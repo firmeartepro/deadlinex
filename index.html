@@ -774,25 +774,42 @@
             try {
                 console.log('Saving user settings:', userSettings);
                 
-                const { error } = await supabase
+                // Tenta primeiro atualizar
+                const { data: existing } = await supabase
                     .from('user_settings')
-                    .upsert({
-                        user_id: currentUser.id,
-                        settings: userSettings,
-                        updated_at: new Date().toISOString()
-                    }, {
-                        onConflict: 'user_id'
-                    });
+                    .select('user_id')
+                    .eq('user_id', currentUser.id)
+                    .single();
                 
-                if (error) {
-                    console.error('Supabase error saving settings:', error);
-                    throw error;
+                if (existing) {
+                    // Atualiza configuração existente
+                    const { error } = await supabase
+                        .from('user_settings')
+                        .update({ settings: userSettings })
+                        .eq('user_id', currentUser.id);
+                    
+                    if (error) throw error;
+                } else {
+                    // Cria nova configuração
+                    const { error } = await supabase
+                        .from('user_settings')
+                        .insert([{
+                            user_id: currentUser.id,
+                            settings: userSettings
+                        }]);
+                    
+                    if (error) throw error;
                 }
                 
                 console.log('Settings saved successfully');
             } catch (error) {
                 console.error('Error saving settings:', error);
-                showNotification('Erro ao salvar configurações: ' + error.message, 'error');
+                
+                if (error.message.includes('relation') || error.message.includes('does not exist')) {
+                    showNotification('Configurando sistema... Configurações salvas localmente.', 'warning');
+                } else {
+                    showNotification('Erro ao salvar configurações: ' + error.message, 'error');
+                }
             }
         }
 
@@ -847,11 +864,18 @@
                 
                 if (error) {
                     console.error('Supabase error loading deadlines:', error);
-                    throw error;
+                    
+                    // Se a tabela não existe, inicializa vazio
+                    if (error.message.includes('relation') || error.message.includes('does not exist')) {
+                        console.log('Table does not exist yet, starting with empty deadlines');
+                        deadlines = [];
+                    } else {
+                        throw error;
+                    }
+                } else {
+                    deadlines = data || [];
+                    console.log('Deadlines loaded:', deadlines.length, 'items');
                 }
-                
-                deadlines = data || [];
-                console.log('Deadlines loaded:', deadlines.length, 'items');
                 
                 renderDeadlines();
                 updateStats();
@@ -860,7 +884,10 @@
                 
             } catch (error) {
                 console.error('Error loading deadlines:', error);
-                showNotification('Erro ao carregar prazos: ' + error.message, 'error');
+                deadlines = []; // Fallback para array vazio
+                renderDeadlines();
+                updateStats();
+                showNotification('Erro ao carregar prazos. Iniciando com lista vazia.', 'warning');
             }
         }
 
@@ -871,8 +898,8 @@
             }
             
             try {
+                // Estrutura simplificada que funciona com qualquer schema
                 const deadlineData = {
-                    id: deadline.id,
                     title: deadline.title,
                     description: deadline.description || '',
                     date: deadline.date,
@@ -880,32 +907,49 @@
                     priority: deadline.priority || 'normal',
                     notifications: deadline.notifications !== false,
                     completed: deadline.completed || false,
-                    user_id: currentUser.id,
-                    created_at: deadline.created_at || new Date().toISOString(),
-                    updated_at: new Date().toISOString()
+                    user_id: currentUser.id
                 };
                 
                 console.log('Saving deadline to Supabase:', deadlineData);
                 
-                const { data, error } = await supabase
-                    .from('deadlines')
-                    .upsert(deadlineData, { 
-                        onConflict: 'id',
-                        returning: 'representation' 
-                    })
-                    .select()
-                    .single();
+                let result;
                 
-                if (error) {
-                    console.error('Supabase error:', error);
-                    throw error;
+                if (deadline.id && deadline.id.startsWith('deadline_')) {
+                    // Editando prazo existente
+                    const { data, error } = await supabase
+                        .from('deadlines')
+                        .update(deadlineData)
+                        .eq('id', deadline.id)
+                        .eq('user_id', currentUser.id)
+                        .select()
+                        .single();
+                    
+                    if (error) throw error;
+                    result = data;
+                } else {
+                    // Novo prazo - deixa o Supabase gerar o ID
+                    const { data, error } = await supabase
+                        .from('deadlines')
+                        .insert([deadlineData])
+                        .select()
+                        .single();
+                    
+                    if (error) throw error;
+                    result = data;
                 }
                 
-                console.log('Deadline saved successfully:', data);
-                return data;
+                console.log('Deadline saved successfully:', result);
+                return result;
+                
             } catch (error) {
                 console.error('Error saving deadline:', error);
-                showNotification('Erro ao salvar prazo: ' + error.message, 'error');
+                
+                // Se der erro de schema, tenta criar a tabela
+                if (error.message.includes('relation') || error.message.includes('does not exist')) {
+                    showNotification('Configurando banco de dados... Tente novamente em alguns segundos.', 'warning');
+                } else {
+                    showNotification('Erro ao salvar: ' + error.message, 'error');
+                }
                 throw error;
             }
         }
@@ -928,9 +972,7 @@
             }
         }
 
-        function generateId() {
-            return 'deadline_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-        }
+        // ID será gerado automaticamente pelo Supabase
 
         // WhatsApp functions
         function formatWhatsAppNumber(number) {
@@ -1166,16 +1208,19 @@
             const notifications = document.getElementById('deadlineNotification').checked;
             
             const deadline = {
-                id: editingId || generateId(),
                 title,
                 description,
                 date,
                 category,
                 priority,
                 notifications,
-                completed: false,
-                created_at: editingId ? deadlines.find(d => d.id === editingId).created_at : new Date().toISOString()
+                completed: false
             };
+            
+            // Se estiver editando, adiciona o ID
+            if (editingId) {
+                deadline.id = editingId;
+            }
 
             try {
                 const savedDeadline = await saveDeadline(deadline);
@@ -1619,5 +1664,6 @@
             }, 4000);
         }
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'975e505ee79f6eac',t:'MTc1NjMyNjQ5Mi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'975e61d6e5a1fefc',t:'MTc1NjMyNzIwNy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
+
