@@ -1,0 +1,20 @@
+{
+  "name": "deadlinex",
+  "version": "1.0.0",
+  "description": "Sistema de gerenciamento de prazos",
+  "main": "index.html",
+  "scripts": {
+    "dev": "vercel dev",
+    "build": "echo 'Build completed'",
+    "start": "vercel dev"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.38.0"
+  },
+  "devDependencies": {
+    "vercel": "^32.0.0"
+  },
+  "keywords": ["deadline", "prazo", "gerenciamento"],
+  "author": "Seu Nome",
+  "license": "MIT"
+}
