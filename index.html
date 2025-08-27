@@ -205,6 +205,10 @@
                             📱 Testar WhatsApp
                         </button>
                         
+                        <button onclick="testSupabaseConnection()" class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors font-medium text-sm">
+                            🔍 Debug Supabase
+                        </button>
+                        
                         <button onclick="openSettingsModal()" class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors font-medium text-sm">
                             ⚙️ Configurações
                         </button>
@@ -806,6 +810,7 @@
                 
             } catch (error) {
                 console.error('Erro ao salvar configurações:', error);
+                showDetailedError(error, 'Salvando Configurações no Supabase');
                 showNotification('Erro ao salvar configurações', 'error');
             } finally {
                 isLoading = false;
@@ -865,6 +870,7 @@
                 
             } catch (error) {
                 console.error('Erro ao carregar prazos:', error);
+                showDetailedError(error, 'Carregando Prazos do Supabase');
                 deadlines = [];
                 renderDeadlines();
                 updateStats();
@@ -921,6 +927,7 @@
                 
             } catch (error) {
                 console.error('Erro ao salvar prazo:', error);
+                showDetailedError(error, 'Salvando Prazo no Supabase');
                 throw error;
             } finally {
                 isLoading = false;
@@ -943,6 +950,7 @@
                 
             } catch (error) {
                 console.error('Erro ao excluir prazo:', error);
+                showDetailedError(error, 'Excluindo Prazo do Supabase');
                 throw error;
             } finally {
                 isLoading = false;
@@ -1610,6 +1618,121 @@
             }
         }
 
+        // Debug system - mostra erros detalhados
+        function showDetailedError(error, context = '') {
+            console.error('Erro detalhado:', error);
+            
+            let errorMessage = `🔍 DEBUG - ${context}\n\n`;
+            errorMessage += `❌ Erro: ${error.message || 'Erro desconhecido'}\n`;
+            errorMessage += `📍 Código: ${error.code || 'N/A'}\n`;
+            errorMessage += `🔗 Detalhes: ${error.details || 'N/A'}\n`;
+            errorMessage += `💡 Hint: ${error.hint || 'N/A'}\n`;
+            
+            if (error.response) {
+                errorMessage += `📡 Status: ${error.response.status || 'N/A'}\n`;
+                errorMessage += `📄 Response: ${JSON.stringify(error.response.data || {}, null, 2)}\n`;
+            }
+            
+            errorMessage += `\n🔧 Stack: ${error.stack || 'N/A'}`;
+            
+            // Mostra no console também
+            console.log('=== ERRO DETALHADO ===');
+            console.log('Context:', context);
+            console.log('Error Object:', error);
+            console.log('User:', currentUser);
+            console.log('Supabase URL:', SUPABASE_URL);
+            console.log('======================');
+            
+            // Cria modal de debug
+            const debugModal = document.createElement('div');
+            debugModal.className = 'fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center p-4';
+            debugModal.innerHTML = `
+                <div class="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+                    <div class="p-6 border-b border-gray-200">
+                        <h3 class="text-xl font-bold text-red-600">🔍 Debug - Erro Detalhado</h3>
+                    </div>
+                    <div class="p-6">
+                        <pre class="bg-gray-100 p-4 rounded-lg text-sm overflow-x-auto whitespace-pre-wrap font-mono">${errorMessage}</pre>
+                        <div class="mt-4 flex gap-2">
+                            <button onclick="copyErrorToClipboard('${errorMessage.replace(/'/g, "\\'")}'); this.parentElement.parentElement.parentElement.parentElement.remove();" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+                                📋 Copiar Erro
+                            </button>
+                            <button onclick="this.parentElement.parentElement.parentElement.parentElement.remove();" class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700">
+                                Fechar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(debugModal);
+            
+            // Remove após 30 segundos se não for fechado manualmente
+            setTimeout(() => {
+                if (document.body.contains(debugModal)) {
+                    document.body.removeChild(debugModal);
+                }
+            }, 30000);
+        }
+        
+        function copyErrorToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                showNotification('Erro copiado para área de transferência!', 'success');
+            }).catch(() => {
+                // Fallback para navegadores mais antigos
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                showNotification('Erro copiado para área de transferência!', 'success');
+            });
+        }
+
+        // Função para testar conexão com Supabase
+        async function testSupabaseConnection() {
+            try {
+                console.log('🔍 Testando conexão com Supabase...');
+                console.log('URL:', SUPABASE_URL);
+                console.log('Key (primeiros 20 chars):', SUPABASE_ANON_KEY.substring(0, 20) + '...');
+                
+                // Testa autenticação
+                const { data: { session } } = await supabase.auth.getSession();
+                console.log('✅ Sessão atual:', session ? 'Logado' : 'Não logado');
+                console.log('👤 Usuário:', currentUser);
+                
+                // Testa acesso às tabelas
+                const { data: testDeadlines, error: deadlinesError } = await supabase
+                    .from('deadlines')
+                    .select('count')
+                    .limit(1);
+                
+                if (deadlinesError) {
+                    console.log('❌ Erro ao acessar tabela deadlines:', deadlinesError);
+                } else {
+                    console.log('✅ Tabela deadlines acessível');
+                }
+                
+                const { data: testSettings, error: settingsError } = await supabase
+                    .from('user_settings')
+                    .select('count')
+                    .limit(1);
+                
+                if (settingsError) {
+                    console.log('❌ Erro ao acessar tabela user_settings:', settingsError);
+                } else {
+                    console.log('✅ Tabela user_settings acessível');
+                }
+                
+                showNotification('Teste de conexão concluído - veja o console (F12)', 'info');
+                
+            } catch (error) {
+                console.error('❌ Erro no teste de conexão:', error);
+                showDetailedError(error, 'Teste de Conexão Supabase');
+            }
+        }
+
         // Notification system
         function showNotification(message, type = 'info') {
             const notification = document.createElement('div');
@@ -1639,5 +1762,5 @@
             }, 4000);
         }
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'975ed155f68aef86',t:'MTc1NjMzMTc3NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'975ede9397a02912',t:'MTc1NjMzMjMxNi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
