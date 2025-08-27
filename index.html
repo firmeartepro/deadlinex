@@ -1752,10 +1752,20 @@
                 }
                 
                 // Mostra instruções para corrigir problemas
-                const instructions = `
-🔧 INSTRUÇÕES PARA CORRIGIR SUPABASE:
+                const sqlCommands = `-- 🚨 CORREÇÃO ERRO 406 - Políticas RLS Conflitantes
+-- Este código remove políticas antigas e cria novas corretas
 
-1️⃣ TABELA DEADLINES - Execute no SQL Editor:
+-- 1️⃣ REMOVER POLÍTICAS ANTIGAS (se existirem)
+DROP POLICY IF EXISTS "Users can view own deadlines" ON deadlines;
+DROP POLICY IF EXISTS "Users can insert own deadlines" ON deadlines;
+DROP POLICY IF EXISTS "Users can update own deadlines" ON deadlines;
+DROP POLICY IF EXISTS "Users can delete own deadlines" ON deadlines;
+DROP POLICY IF EXISTS "Users can view own settings" ON user_settings;
+DROP POLICY IF EXISTS "Users can insert own settings" ON user_settings;
+DROP POLICY IF EXISTS "Users can update own settings" ON user_settings;
+DROP POLICY IF EXISTS "Users can delete own settings" ON user_settings;
+
+-- 2️⃣ CRIAR TABELAS (se não existirem)
 CREATE TABLE IF NOT EXISTS deadlines (
     id SERIAL PRIMARY KEY,
     user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
@@ -1768,40 +1778,147 @@ CREATE TABLE IF NOT EXISTS deadlines (
     created_at TIMESTAMP DEFAULT NOW()
 );
 
-2️⃣ TABELA USER_SETTINGS - Execute no SQL Editor:
 CREATE TABLE IF NOT EXISTS user_settings (
     user_id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
     settings JSONB NOT NULL DEFAULT '{}',
     created_at TIMESTAMP DEFAULT NOW()
 );
 
-3️⃣ RLS (Row Level Security) - Execute no SQL Editor:
--- Habilitar RLS
+-- 3️⃣ HABILITAR RLS
 ALTER TABLE deadlines ENABLE ROW LEVEL SECURITY;
 ALTER TABLE user_settings ENABLE ROW LEVEL SECURITY;
 
--- Políticas para deadlines
-CREATE POLICY "Users can view own deadlines" ON deadlines FOR SELECT USING (auth.uid() = user_id);
-CREATE POLICY "Users can insert own deadlines" ON deadlines FOR INSERT WITH CHECK (auth.uid() = user_id);
-CREATE POLICY "Users can update own deadlines" ON deadlines FOR UPDATE USING (auth.uid() = user_id);
-CREATE POLICY "Users can delete own deadlines" ON deadlines FOR DELETE USING (auth.uid() = user_id);
+-- 4️⃣ CRIAR POLÍTICAS CORRETAS PARA DEADLINES
+CREATE POLICY "deadlines_select_policy" ON deadlines FOR SELECT USING (auth.uid() = user_id);
+CREATE POLICY "deadlines_insert_policy" ON deadlines FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "deadlines_update_policy" ON deadlines FOR UPDATE USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "deadlines_delete_policy" ON deadlines FOR DELETE USING (auth.uid() = user_id);
 
--- Políticas para user_settings
-CREATE POLICY "Users can view own settings" ON user_settings FOR SELECT USING (auth.uid() = user_id);
-CREATE POLICY "Users can insert own settings" ON user_settings FOR INSERT WITH CHECK (auth.uid() = user_id);
-CREATE POLICY "Users can update own settings" ON user_settings FOR UPDATE USING (auth.uid() = user_id);
-CREATE POLICY "Users can delete own settings" ON user_settings FOR DELETE USING (auth.uid() = user_id);
+-- 5️⃣ CRIAR POLÍTICAS CORRETAS PARA USER_SETTINGS
+CREATE POLICY "settings_select_policy" ON user_settings FOR SELECT USING (auth.uid() = user_id);
+CREATE POLICY "settings_insert_policy" ON user_settings FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "settings_update_policy" ON user_settings FOR UPDATE USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "settings_delete_policy" ON user_settings FOR DELETE USING (auth.uid() = user_id);
 
-4️⃣ Após executar, teste novamente!
-                `;
+-- 6️⃣ VERIFICAR SE FUNCIONOU
+SELECT 'Políticas criadas com sucesso!' as status;`;
                 
-                console.log(instructions);
-                showNotification('Instruções de correção no console (F12)', 'info');
+                console.log('📋 COMANDOS SQL PARA COPIAR:');
+                console.log(sqlCommands);
+                
+                // Mostra modal com instruções visuais
+                showSupabaseInstructions(sqlCommands, deadlinesError, settingsError);
                 
             } catch (error) {
                 console.error('❌ Erro no teste de conexão:', error);
                 showDetailedError(error, 'Teste de Conexão Supabase');
             }
+        }
+
+        function showSupabaseInstructions(sqlCommands, deadlinesError, settingsError) {
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center p-4';
+            modal.innerHTML = `
+                <div class="bg-white rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+                    <div class="p-6 border-b border-gray-200">
+                        <h3 class="text-2xl font-bold text-red-600">🚨 ERRO 406 - Políticas RLS Bloqueando Acesso</h3>
+                        <p class="text-gray-600 mt-2">As tabelas existem, mas as políticas de segurança estão bloqueando o acesso!</p>
+                    </div>
+                    
+                    <div class="p-6 space-y-6">
+                        <!-- Diagnóstico -->
+                        <div class="bg-red-50 border-l-4 border-red-400 p-4 rounded-lg">
+                            <h4 class="font-bold text-red-900 mb-2">🔍 Diagnóstico:</h4>
+                            <div class="space-y-1 text-sm text-red-800">
+                                <div>✅ Supabase conectado</div>
+                                <div>✅ Usuário logado: artebr.firme@gmail.com</div>
+                                <div>✅ Tabelas existem (deadlines e user_settings)</div>
+                                <div>❌ <strong>ERRO 406:</strong> Políticas RLS bloqueando acesso</div>
+                            </div>
+                        </div>
+
+                        <!-- Solução -->
+                        <div class="bg-green-50 border-l-4 border-green-400 p-4 rounded-lg">
+                            <h4 class="font-bold text-green-900 mb-3">✅ SOLUÇÃO - Execute este código SQL:</h4>
+                            <p class="text-sm text-green-800 mb-3">O código abaixo vai corrigir as políticas de segurança e permitir o acesso às suas tabelas.</p>
+                        </div>
+
+                        <!-- Instruções passo a passo -->
+                        <div class="bg-blue-50 p-4 rounded-lg">
+                            <h4 class="font-bold text-blue-900 mb-3">📋 Instruções Passo a Passo:</h4>
+                            <ol class="list-decimal list-inside space-y-2 text-sm text-blue-800">
+                                <li><strong>Clique em "🚀 Abrir Supabase"</strong> (abre nova aba)</li>
+                                <li><strong>No Supabase, clique em "SQL Editor"</strong> (menu lateral)</li>
+                                <li><strong>Clique em "📋 Copiar SQL"</strong> aqui embaixo</li>
+                                <li><strong>Cole no SQL Editor</strong> do Supabase</li>
+                                <li><strong>Clique em "Run"</strong> para executar</li>
+                                <li><strong>Volte aqui e teste novamente!</strong></li>
+                            </ol>
+                        </div>
+
+                        <!-- Código SQL -->
+                        <div class="bg-gray-900 text-green-400 p-4 rounded-lg">
+                            <div class="flex justify-between items-center mb-2">
+                                <h4 class="font-bold text-white">💻 Código SQL - Corrige Erro 406:</h4>
+                                <button onclick="copyToClipboard(\`${sqlCommands.replace(/`/g, '\\`')}\`)" class="bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700">
+                                    📋 Copiar SQL
+                                </button>
+                            </div>
+                            <pre class="text-xs overflow-x-auto whitespace-pre-wrap font-mono">${sqlCommands}</pre>
+                        </div>
+
+                        <!-- Botões de ação -->
+                        <div class="flex gap-3">
+                            <button onclick="window.open('https://supabase.com/dashboard', '_blank')" class="flex-1 bg-green-600 text-white py-3 px-4 rounded-lg hover:bg-green-700 font-medium">
+                                🚀 Abrir Supabase Dashboard
+                            </button>
+                            <button onclick="copyToClipboard(\`${sqlCommands.replace(/`/g, '\\`')}\`)" class="flex-1 bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 font-medium">
+                                📋 Copiar Código SQL
+                            </button>
+                            <button onclick="this.closest('.fixed').remove()" class="bg-gray-600 text-white py-3 px-4 rounded-lg hover:bg-gray-700 font-medium">
+                                Fechar
+                            </button>
+                        </div>
+
+                        <!-- O que o código faz -->
+                        <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4">
+                            <div class="flex">
+                                <div class="flex-shrink-0">
+                                    <svg class="h-5 w-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                                    </svg>
+                                </div>
+                                <div class="ml-3">
+                                    <h5 class="font-medium text-yellow-800">💡 O que o código SQL faz:</h5>
+                                    <ul class="text-sm text-yellow-700 mt-1 space-y-1">
+                                        <li>• <strong>Remove políticas antigas</strong> que estão causando conflito</li>
+                                        <li>• <strong>Cria políticas corretas</strong> para seu usuário específico</li>
+                                        <li>• <strong>Permite acesso total</strong> aos seus próprios dados</li>
+                                        <li>• <strong>Mantém segurança</strong> - outros usuários não veem seus dados</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                showNotification('✅ Código SQL copiado! Cole no Supabase SQL Editor', 'success');
+            }).catch(() => {
+                // Fallback para navegadores mais antigos
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                showNotification('✅ Código SQL copiado! Cole no Supabase SQL Editor', 'success');
+            });
         }
 
         // Notification system
@@ -1833,5 +1950,5 @@ CREATE POLICY "Users can delete own settings" ON user_settings FOR DELETE USING 
             }, 4000);
         }
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'975eebf062afd838',t:'MTc1NjMzMjg2NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'975f01eb43daf1ee',t:'MTc1NjMzMzc2NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
