@@ -757,10 +757,10 @@
         };
 
         // ⚙️ CONFIGURAÇÃO CENTRALIZADA DO SISTEMA
-        // 👇 CONFIGURE SUAS CREDENCIAIS AQUI (APENAS UMA VEZ)
+        // 👇 CREDENCIAIS CONFIGURADAS E PRONTAS PARA USO
         const SYSTEM_EMAIL_CONFIG = {
-            brevoApiKey: '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', // Substitua pela sua API Key da Brevo
-            senderEmail: 'deadlinexartur@gmail.com', // Substitua pelo seu email verificado
+            brevoApiKey: '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',
+            senderEmail: 'deadlinexartur@gmail.com', // Email do sistema configurado
             senderName: 'DeadlineX - Sistema de Prazos'
         };
 
@@ -993,11 +993,6 @@
                 throw new Error('Sistema de email não configurado. Entre em contato com o administrador.');
             }
 
-            // Check if system email is properly configured
-            if (SYSTEM_EMAIL_CONFIG.brevoApiKey === 'SUA_API_KEY_AQUI') {
-                throw new Error('Sistema de email não configurado. Entre em contato com o administrador.');
-            }
-
             try {
                 const emailPayload = {
                     sender: {
@@ -1180,11 +1175,6 @@
         // Email functions
         async function sendWelcomeEmail(email, name) {
             try {
-                if (SYSTEM_EMAIL_CONFIG.brevoApiKey === 'SUA_API_KEY_AQUI') {
-                    console.log('System email not configured, skipping welcome email');
-                    return;
-                }
-
                 const htmlContent = getWelcomeEmailTemplate(name);
                 
                 await sendEmailWithBrevo(
@@ -1203,7 +1193,7 @@
 
         async function sendDeadlineAlert(userEmail, userName, deadline) {
             try {
-                if (SYSTEM_EMAIL_CONFIG.brevoApiKey === 'SUA_API_KEY_AQUI' || !userSettings.emailNotifications) {
+                if (!userSettings.emailNotifications) {
                     return;
                 }
 
@@ -1243,11 +1233,6 @@
         // Test email system
         async function testEmailSystem() {
             try {
-                if (SYSTEM_EMAIL_CONFIG.brevoApiKey === 'SUA_API_KEY_AQUI') {
-                    showNotification('Sistema de email não configurado. Entre em contato com o administrador.', 'error');
-                    return;
-                }
-
                 showEmailStatus('pending');
                 
                 const testDeadline = {
@@ -1972,10 +1957,5 @@
             }, 4000);
         }
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'975b778123960319',t:'MTc1NjI5NjYzNy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'975b8d34b028a451',t:'MTc1NjI5NzUyNi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
-
-
-
-
-
