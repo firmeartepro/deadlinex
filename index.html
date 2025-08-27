@@ -584,7 +584,7 @@
     </div>
 
     <script>
-        // Supabase configuration - Corrigido para funcionar igual versão 7
+        // Supabase configuration
         const SUPABASE_URL = 'https://vastjlzaxafpoagptklu.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZhc3RqbHpheGFmcG9hZ3B0a2x1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTYyNjUzMDEsImV4cCI6MjA3MTg0MTMwMX0.4EnnkdyVDEo1qSp1C2-QgVlklUkL2W3ulqOmXX_DiVY';
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -593,6 +593,7 @@
         let deadlines = [];
         let editingId = null;
         let currentUser = null;
+        let isLoading = false; // Previne salvamentos múltiplos
         let userSettings = {
             name: '',
             email: '',
@@ -606,7 +607,7 @@
             showUrgentAlerts: true
         };
 
-        // WhatsApp configuration - cada usuário configura seu próprio número
+        // WhatsApp configuration
         const WHATSAPP_WEB_URL = 'https://web.whatsapp.com/send';
 
         // Category icons and colors
@@ -638,60 +639,7 @@
                     showAuthScreen();
                 }
             });
-            
-            // Auto-sync system - tenta sincronizar dados temporários a cada 30 segundos
-            setInterval(syncTemporaryData, 30000);
         });
-
-        // Sistema de sincronização automática
-        async function syncTemporaryData() {
-            if (!currentUser) return;
-            
-            try {
-                // Tenta sincronizar prazos temporários
-                const tempDeadlines = deadlines.filter(d => d.id && d.id.toString().startsWith('temp_'));
-                
-                for (const tempDeadline of tempDeadlines) {
-                    try {
-                        console.log('Syncing temporary deadline:', tempDeadline.title);
-                        
-                        // Remove o ID temporário para criar novo no Supabase
-                        const { id, ...deadlineWithoutId } = tempDeadline;
-                        const synced = await saveDeadline(deadlineWithoutId);
-                        
-                        if (synced && synced.id && typeof synced.id === 'number') {
-                            // Substitui o temporário pelo sincronizado
-                            const index = deadlines.findIndex(d => d.id === id);
-                            if (index !== -1) {
-                                deadlines[index] = synced;
-                            }
-                            console.log('Temporary deadline synced successfully');
-                        }
-                    } catch (error) {
-                        console.log('Sync failed for deadline, will retry later:', error.message);
-                    }
-                }
-                
-                // Tenta sincronizar configurações do localStorage
-                const localSettingsKey = 'deadlinex_settings_' + currentUser.id;
-                const localSettings = localStorage.getItem(localSettingsKey);
-                
-                if (localSettings) {
-                    try {
-                        const parsedSettings = JSON.parse(localSettings);
-                        userSettings = { ...userSettings, ...parsedSettings };
-                        await saveUserSettings();
-                        localStorage.removeItem(localSettingsKey);
-                        console.log('Local settings synced successfully');
-                    } catch (error) {
-                        console.log('Settings sync failed, will retry later:', error.message);
-                    }
-                }
-                
-            } catch (error) {
-                console.log('Auto-sync error:', error.message);
-            }
-        }
 
         // Authentication functions
         async function checkAuth() {
@@ -820,29 +768,24 @@
             }
         }
 
-        // Supabase data management functions
+        // Supabase data management functions - CORRIGIDAS
         async function saveUserSettings() {
-            if (!currentUser) return;
+            if (!currentUser || isLoading) return;
             
             try {
-                console.log('Saving user settings:', userSettings);
+                isLoading = true;
                 
-                // Estrutura simplificada para configurações
                 const settingsData = {
                     user_id: currentUser.id,
                     settings: userSettings
                 };
                 
-                // Tenta primeiro verificar se existe
-                const { data: existing, error: selectError } = await supabase
+                // Verifica se já existe configuração
+                const { data: existing } = await supabase
                     .from('user_settings')
                     .select('user_id')
                     .eq('user_id', currentUser.id)
                     .maybeSingle();
-                
-                if (selectError && !selectError.message.includes('relation') && !selectError.message.includes('does not exist')) {
-                    throw selectError;
-                }
                 
                 if (existing) {
                     // Atualiza configuração existente
@@ -861,30 +804,11 @@
                     if (error) throw error;
                 }
                 
-                console.log('Settings saved successfully');
-                
             } catch (error) {
-                console.error('Error saving settings:', error);
-                
-                // Tratamento específico para erros de schema/cache
-                if (error.message.includes('relation') || 
-                    error.message.includes('does not exist') ||
-                    error.message.includes('schema') ||
-                    error.message.includes('cache')) {
-                    
-                    console.log('Settings schema/cache error, saving locally');
-                    
-                    // Salva no localStorage como fallback
-                    try {
-                        localStorage.setItem('deadlinex_settings_' + currentUser.id, JSON.stringify(userSettings));
-                        showNotification('Configurações salvas localmente. Serão sincronizadas automaticamente.', 'info');
-                    } catch (localError) {
-                        console.error('LocalStorage error:', localError);
-                        showNotification('Erro ao salvar configurações temporariamente.', 'warning');
-                    }
-                } else {
-                    showNotification('Erro ao salvar configurações: ' + error.message, 'error');
-                }
+                console.error('Erro ao salvar configurações:', error);
+                showNotification('Erro ao salvar configurações', 'error');
+            } finally {
+                isLoading = false;
             }
         }
 
@@ -892,8 +816,6 @@
             if (!currentUser) return;
             
             try {
-                console.log('Loading user settings for:', currentUser.id);
-                
                 const { data, error } = await supabase
                     .from('user_settings')
                     .select('settings')
@@ -901,13 +823,11 @@
                     .single();
                 
                 if (error && error.code !== 'PGRST116') {
-                    console.error('Error loading settings:', error);
                     throw error;
                 }
                 
                 if (data?.settings) {
                     userSettings = { ...userSettings, ...data.settings };
-                    console.log('Settings loaded:', userSettings);
                 }
                 
                 // Set user email from auth if not in settings
@@ -921,7 +841,7 @@
                 }
                 
             } catch (error) {
-                console.error('Error loading settings:', error);
+                console.error('Erro ao carregar configurações:', error);
             }
         }
 
@@ -929,51 +849,37 @@
             if (!currentUser) return;
             
             try {
-                console.log('Loading deadlines for user:', currentUser.id);
-                
                 const { data, error } = await supabase
                     .from('deadlines')
                     .select('*')
                     .eq('user_id', currentUser.id)
                     .order('date', { ascending: true });
                 
-                if (error) {
-                    console.error('Supabase error loading deadlines:', error);
-                    
-                    // Se a tabela não existe, inicializa vazio
-                    if (error.message.includes('relation') || error.message.includes('does not exist')) {
-                        console.log('Table does not exist yet, starting with empty deadlines');
-                        deadlines = [];
-                    } else {
-                        throw error;
-                    }
-                } else {
-                    deadlines = data || [];
-                    console.log('Deadlines loaded:', deadlines.length, 'items');
-                }
+                if (error) throw error;
                 
+                deadlines = data || [];
                 renderDeadlines();
                 updateStats();
                 checkNotifications();
                 checkUrgentDeadlines();
                 
             } catch (error) {
-                console.error('Error loading deadlines:', error);
-                deadlines = []; // Fallback para array vazio
+                console.error('Erro ao carregar prazos:', error);
+                deadlines = [];
                 renderDeadlines();
                 updateStats();
-                showNotification('Erro ao carregar prazos. Iniciando com lista vazia.', 'warning');
+                showNotification('Erro ao carregar prazos', 'error');
             }
         }
 
         async function saveDeadline(deadline) {
-            if (!currentUser) {
-                console.error('No user logged in');
-                return;
+            if (!currentUser || isLoading) {
+                throw new Error('Sistema ocupado, tente novamente');
             }
             
             try {
-                // Estrutura mínima que funciona com qualquer schema do Supabase
+                isLoading = true;
+                
                 const deadlineData = {
                     user_id: currentUser.id,
                     title: deadline.title,
@@ -985,12 +891,10 @@
                     completed: deadline.completed || false
                 };
                 
-                console.log('Saving deadline to Supabase:', deadlineData);
-                
                 let result;
                 
                 if (deadline.id && typeof deadline.id === 'number') {
-                    // Editando prazo existente (ID numérico do Supabase)
+                    // Editando prazo existente
                     const { data, error } = await supabase
                         .from('deadlines')
                         .update(deadlineData)
@@ -999,65 +903,36 @@
                         .select()
                         .single();
                     
-                    if (error) {
-                        console.error('Update error:', error);
-                        throw error;
-                    }
+                    if (error) throw error;
                     result = data;
                 } else {
-                    // Novo prazo - Supabase gera ID automaticamente
+                    // Novo prazo
                     const { data, error } = await supabase
                         .from('deadlines')
                         .insert([deadlineData])
                         .select()
                         .single();
                     
-                    if (error) {
-                        console.error('Insert error:', error);
-                        throw error;
-                    }
+                    if (error) throw error;
                     result = data;
                 }
                 
-                console.log('Deadline saved successfully:', result);
                 return result;
                 
             } catch (error) {
-                console.error('Error saving deadline:', error);
-                
-                // Tratamento específico para erros de schema/cache
-                if (error.message.includes('relation') || 
-                    error.message.includes('does not exist') ||
-                    error.message.includes('schema') ||
-                    error.message.includes('cache')) {
-                    
-                    console.log('Schema/cache error detected, using fallback');
-                    showNotification('Sistema configurando banco de dados... Aguarde alguns segundos e tente novamente.', 'warning');
-                    
-                    // Fallback: salva localmente temporariamente
-                    const tempId = 'temp_' + Date.now();
-                    const tempDeadline = { ...deadline, id: tempId };
-                    
-                    // Adiciona à lista local temporariamente
-                    if (!deadline.id) {
-                        deadlines.push(tempDeadline);
-                        renderDeadlines();
-                        updateStats();
-                        showNotification('Prazo salvo temporariamente. Será sincronizado automaticamente.', 'info');
-                    }
-                    
-                    return tempDeadline;
-                } else {
-                    showNotification('Erro ao salvar prazo: ' + error.message, 'error');
-                    throw error;
-                }
+                console.error('Erro ao salvar prazo:', error);
+                throw error;
+            } finally {
+                isLoading = false;
             }
         }
 
         async function deleteDeadlineFromDB(id) {
-            if (!currentUser) return;
+            if (!currentUser || isLoading) return;
             
             try {
+                isLoading = true;
+                
                 const { error } = await supabase
                     .from('deadlines')
                     .delete()
@@ -1065,21 +940,19 @@
                     .eq('user_id', currentUser.id);
                 
                 if (error) throw error;
+                
             } catch (error) {
-                console.error('Error deleting deadline:', error);
-                showNotification('Erro ao excluir prazo', 'error');
+                console.error('Erro ao excluir prazo:', error);
                 throw error;
+            } finally {
+                isLoading = false;
             }
         }
 
-        // ID será gerado automaticamente pelo Supabase
-
         // WhatsApp functions
         function formatWhatsAppNumber(number) {
-            // Remove todos os caracteres não numéricos
             const cleanNumber = number.replace(/\D/g, '');
             
-            // Se não começar com 55 (Brasil), adiciona
             if (!cleanNumber.startsWith('55')) {
                 return '55' + cleanNumber;
             }
@@ -1093,7 +966,6 @@
                 const encodedMessage = encodeURIComponent(message);
                 const whatsappUrl = `${WHATSAPP_WEB_URL}?phone=${formattedNumber}&text=${encodedMessage}`;
                 
-                // Abre o WhatsApp Web em nova aba
                 window.open(whatsappUrl, '_blank');
                 
                 return true;
@@ -1137,7 +1009,6 @@
                 sendWhatsAppMessage(whatsappNumber, message);
                 
                 showWhatsAppStatus('success');
-                console.log('WhatsApp alert sent successfully');
                 
             } catch (error) {
                 console.error('Error sending WhatsApp alert:', error);
@@ -1158,7 +1029,6 @@
                     priority: 'normal'
                 };
 
-                // Use WhatsApp number from settings or ask for it
                 let whatsappNumber = userSettings.whatsappNumber;
                 if (!whatsappNumber) {
                     whatsappNumber = prompt('Digite seu número do WhatsApp (com DDD) para receber o teste:\nExemplo: 11999887766');
@@ -1216,7 +1086,6 @@
 
         // Settings modal functions
         function openSettingsModal() {
-            // Load current settings into form
             document.getElementById('userName').value = userSettings.name || '';
             document.getElementById('userEmail').value = userSettings.email || '';
             document.getElementById('userWhatsApp').value = userSettings.whatsappNumber || '';
@@ -1241,7 +1110,6 @@
             document.getElementById('modalTitle').textContent = 'Novo Prazo';
             document.getElementById('deadlineForm').reset();
             
-            // Apply default settings
             document.getElementById('deadlineCategory').value = userSettings.defaultCategory;
             document.getElementById('deadlinePriority').value = userSettings.defaultPriority;
             document.getElementById('deadlineNotification').checked = userSettings.whatsappNotifications;
@@ -1274,7 +1142,8 @@
         document.getElementById('settingsForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
-            // Update settings from form
+            if (isLoading) return;
+            
             userSettings.name = document.getElementById('userName').value;
             userSettings.email = document.getElementById('userEmail').value;
             userSettings.whatsappNumber = document.getElementById('userWhatsApp').value;
@@ -1286,19 +1155,24 @@
             userSettings.defaultPriority = document.getElementById('defaultPriority').value;
             userSettings.showUrgentAlerts = document.getElementById('showUrgentAlerts').checked;
             
-            // Save settings
-            await saveUserSettings();
-            closeSettingsModal();
-            
-            // Update urgent alerts display
-            checkUrgentDeadlines();
-            
-            showNotification('Configurações salvas com sucesso!', 'success');
+            try {
+                await saveUserSettings();
+                closeSettingsModal();
+                checkUrgentDeadlines();
+                showNotification('Configurações salvas com sucesso!', 'success');
+            } catch (error) {
+                showNotification('Erro ao salvar configurações', 'error');
+            }
         });
 
-        // Form submission
+        // Form submission - CORRIGIDO
         document.getElementById('deadlineForm').addEventListener('submit', async function(e) {
             e.preventDefault();
+            
+            if (isLoading) {
+                showNotification('Aguarde, salvando...', 'warning');
+                return;
+            }
             
             const title = document.getElementById('deadlineTitle').value;
             const description = document.getElementById('deadlineDescription').value;
@@ -1317,7 +1191,6 @@
                 completed: false
             };
             
-            // Se estiver editando, adiciona o ID
             if (editingId) {
                 deadline.id = editingId;
             }
@@ -1327,7 +1200,9 @@
                 
                 if (editingId) {
                     const index = deadlines.findIndex(d => d.id === editingId);
-                    deadlines[index] = savedDeadline;
+                    if (index !== -1) {
+                        deadlines[index] = savedDeadline;
+                    }
                 } else {
                     deadlines.push(savedDeadline);
                 }
@@ -1338,7 +1213,7 @@
                 checkUrgentDeadlines();
                 closeModal();
                 
-                showNotification(editingId ? 'Prazo atualizado com sucesso!' : 'Prazo criado com sucesso!', 'success');
+                showNotification(editingId ? 'Prazo atualizado!' : 'Prazo criado!', 'success');
                 
             } catch (error) {
                 showNotification('Erro ao salvar prazo', 'error');
@@ -1539,7 +1414,6 @@
                 badge.textContent = notificationCount;
                 badge.classList.remove('hidden');
                 
-                // Browser notifications if enabled
                 if (userSettings.browserNotifications && 'Notification' in window && Notification.permission === 'granted') {
                     urgentDeadlines.forEach(deadline => {
                         const daysUntil = getDaysUntil(deadline.date);
@@ -1624,7 +1498,7 @@
                 deadlines: deadlines,
                 settings: userSettings,
                 exportDate: new Date().toISOString(),
-                version: '8.0'
+                version: '9.0'
             };
             
             const dataStr = JSON.stringify(dataToExport, null, 2);
@@ -1652,13 +1526,11 @@
                     const importedData = JSON.parse(e.target.result);
                     
                     if (importedData.deadlines) {
-                        // Import deadlines to Supabase
                         for (const deadline of importedData.deadlines) {
                             deadline.user_id = currentUser.id;
                             await saveDeadline(deadline);
                         }
                         
-                        // Reload deadlines
                         await loadDeadlines();
                     }
                     
@@ -1675,11 +1547,13 @@
             };
             
             reader.readAsText(file);
-            event.target.value = ''; // Reset file input
+            event.target.value = '';
         }
 
         // Deadline actions
         async function toggleComplete(id) {
+            if (isLoading) return;
+            
             const deadline = deadlines.find(d => d.id === id);
             if (deadline) {
                 deadline.completed = !deadline.completed;
@@ -1698,6 +1572,8 @@
         }
 
         async function deleteDeadline(id) {
+            if (isLoading) return;
+            
             if (confirm('Tem certeza que deseja excluir este prazo?')) {
                 try {
                     await deleteDeadlineFromDB(id);
@@ -1722,14 +1598,13 @@
                 whatsappNumber = prompt('Digite seu número do WhatsApp (com DDD) para receber o alerta:\nExemplo: 11999887766');
                 if (!whatsappNumber) return;
                 
-                // Salva o número para próximas vezes
                 userSettings.whatsappNumber = whatsappNumber;
                 saveUserSettings();
             }
 
             try {
                 sendDeadlineAlert(whatsappNumber, deadline);
-                showNotification('WhatsApp aberto! Envie a mensagem para receber o alerta.', 'success');
+                showNotification('WhatsApp Web aberto! Envie a mensagem para receber o alerta.', 'success');
             } catch (error) {
                 showNotification('Erro ao abrir WhatsApp: ' + error.message, 'error');
             }
@@ -1764,5 +1639,5 @@
             }, 4000);
         }
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'975e6b0b2785f1e9',t:'MTc1NjMyNzU4NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'975ed155f68aef86',t:'MTc1NjMzMTc3NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
