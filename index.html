@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DeadlineX - Nunca Mais Perca um Prazo</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         body { font-family: 'Inter', sans-serif; }
@@ -49,42 +48,6 @@
             50% { opacity: 0.5; }
         }
 
-        .auth-container {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-        }
-
-        .glass-effect {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .fade-in {
-            animation: fadeIn 0.5s ease-in;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .loading-spinner {
-            border: 2px solid #f3f3f3;
-            border-top: 2px solid #3498db;
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            animation: spin 1s linear infinite;
-            display: inline-block;
-            margin-right: 8px;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
         .email-status {
             padding: 8px 12px;
             border-radius: 6px;
@@ -109,562 +72,185 @@
             background: #fef3c7;
             color: #92400e;
         }
+
+        .loading-spinner {
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #3498db;
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            margin-right: 8px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
     
-    <!-- Loading Screen -->
-    <div id="loadingScreen" class="fixed inset-0 bg-white z-50 flex items-center justify-center">
-        <div class="text-center">
-            <div class="bg-gradient-to-r from-blue-600 to-indigo-600 p-6 rounded-2xl inline-block mb-4">
-                <svg class="w-16 h-16 text-white animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                </svg>
-            </div>
-            <h1 class="text-3xl font-bold text-gray-800 mb-2">DeadlineX</h1>
-            <p class="text-gray-600">Carregando...</p>
-        </div>
-    </div>
-    
-    <!-- Authentication Screen -->
-    <div id="authScreen" class="auth-container flex items-center justify-center p-4 hidden">
-        <div class="glass-effect rounded-2xl shadow-2xl max-w-md w-full p-8">
-            <!-- Logo and Title -->
-            <div class="text-center mb-8">
-                <div class="bg-gradient-to-r from-blue-600 to-indigo-600 p-4 rounded-2xl inline-block mb-4">
-                    <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                </div>
-                <h1 class="text-3xl font-bold text-gray-800 mb-2">DeadlineX</h1>
-                <p class="text-gray-600">Nunca mais perca um prazo importante</p>
-            </div>
-
-            <!-- Login Form -->
-            <div id="loginForm" class="fade-in">
-                <h2 class="text-2xl font-semibold text-gray-800 mb-6 text-center">Entrar na sua conta</h2>
-                
-                <form id="loginFormElement" class="space-y-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
-                        <input type="email" id="loginEmail" required class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" placeholder="seu@email.com">
-                    </div>
-                    
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Senha</label>
-                        <div class="relative">
-                            <input type="password" id="loginPassword" required class="w-full border border-gray-300 rounded-lg px-4 py-3 pr-12 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" placeholder="••••••••">
-                            <button type="button" onclick="togglePassword('loginPassword')" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <div class="flex items-center justify-between">
-                        <label class="flex items-center">
-                            <input type="checkbox" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
-                            <span class="ml-2 text-sm text-gray-600">Lembrar de mim</span>
-                        </label>
-                        <button type="button" onclick="showForgotPassword()" class="text-sm text-blue-600 hover:text-blue-800 transition-colors">Esqueceu a senha?</button>
-                    </div>
-                    
-                    <button type="submit" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 px-4 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 font-medium shadow-lg">
-                        <span class="login-btn-text">Entrar</span>
-                    </button>
-                </form>
-                
-                <div class="mt-6 text-center">
-                    <p class="text-gray-600">Não tem uma conta? 
-                        <button onclick="showRegisterForm()" class="text-blue-600 hover:text-blue-800 font-medium transition-colors">Cadastre-se</button>
-                    </p>
-                </div>
-            </div>
-
-            <!-- Register Form -->
-            <div id="registerForm" class="fade-in hidden">
-                <h2 class="text-2xl font-semibold text-gray-800 mb-6 text-center">Criar nova conta</h2>
-                
-                <form id="registerFormElement" class="space-y-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Nome completo</label>
-                        <input type="text" id="registerName" required class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" placeholder="Seu nome completo">
-                    </div>
-                    
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
-                        <input type="email" id="registerEmail" required class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" placeholder="seu@email.com">
-                    </div>
-                    
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Senha</label>
-                        <div class="relative">
-                            <input type="password" id="registerPassword" required class="w-full border border-gray-300 rounded-lg px-4 py-3 pr-12 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" placeholder="••••••••">
-                            <button type="button" onclick="togglePassword('registerPassword')" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                                </svg>
-                            </button>
-                        </div>
-                        <div class="mt-1">
-                            <div class="text-xs text-gray-500">
-                                <div id="passwordStrength" class="flex space-x-1 mt-2">
-                                    <div class="h-1 flex-1 bg-gray-200 rounded"></div>
-                                    <div class="h-1 flex-1 bg-gray-200 rounded"></div>
-                                    <div class="h-1 flex-1 bg-gray-200 rounded"></div>
-                                    <div class="h-1 flex-1 bg-gray-200 rounded"></div>
-                                </div>
-                                <p id="passwordStrengthText" class="mt-1">Mínimo 8 caracteres</p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Confirmar senha</label>
-                        <input type="password" id="registerConfirmPassword" required class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" placeholder="••••••••">
-                    </div>
-                    
-                    <div class="flex items-start">
-                        <input type="checkbox" id="emailNotifications" checked class="mt-1 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
-                        <label for="emailNotifications" class="ml-2 text-sm text-gray-600">
-                            Quero receber alertas por email quando meus prazos estiverem próximos do vencimento
-                        </label>
-                    </div>
-                    
-                    <div class="flex items-start">
-                        <input type="checkbox" id="termsAccept" required class="mt-1 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
-                        <label for="termsAccept" class="ml-2 text-sm text-gray-600">
-                            Eu aceito os <a href="#" class="text-blue-600 hover:text-blue-800">Termos de Uso</a> e a <a href="#" class="text-blue-600 hover:text-blue-800">Política de Privacidade</a>
-                        </label>
-                    </div>
-                    
-                    <button type="submit" class="w-full bg-gradient-to-r from-green-600 to-emerald-600 text-white py-3 px-4 rounded-lg hover:from-green-700 hover:to-emerald-700 transition-all duration-200 font-medium shadow-lg">
-                        <span class="register-btn-text">Criar conta</span>
-                    </button>
-                </form>
-                
-                <div class="mt-6 text-center">
-                    <p class="text-gray-600">Já tem uma conta? 
-                        <button onclick="showLoginForm()" class="text-blue-600 hover:text-blue-800 font-medium transition-colors">Faça login</button>
-                    </p>
-                </div>
-            </div>
-
-            <!-- Forgot Password Form -->
-            <div id="forgotPasswordForm" class="fade-in hidden">
-                <h2 class="text-2xl font-semibold text-gray-800 mb-6 text-center">Recuperar senha</h2>
-                
-                <form id="forgotPasswordFormElement" class="space-y-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
-                        <input type="email" id="forgotEmail" required class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" placeholder="seu@email.com">
-                    </div>
-                    
-                    <button type="submit" class="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-3 px-4 rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all duration-200 font-medium shadow-lg">
-                        <span class="forgot-btn-text">Enviar link de recuperação</span>
-                    </button>
-                </form>
-                
-                <div class="mt-6 text-center">
-                    <button onclick="showLoginForm()" class="text-blue-600 hover:text-blue-800 font-medium transition-colors">← Voltar ao login</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Main App (Hidden initially) -->
-    <div id="mainApp" class="hidden">
-        <!-- Header -->
-        <header class="bg-white shadow-lg border-b border-gray-200">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex justify-between items-center py-4">
-                    <div class="flex items-center space-x-3">
-                        <div class="bg-gradient-to-r from-blue-600 to-indigo-600 p-2 rounded-lg">
-                            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
-                        </div>
-                        <div>
-                            <h1 class="text-2xl font-bold text-gray-900">DeadlineX</h1>
-                            <p class="text-sm text-gray-600">Bem-vindo, <span id="userName">Usuário</span>!</p>
-                        </div>
-                    </div>
-                    <div class="flex items-center space-x-4">
-                        <div id="notificationBell" class="relative cursor-pointer">
-                            <svg class="w-6 h-6 text-gray-600 hover:text-blue-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5v-5zM10.07 2.82l3.93 3.93-3.93 3.93-3.93-3.93 3.93-3.93z"></path>
-                            </svg>
-                            <span id="notificationCount" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center notification-badge hidden">0</span>
-                        </div>
-                        
-                        <!-- Email Status Indicator -->
-                        <div id="emailStatus" class="hidden">
-                            <span class="email-status email-success">
-                                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                                </svg>
-                                Email enviado
-                            </span>
-                        </div>
-                        
-                        <!-- User Menu -->
-                        <div class="relative">
-                            <button onclick="toggleUserMenu()" class="flex items-center space-x-2 text-gray-700 hover:text-blue-600 transition-colors">
-                                <div class="w-8 h-8 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full flex items-center justify-center text-white font-medium text-sm">
-                                    <span id="userInitials">U</span>
-                                </div>
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                                </svg>
-                            </button>
-                            
-                            <div id="userMenu" class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 hidden z-50">
-                                <div class="py-2">
-                                    <a href="#" onclick="showProfile()" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors">
-                                        <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                                        </svg>
-                                        Meu Perfil
-                                    </a>
-                                    <a href="#" onclick="showSettings()" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors">
-                                        <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                        </svg>
-                                        Configurações
-                                    </a>
-                                    <a href="#" onclick="testEmailSystem()" class="block px-4 py-2 text-sm text-blue-600 hover:bg-blue-50 transition-colors">
-                                        <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-                                        </svg>
-                                        Testar Email
-                                    </a>
-                                    <hr class="my-2">
-                                    <button onclick="logout()" class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors">
-                                        <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
-                                        </svg>
-                                        Sair
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <button onclick="openAddModal()" class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-2 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 font-medium shadow-md">
-                            + Novo Prazo
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </header>
-
-        <!-- Main Content -->
-        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <!-- Stats Cards -->
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-                <div class="bg-white rounded-xl shadow-md p-6 border border-gray-100">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-sm font-medium text-gray-600">Total de Prazos</p>
-                            <p id="totalDeadlines" class="text-3xl font-bold text-gray-900">0</p>
-                        </div>
-                        <div class="bg-blue-100 p-3 rounded-lg">
-                            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
-                            </svg>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="bg-white rounded-xl shadow-md p-6 border border-gray-100">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-sm font-medium text-gray-600">Urgentes</p>
-                            <p id="urgentDeadlines" class="text-3xl font-bold text-red-600">0</p>
-                        </div>
-                        <div class="bg-red-100 p-3 rounded-lg">
-                            <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
-                            </svg>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="bg-white rounded-xl shadow-md p-6 border border-gray-100">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-sm font-medium text-gray-600">Esta Semana</p>
-                            <p id="weekDeadlines" class="text-3xl font-bold text-yellow-600">0</p>
-                        </div>
-                        <div class="bg-yellow-100 p-3 rounded-lg">
-                            <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="bg-white rounded-xl shadow-md p-6 border border-gray-100">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-sm font-medium text-gray-600">Concluídos</p>
-                            <p id="completedDeadlines" class="text-3xl font-bold text-green-600">0</p>
-                        </div>
-                        <div class="bg-green-100 p-3 rounded-lg">
-                            <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Filters -->
-            <div class="bg-white rounded-xl shadow-md p-6 mb-8 border border-gray-100">
-                <div class="flex flex-wrap items-center gap-4">
-                    <div class="flex items-center space-x-2">
-                        <label class="text-sm font-medium text-gray-700">Categoria:</label>
-                        <select id="categoryFilter" onchange="filterDeadlines()" class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                            <option value="">Todas</option>
-                            <option value="veiculos">🚗 Veículos</option>
-                            <option value="contratos">📄 Contratos</option>
-                            <option value="manutencao">🔧 Manutenção</option>
-                            <option value="saude">🏥 Saúde</option>
-                            <option value="financeiro">💰 Financeiro</option>
-                            <option value="documentos">📋 Documentos</option>
-                            <option value="outros">📌 Outros</option>
-                        </select>
-                    </div>
-                    
-                    <div class="flex items-center space-x-2">
-                        <label class="text-sm font-medium text-gray-700">Status:</label>
-                        <select id="statusFilter" onchange="filterDeadlines()" class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                            <option value="">Todos</option>
-                            <option value="urgent">Urgente</option>
-                            <option value="warning">Atenção</option>
-                            <option value="normal">Normal</option>
-                            <option value="completed">Concluído</option>
-                        </select>
-                    </div>
-                    
-                    <div class="flex items-center space-x-2">
-                        <input type="text" id="searchInput" placeholder="Buscar prazos..." onkeyup="filterDeadlines()" class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-64">
-                    </div>
-                </div>
-            </div>
-
-            <!-- Deadlines List -->
-            <div class="bg-white rounded-xl shadow-md border border-gray-100">
-                <div class="p-6 border-b border-gray-200">
-                    <h2 class="text-xl font-semibold text-gray-900">Meus Prazos</h2>
-                </div>
-                <div id="deadlinesList" class="p-6">
-                    <div class="text-center py-12">
-                        <svg class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <!-- Header -->
+    <header class="bg-white shadow-lg border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center space-x-3">
+                    <div class="bg-gradient-to-r from-blue-600 to-indigo-600 p-2 rounded-lg">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                         </svg>
-                        <h3 class="text-lg font-medium text-gray-900 mb-2">Nenhum prazo cadastrado</h3>
-                        <p class="text-gray-600 mb-4">Comece adicionando seu primeiro prazo para nunca mais esquecer datas importantes!</p>
-                        <button onclick="openAddModal()" class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-3 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 font-medium">
-                            + Adicionar Primeiro Prazo
-                        </button>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-900">DeadlineX</h1>
+                        <p class="text-sm text-gray-600">Nunca mais perca um prazo importante</p>
                     </div>
                 </div>
-            </div>
-        </main>
-    </div>
-
-    <!-- Settings Modal -->
-    <div id="settingsModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <div class="p-6 border-b border-gray-200">
-                <div class="flex items-center justify-between">
-                    <h3 class="text-xl font-semibold text-gray-900">⚙️ Configurações</h3>
-                    <button onclick="closeSettingsModal()" class="text-gray-400 hover:text-gray-600 transition-colors">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                <div class="flex items-center space-x-4">
+                    <div id="notificationBell" class="relative cursor-pointer">
+                        <svg class="w-6 h-6 text-gray-600 hover:text-blue-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5v-5zM10.07 2.82l3.93 3.93-3.93 3.93-3.93-3.93 3.93-3.93z"></path>
                         </svg>
+                        <span id="notificationCount" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center notification-badge hidden">0</span>
+                    </div>
+                    
+                    <!-- Email Status Indicator -->
+                    <div id="emailStatus" class="hidden">
+                        <span class="email-status email-success">
+                            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                            </svg>
+                            Email enviado
+                        </span>
+                    </div>
+                    
+                    <button onclick="testEmailSystem()" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors font-medium text-sm">
+                        📧 Testar Email
+                    </button>
+                    
+                    <button onclick="openAddModal()" class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-2 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 font-medium shadow-md">
+                        + Novo Prazo
                     </button>
                 </div>
-            </div>
-            
-            <div class="p-6">
-                <!-- Status do Sistema de Email -->
-                <div class="bg-green-50 p-4 rounded-lg mb-6">
-                    <h4 class="font-medium text-green-900 mb-3">✅ Sistema de Email Configurado</h4>
-                    <div class="space-y-2">
-                        <p class="text-sm text-green-800">
-                            <strong>📧 Remetente:</strong> DeadlineX - Sistema de Prazos
-                        </p>
-                        <p class="text-sm text-green-700">
-                            O sistema de email está configurado e pronto para enviar seus alertas automaticamente.
-                        </p>
-                        <div class="mt-3">
-                            <button onclick="testEmailSystem()" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors text-sm font-medium">
-                                📤 Testar Envio de Email
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <form id="settingsForm" class="space-y-6">
-                    <!-- Notificações -->
-                    <div>
-                        <h4 class="font-medium text-gray-900 mb-3">📧 Notificações por Email</h4>
-                        <div class="space-y-3">
-                            <label class="flex items-center">
-                                <input type="checkbox" id="emailNotificationsSettings" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
-                                <span class="ml-2 text-sm text-gray-700">Receber alertas por email</span>
-                            </label>
-                            <label class="flex items-center">
-                                <input type="checkbox" id="urgentOnlySettings" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
-                                <span class="ml-2 text-sm text-gray-700">Apenas prazos urgentes</span>
-                            </label>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Enviar alertas quando restarem:</label>
-                                <select id="alertDaysSettings" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                                    <option value="1">1 dia</option>
-                                    <option value="3" selected>3 dias</option>
-                                    <option value="7">7 dias</option>
-                                    <option value="15">15 dias</option>
-                                    <option value="30">30 dias</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Notificações do Navegador -->
-                    <div class="border-t border-gray-200 pt-4">
-                        <h4 class="font-medium text-gray-900 mb-3">🔔 Notificações do Navegador</h4>
-                        <div class="space-y-3">
-                            <label class="flex items-center">
-                                <input type="checkbox" id="browserNotificationsSettings" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
-                                <span class="ml-2 text-sm text-gray-700">Permitir notificações do navegador</span>
-                            </label>
-                            <button type="button" onclick="requestNotificationPermission()" class="text-sm text-blue-600 hover:text-blue-800 transition-colors">
-                                Solicitar permissão do navegador
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <!-- Preferências de Exibição -->
-                    <div class="border-t border-gray-200 pt-4">
-                        <h4 class="font-medium text-gray-900 mb-3">🎨 Preferências de Exibição</h4>
-                        <div class="space-y-3">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Categoria padrão para novos prazos</label>
-                                <select id="defaultCategorySettings" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                                    <option value="outros">📌 Outros</option>
-                                    <option value="veiculos">🚗 Veículos</option>
-                                    <option value="contratos">📄 Contratos</option>
-                                    <option value="manutencao">🔧 Manutenção</option>
-                                    <option value="saude">🏥 Saúde</option>
-                                    <option value="financeiro">💰 Financeiro</option>
-                                    <option value="documentos">📋 Documentos</option>
-                                </select>
-                            </div>
-                            
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Prioridade padrão</label>
-                                <select id="defaultPrioritySettings" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                                    <option value="normal">Normal</option>
-                                    <option value="high">Alta</option>
-                                    <option value="critical">Crítica</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Zona de Perigo -->
-                    <div class="border-t border-gray-200 pt-4">
-                        <h4 class="font-medium text-red-600 mb-3">⚠️ Zona de Perigo</h4>
-                        <div class="space-y-3">
-                            <button type="button" onclick="exportData()" class="w-full bg-blue-100 text-blue-800 py-2 px-4 rounded-lg hover:bg-blue-200 transition-colors font-medium text-sm">
-                                📥 Exportar meus dados
-                            </button>
-                            <button type="button" onclick="confirmDeleteAccount()" class="w-full bg-red-100 text-red-800 py-2 px-4 rounded-lg hover:bg-red-200 transition-colors font-medium text-sm">
-                                🗑️ Excluir minha conta
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <div class="flex space-x-3 pt-4">
-                        <button type="button" onclick="closeSettingsModal()" class="flex-1 bg-gray-200 text-gray-800 py-2 px-4 rounded-lg hover:bg-gray-300 transition-colors font-medium">
-                            Cancelar
-                        </button>
-                        <button type="submit" class="flex-1 bg-gradient-to-r from-green-600 to-emerald-600 text-white py-2 px-4 rounded-lg hover:from-green-700 hover:to-emerald-700 transition-all duration-200 font-medium">
-                            Salvar Configurações
-                        </button>
-                    </div>
-                </form>
             </div>
         </div>
-    </div>
+    </header>
 
-    <!-- Profile Modal -->
-    <div id="profileModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
-            <div class="p-6 border-b border-gray-200">
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white rounded-xl shadow-md p-6 border border-gray-100">
                 <div class="flex items-center justify-between">
-                    <h3 class="text-xl font-semibold text-gray-900">Meu Perfil</h3>
-                    <button onclick="closeProfileModal()" class="text-gray-400 hover:text-gray-600 transition-colors">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Total de Prazos</p>
+                        <p id="totalDeadlines" class="text-3xl font-bold text-gray-900">0</p>
+                    </div>
+                    <div class="bg-blue-100 p-3 rounded-lg">
+                        <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
                         </svg>
-                    </button>
+                    </div>
                 </div>
             </div>
             
-            <div class="p-6">
-                <div class="text-center mb-6">
-                    <div class="w-20 h-20 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full flex items-center justify-center text-white font-bold text-2xl mx-auto mb-4">
-                        <span id="profileInitials">U</span>
+            <div class="bg-white rounded-xl shadow-md p-6 border border-gray-100">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Urgentes</p>
+                        <p id="urgentDeadlines" class="text-3xl font-bold text-red-600">0</p>
                     </div>
-                    <h3 id="profileName" class="text-xl font-semibold text-gray-900">Nome do Usuário</h3>
-                    <p id="profileEmail" class="text-gray-600">email@exemplo.com</p>
+                    <div class="bg-red-100 p-3 rounded-lg">
+                        <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-md p-6 border border-gray-100">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Esta Semana</p>
+                        <p id="weekDeadlines" class="text-3xl font-bold text-yellow-600">0</p>
+                    </div>
+                    <div class="bg-yellow-100 p-3 rounded-lg">
+                        <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-md p-6 border border-gray-100">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Concluídos</p>
+                        <p id="completedDeadlines" class="text-3xl font-bold text-green-600">0</p>
+                    </div>
+                    <div class="bg-green-100 p-3 rounded-lg">
+                        <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="bg-white rounded-xl shadow-md p-6 mb-8 border border-gray-100">
+            <div class="flex flex-wrap items-center gap-4">
+                <div class="flex items-center space-x-2">
+                    <label class="text-sm font-medium text-gray-700">Categoria:</label>
+                    <select id="categoryFilter" onchange="filterDeadlines()" class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        <option value="">Todas</option>
+                        <option value="veiculos">🚗 Veículos</option>
+                        <option value="contratos">📄 Contratos</option>
+                        <option value="manutencao">🔧 Manutenção</option>
+                        <option value="saude">🏥 Saúde</option>
+                        <option value="financeiro">💰 Financeiro</option>
+                        <option value="documentos">📋 Documentos</option>
+                        <option value="outros">📌 Outros</option>
+                    </select>
                 </div>
                 
-                <form id="profileForm" class="space-y-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Nome completo</label>
-                        <input type="text" id="profileNameInput" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                    </div>
-                    
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
-                        <input type="email" id="profileEmailInput" disabled class="w-full border border-gray-300 rounded-lg px-3 py-2 bg-gray-100 text-gray-500">
-                        <p class="text-xs text-gray-500 mt-1">O email não pode ser alterado</p>
-                    </div>
-                    
-                    <div class="pt-4 border-t border-gray-200">
-                        <h4 class="font-medium text-gray-900 mb-3">Estatísticas</h4>
-                        <div class="grid grid-cols-2 gap-4 text-center">
-                            <div class="bg-blue-50 p-3 rounded-lg">
-                                <p class="text-2xl font-bold text-blue-600" id="profileTotalDeadlines">0</p>
-                                <p class="text-sm text-gray-600">Total de Prazos</p>
-                            </div>
-                            <div class="bg-green-50 p-3 rounded-lg">
-                                <p class="text-2xl font-bold text-green-600" id="profileCompletedDeadlines">0</p>
-                                <p class="text-sm text-gray-600">Concluídos</p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="flex space-x-3 pt-4">
-                        <button type="button" onclick="closeProfileModal()" class="flex-1 bg-gray-200 text-gray-800 py-2 px-4 rounded-lg hover:bg-gray-300 transition-colors font-medium">
-                            Cancelar
-                        </button>
-                        <button type="submit" class="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-2 px-4 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 font-medium">
-                            Salvar Alterações
-                        </button>
-                    </div>
-                </form>
+                <div class="flex items-center space-x-2">
+                    <label class="text-sm font-medium text-gray-700">Status:</label>
+                    <select id="statusFilter" onchange="filterDeadlines()" class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        <option value="">Todos</option>
+                        <option value="urgent">Urgente</option>
+                        <option value="warning">Atenção</option>
+                        <option value="normal">Normal</option>
+                        <option value="completed">Concluído</option>
+                    </select>
+                </div>
+                
+                <div class="flex items-center space-x-2">
+                    <input type="text" id="searchInput" placeholder="Buscar prazos..." onkeyup="filterDeadlines()" class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-64">
+                </div>
             </div>
         </div>
-    </div>
+
+        <!-- Deadlines List -->
+        <div class="bg-white rounded-xl shadow-md border border-gray-100">
+            <div class="p-6 border-b border-gray-200">
+                <h2 class="text-xl font-semibold text-gray-900">Meus Prazos</h2>
+            </div>
+            <div id="deadlinesList" class="p-6">
+                <div class="text-center py-12">
+                    <svg class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <h3 class="text-lg font-medium text-gray-900 mb-2">Nenhum prazo cadastrado</h3>
+                    <p class="text-gray-600 mb-4">Comece adicionando seu primeiro prazo para nunca mais esquecer datas importantes!</p>
+                    <button onclick="openAddModal()" class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-3 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 font-medium">
+                        + Adicionar Primeiro Prazo
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
 
     <!-- Add/Edit Modal -->
     <div id="deadlineModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
@@ -729,7 +315,7 @@
                         Cancelar
                     </button>
                     <button type="submit" class="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-2 px-4 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 font-medium">
-                        <span class="save-btn-text">Salvar</span>
+                        Salvar
                     </button>
                 </div>
             </form>
@@ -737,26 +323,11 @@
     </div>
 
     <script>
-        // Initialize Supabase
-        const SUPABASE_URL = 'https://vastjlzaxafpoagptklu.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZhc3RqbHpheGFmcG9hZ3B0a2x1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTYyNjUzMDEsImV4cCI6MjA3MTg0MTMwMX0.4EnnkdyVDEo1qSp1C2-QgVlklUkL2W3ulqOmXX_DiVY';
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
         // Global variables
         let deadlines = [];
         let editingId = null;
-        let currentUser = null;
-        let isLoggedIn = false;
-        let userSettings = {
-            emailNotifications: true,
-            urgentOnly: false,
-            browserNotifications: false,
-            defaultCategory: 'outros',
-            defaultPriority: 'normal',
-            alertDays: 3
-        };
 
-        // Email configuration
+        // Email configuration with credentials
         const BREVO_API_KEY = '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';
         const SENDER_EMAIL = 'deadlinexartur@gmail.com';
         const SENDER_NAME = 'DeadlineX - Sistema de Prazos';
@@ -774,215 +345,15 @@
 
         // Initialize app
         document.addEventListener('DOMContentLoaded', function() {
-            setTimeout(() => {
-                document.getElementById('loadingScreen').classList.add('hidden');
-                checkAuthStatus();
-            }, 1500);
-            
             // Set minimum date to today
             document.getElementById('deadlineDate').min = new Date().toISOString().split('T')[0];
             
-            // Password strength checker
-            document.getElementById('registerPassword').addEventListener('input', checkPasswordStrength);
+            // Load data from localStorage
+            loadDeadlines();
+            renderDeadlines();
+            updateStats();
+            checkNotifications();
         });
-
-        // Authentication functions
-        async function checkAuthStatus() {
-            try {
-                const { data: { user } } = await supabase.auth.getUser();
-                if (user) {
-                    currentUser = user;
-                    isLoggedIn = true;
-                    await loadUserSettings();
-                    showMainApp();
-                } else {
-                    showAuthScreen();
-                }
-            } catch (error) {
-                console.error('Error checking auth status:', error);
-                showAuthScreen();
-            }
-        }
-
-        function showAuthScreen() {
-            document.getElementById('authScreen').classList.remove('hidden');
-            document.getElementById('mainApp').classList.add('hidden');
-        }
-
-        function showMainApp() {
-            document.getElementById('authScreen').classList.add('hidden');
-            document.getElementById('mainApp').classList.remove('hidden');
-            
-            if (currentUser) {
-                document.getElementById('userName').textContent = currentUser.user_metadata?.name || currentUser.email;
-                document.getElementById('userInitials').textContent = getInitials(currentUser.user_metadata?.name || currentUser.email);
-                loadUserDeadlines();
-            }
-        }
-
-        function showLoginForm() {
-            document.getElementById('registerForm').classList.add('hidden');
-            document.getElementById('forgotPasswordForm').classList.add('hidden');
-            document.getElementById('loginForm').classList.remove('hidden');
-        }
-
-        function showRegisterForm() {
-            document.getElementById('loginForm').classList.add('hidden');
-            document.getElementById('forgotPasswordForm').classList.add('hidden');
-            document.getElementById('registerForm').classList.remove('hidden');
-        }
-
-        function showForgotPassword() {
-            document.getElementById('loginForm').classList.add('hidden');
-            document.getElementById('registerForm').classList.add('hidden');
-            document.getElementById('forgotPasswordForm').classList.remove('hidden');
-        }
-
-        // Login form submission
-        document.getElementById('loginFormElement').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const email = document.getElementById('loginEmail').value;
-            const password = document.getElementById('loginPassword').value;
-            
-            // Show loading state
-            const submitBtn = e.target.querySelector('button[type="submit"]');
-            const btnText = submitBtn.querySelector('.login-btn-text');
-            btnText.innerHTML = '<div class="loading-spinner"></div>Entrando...';
-            submitBtn.disabled = true;
-            
-            try {
-                const { data, error } = await supabase.auth.signInWithPassword({
-                    email: email,
-                    password: password
-                });
-
-                if (error) throw error;
-
-                currentUser = data.user;
-                isLoggedIn = true;
-                await loadUserSettings();
-                showMainApp();
-                showNotification('Login realizado com sucesso!', 'success');
-                
-            } catch (error) {
-                showNotification('Erro ao fazer login: ' + error.message, 'error');
-            } finally {
-                btnText.textContent = 'Entrar';
-                submitBtn.disabled = false;
-            }
-        });
-
-        // Register form submission
-        document.getElementById('registerFormElement').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const name = document.getElementById('registerName').value;
-            const email = document.getElementById('registerEmail').value;
-            const password = document.getElementById('registerPassword').value;
-            const confirmPassword = document.getElementById('registerConfirmPassword').value;
-            const emailNotifications = document.getElementById('emailNotifications').checked;
-            
-            // Validate passwords match
-            if (password !== confirmPassword) {
-                showNotification('As senhas não coincidem!', 'error');
-                return;
-            }
-            
-            // Validate password strength
-            if (password.length < 8) {
-                showNotification('A senha deve ter pelo menos 8 caracteres!', 'error');
-                return;
-            }
-            
-            // Show loading state
-            const submitBtn = e.target.querySelector('button[type="submit"]');
-            const btnText = submitBtn.querySelector('.register-btn-text');
-            btnText.innerHTML = '<div class="loading-spinner"></div>Criando conta...';
-            submitBtn.disabled = true;
-            
-            try {
-                const { data, error } = await supabase.auth.signUp({
-                    email: email,
-                    password: password,
-                    options: {
-                        data: {
-                            name: name,
-                            email_notifications: emailNotifications
-                        }
-                    }
-                });
-
-                if (error) throw error;
-
-                if (data.user && !data.session) {
-                    showNotification('Verifique seu email para confirmar a conta!', 'success');
-                    showLoginForm();
-                } else {
-                    currentUser = data.user;
-                    isLoggedIn = true;
-                    await loadUserSettings();
-                    showMainApp();
-                    showNotification('Conta criada com sucesso! Bem-vindo ao DeadlineX!', 'success');
-                    
-                    // Send welcome email
-                    if (emailNotifications) {
-                        await sendWelcomeEmail(email, name);
-                    }
-                }
-                
-            } catch (error) {
-                showNotification('Erro ao criar conta: ' + error.message, 'error');
-            } finally {
-                btnText.textContent = 'Criar conta';
-                submitBtn.disabled = false;
-            }
-        });
-
-        // Forgot password form submission
-        document.getElementById('forgotPasswordFormElement').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const email = document.getElementById('forgotEmail').value;
-            
-            // Show loading state
-            const submitBtn = e.target.querySelector('button[type="submit"]');
-            const btnText = submitBtn.querySelector('.forgot-btn-text');
-            btnText.innerHTML = '<div class="loading-spinner"></div>Enviando...';
-            submitBtn.disabled = true;
-            
-            try {
-                const { error } = await supabase.auth.resetPasswordForEmail(email);
-                
-                if (error) throw error;
-                
-                showNotification('Link de recuperação enviado para seu email!', 'success');
-                showLoginForm();
-                
-            } catch (error) {
-                showNotification('Erro ao enviar email: ' + error.message, 'error');
-            } finally {
-                btnText.textContent = 'Enviar link de recuperação';
-                submitBtn.disabled = false;
-            }
-        });
-
-        // Logout function
-        async function logout() {
-            try {
-                const { error } = await supabase.auth.signOut();
-                if (error) throw error;
-                
-                currentUser = null;
-                isLoggedIn = false;
-                deadlines = [];
-                showAuthScreen();
-                showNotification('Logout realizado com sucesso!', 'success');
-                
-            } catch (error) {
-                console.error('Error logging out:', error);
-            }
-        }
 
         // Email functions
         async function sendEmailWithBrevo(to, subject, htmlContent, textContent = '') {
@@ -1001,7 +372,7 @@
                         },
                         to: [{
                             email: to,
-                            name: currentUser.user_metadata?.name || to
+                            name: 'Usuário DeadlineX'
                         }],
                         subject: subject,
                         htmlContent: htmlContent,
@@ -1021,58 +392,7 @@
             }
         }
 
-        function getWelcomeEmailTemplate(userName) {
-            return `
-                <!DOCTYPE html>
-                <html>
-                <head>
-                    <meta charset="UTF-8">
-                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                    <title>Bem-vindo ao DeadlineX</title>
-                </head>
-                <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f8fafc;">
-                    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
-                        <h1 style="color: white; margin: 0; font-size: 28px;">🎉 Bem-vindo ao DeadlineX!</h1>
-                    </div>
-                    
-                    <div style="background: white; padding: 30px; border-radius: 0 0 10px 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-                        <h2 style="color: #4F46E5; margin-top: 0;">Olá, ${userName}!</h2>
-                        
-                        <p>Parabéns por se juntar ao <strong>DeadlineX</strong> - sua nova ferramenta para nunca mais perder prazos importantes! 🚀</p>
-                        
-                        <div style="background: #F3F4F6; padding: 20px; border-radius: 8px; margin: 20px 0;">
-                            <h3 style="color: #374151; margin-top: 0;">✨ O que você pode fazer agora:</h3>
-                            <ul style="color: #6B7280; padding-left: 20px;">
-                                <li>📅 Adicionar seus primeiros prazos importantes</li>
-                                <li>🔔 Configurar alertas personalizados</li>
-                                <li>📊 Acompanhar suas estatísticas</li>
-                                <li>📱 Receber notificações no navegador</li>
-                            </ul>
-                        </div>
-                        
-                        <div style="text-align: center; margin: 30px 0;">
-                            <a href="${window.location.origin}" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 12px 30px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">
-                                🚀 Começar Agora
-                            </a>
-                        </div>
-                        
-                        <div style="border-top: 1px solid #E5E7EB; padding-top: 20px; margin-top: 30px; text-align: center; color: #6B7280; font-size: 14px;">
-                            <p>Precisa de ajuda? Responda este email que te ajudaremos! 💬</p>
-                            <p style="margin: 10px 0;">
-                                <strong>DeadlineX</strong> - Nunca mais perca um prazo importante
-                            </p>
-                            <p style="font-size: 12px; color: #9CA3AF;">
-                                Você está recebendo este email porque se cadastrou no DeadlineX.<br>
-                                Para cancelar, acesse suas configurações no sistema.
-                            </p>
-                        </div>
-                    </div>
-                </body>
-                </html>
-            `;
-        }
-
-        function getDeadlineAlertTemplate(userName, deadline, daysRemaining) {
+        function getDeadlineAlertTemplate(deadline, daysRemaining) {
             const urgencyColor = daysRemaining <= 1 ? '#EF4444' : daysRemaining <= 3 ? '#F59E0B' : '#3B82F6';
             const urgencyText = daysRemaining < 0 ? 'VENCIDO' : daysRemaining === 0 ? 'VENCE HOJE' : daysRemaining === 1 ? 'VENCE AMANHÃ' : `${daysRemaining} DIAS RESTANTES`;
             const category = categoryConfig[deadline.category] || categoryConfig['outros'];
@@ -1092,7 +412,7 @@
                     </div>
                     
                     <div style="background: white; padding: 30px; border-radius: 0 0 10px 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-                        <h2 style="color: #374151; margin-top: 0;">Olá, ${userName}!</h2>
+                        <h2 style="color: #374151; margin-top: 0;">Olá!</h2>
                         
                         <div style="background: #F9FAFB; border-left: 4px solid ${urgencyColor}; padding: 20px; margin: 20px 0;">
                             <div style="display: flex; align-items: center; margin-bottom: 10px;">
@@ -1110,12 +430,6 @@
                             </div>
                         </div>
                         
-                        <div style="text-align: center; margin: 30px 0;">
-                            <a href="${window.location.origin}" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 12px 30px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">
-                                📱 Ver no DeadlineX
-                            </a>
-                        </div>
-                        
                         <div style="background: #FEF3C7; border: 1px solid #F59E0B; padding: 15px; border-radius: 6px; margin: 20px 0;">
                             <p style="margin: 0; color: #92400E; font-size: 14px;">
                                 💡 <strong>Dica:</strong> Marque como concluído assim que finalizar para manter seu controle organizado!
@@ -1123,12 +437,10 @@
                         </div>
                         
                         <div style="border-top: 1px solid #E5E7EB; padding-top: 20px; margin-top: 30px; text-align: center; color: #6B7280; font-size: 12px;">
-                            <p>Você está recebendo este email porque ativou os alertas para este prazo.</p>
                             <p style="margin: 10px 0;">
                                 <strong>DeadlineX</strong> - Nunca mais perca um prazo importante
                             </p>
                             <p style="font-size: 11px; color: #9CA3AF;">
-                                Para cancelar alertas, acesse suas configurações no sistema.<br>
                                 Este email foi enviado automaticamente pelo sistema DeadlineX.
                             </p>
                         </div>
@@ -1138,40 +450,11 @@
             `;
         }
 
-        async function sendWelcomeEmail(email, name) {
+        async function sendDeadlineAlert(userEmail, deadline) {
             try {
-                const htmlContent = getWelcomeEmailTemplate(name);
-                
-                await sendEmailWithBrevo(
-                    email,
-                    '🎉 Bem-vindo ao DeadlineX - Nunca mais perca um prazo!',
-                    htmlContent
-                );
-                
-                console.log('Welcome email sent successfully');
-                
-            } catch (error) {
-                console.error('Error sending welcome email:', error);
-            }
-        }
-
-        async function sendDeadlineAlert(userEmail, userName, deadline) {
-            try {
-                if (!userSettings.emailNotifications) {
-                    return;
-                }
-
                 const daysRemaining = getDaysUntil(deadline.date);
                 
-                if (userSettings.urgentOnly && daysRemaining > 3) {
-                    return;
-                }
-                
-                if (daysRemaining > userSettings.alertDays && daysRemaining >= 0) {
-                    return;
-                }
-
-                const htmlContent = getDeadlineAlertTemplate(userName, deadline, daysRemaining);
+                const htmlContent = getDeadlineAlertTemplate(deadline, daysRemaining);
                 const subject = daysRemaining < 0 
                     ? `🚨 PRAZO VENCIDO: ${deadline.title}`
                     : daysRemaining === 0 
@@ -1204,8 +487,14 @@
                     priority: 'normal'
                 };
 
-                const userName = currentUser.user_metadata?.name || currentUser.email;
-                await sendDeadlineAlert(currentUser.email, userName, testDeadline);
+                // Solicitar email do usuário para teste
+                const userEmail = prompt('Digite seu email para receber o teste:');
+                if (!userEmail) {
+                    showEmailStatus('error');
+                    return;
+                }
+
+                await sendDeadlineAlert(userEmail, testDeadline);
                 
                 showNotification('Email de teste enviado com sucesso! Verifique sua caixa de entrada.', 'success');
                 
@@ -1241,7 +530,7 @@
             } else if (status === 'pending') {
                 statusElement.classList.add('email-pending');
                 statusElement.innerHTML = `
-                    <div class="loading-spinner" style="width: 12px; height: 12px; margin-right: 4px;"></div>
+                    <div class="loading-spinner"></div>
                     Enviando...
                 `;
             }
@@ -1251,305 +540,20 @@
             }, 5000);
         }
 
-        // Settings functions
-        async function loadUserSettings() {
-            try {
-                const { data, error } = await supabase
-                    .from('user_settings')
-                    .select('*')
-                    .eq('user_id', currentUser.id)
-                    .single();
+        // Data management functions
+        function saveDeadlines() {
+            localStorage.setItem('deadlines', JSON.stringify(deadlines));
+        }
 
-                if (data) {
-                    userSettings = { ...userSettings, ...data.settings };
-                }
-            } catch (error) {
-                console.log('Using default settings');
+        function loadDeadlines() {
+            const saved = localStorage.getItem('deadlines');
+            if (saved) {
+                deadlines = JSON.parse(saved);
             }
         }
 
-        async function saveUserSettings() {
-            try {
-                const { error } = await supabase
-                    .from('user_settings')
-                    .upsert({
-                        user_id: currentUser.id,
-                        settings: userSettings
-                    });
-
-                if (error) throw error;
-            } catch (error) {
-                console.error('Error saving settings:', error);
-            }
-        }
-
-        // Deadline management functions
-        async function loadUserDeadlines() {
-            try {
-                const { data, error } = await supabase
-                    .from('deadlines')
-                    .select('*')
-                    .eq('user_id', currentUser.id)
-                    .order('date', { ascending: true });
-
-                if (error) throw error;
-
-                deadlines = data || [];
-                renderDeadlines();
-                updateStats();
-                checkNotifications();
-                
-            } catch (error) {
-                console.error('Error loading deadlines:', error);
-                deadlines = [];
-                renderDeadlines();
-                updateStats();
-            }
-        }
-
-        async function saveDeadline(deadlineData) {
-            try {
-                if (editingId) {
-                    const { data, error } = await supabase
-                        .from('deadlines')
-                        .update(deadlineData)
-                        .eq('id', editingId)
-                        .select()
-                        .single();
-
-                    if (error) throw error;
-                } else {
-                    const { data, error } = await supabase
-                        .from('deadlines')
-                        .insert([{
-                            ...deadlineData,
-                            user_id: currentUser.id
-                        }])
-                        .select()
-                        .single();
-
-                    if (error) throw error;
-                }
-
-                await loadUserDeadlines();
-                
-            } catch (error) {
-                console.error('Error saving deadline:', error);
-                showNotification('Erro ao salvar prazo: ' + error.message, 'error');
-            }
-        }
-
-        async function deleteDeadlineFromDB(id) {
-            try {
-                const { error } = await supabase
-                    .from('deadlines')
-                    .delete()
-                    .eq('id', id);
-
-                if (error) throw error;
-
-                await loadUserDeadlines();
-                
-            } catch (error) {
-                console.error('Error deleting deadline:', error);
-                showNotification('Erro ao excluir prazo: ' + error.message, 'error');
-            }
-        }
-
-        // UI functions
-        function toggleUserMenu() {
-            const menu = document.getElementById('userMenu');
-            menu.classList.toggle('hidden');
-        }
-
-        document.addEventListener('click', function(e) {
-            const menu = document.getElementById('userMenu');
-            const button = e.target.closest('button');
-            if (!menu.contains(e.target) && !button?.onclick?.toString().includes('toggleUserMenu')) {
-                menu.classList.add('hidden');
-            }
-        });
-
-        function togglePassword(inputId) {
-            const input = document.getElementById(inputId);
-            const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
-            input.setAttribute('type', type);
-        }
-
-        function checkPasswordStrength() {
-            const password = document.getElementById('registerPassword').value;
-            const strengthBars = document.querySelectorAll('#passwordStrength div');
-            const strengthText = document.getElementById('passwordStrengthText');
-            
-            let strength = 0;
-            let text = 'Muito fraca';
-            let color = 'bg-red-500';
-            
-            if (password.length >= 8) strength++;
-            if (password.match(/[a-z]/)) strength++;
-            if (password.match(/[A-Z]/)) strength++;
-            if (password.match(/[0-9]/)) strength++;
-            if (password.match(/[^a-zA-Z0-9]/)) strength++;
-            
-            strengthBars.forEach(bar => {
-                bar.className = 'h-1 flex-1 bg-gray-200 rounded';
-            });
-            
-            if (strength >= 1) { text = 'Fraca'; color = 'bg-red-500'; }
-            if (strength >= 2) { text = 'Regular'; color = 'bg-yellow-500'; }
-            if (strength >= 3) { text = 'Boa'; color = 'bg-blue-500'; }
-            if (strength >= 4) { text = 'Forte'; color = 'bg-green-500'; }
-            
-            for (let i = 0; i < Math.min(strength, 4); i++) {
-                strengthBars[i].className = `h-1 flex-1 ${color} rounded`;
-            }
-            
-            strengthText.textContent = text;
-        }
-
-        function getInitials(name) {
-            return name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
-        }
-
-        // Profile and settings functions
-        function showProfile() {
-            document.getElementById('userMenu').classList.add('hidden');
-            
-            const userName = currentUser.user_metadata?.name || currentUser.email;
-            document.getElementById('profileInitials').textContent = getInitials(userName);
-            document.getElementById('profileName').textContent = userName;
-            document.getElementById('profileEmail').textContent = currentUser.email;
-            document.getElementById('profileNameInput').value = userName;
-            document.getElementById('profileEmailInput').value = currentUser.email;
-            
-            const total = deadlines.length;
-            const completed = deadlines.filter(d => d.completed).length;
-            document.getElementById('profileTotalDeadlines').textContent = total;
-            document.getElementById('profileCompletedDeadlines').textContent = completed;
-            
-            document.getElementById('profileModal').classList.remove('hidden');
-        }
-
-        function closeProfileModal() {
-            document.getElementById('profileModal').classList.add('hidden');
-        }
-
-        function showSettings() {
-            document.getElementById('userMenu').classList.add('hidden');
-            
-            document.getElementById('emailNotificationsSettings').checked = userSettings.emailNotifications;
-            document.getElementById('urgentOnlySettings').checked = userSettings.urgentOnly;
-            document.getElementById('alertDaysSettings').value = userSettings.alertDays || 3;
-            document.getElementById('browserNotificationsSettings').checked = userSettings.browserNotifications;
-            document.getElementById('defaultCategorySettings').value = userSettings.defaultCategory;
-            document.getElementById('defaultPrioritySettings').value = userSettings.defaultPriority;
-            
-            document.getElementById('settingsModal').classList.remove('hidden');
-        }
-
-        function closeSettingsModal() {
-            document.getElementById('settingsModal').classList.add('hidden');
-        }
-
-        // Profile form submission
-        document.getElementById('profileForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const newName = document.getElementById('profileNameInput').value;
-            
-            try {
-                const { error } = await supabase.auth.updateUser({
-                    data: { name: newName }
-                });
-
-                if (error) throw error;
-
-                document.getElementById('userName').textContent = newName;
-                document.getElementById('userInitials').textContent = getInitials(newName);
-                
-                closeProfileModal();
-                showNotification('Perfil atualizado com sucesso!', 'success');
-                
-            } catch (error) {
-                showNotification('Erro ao atualizar perfil: ' + error.message, 'error');
-            }
-        });
-
-        // Settings form submission
-        document.getElementById('settingsForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            userSettings.emailNotifications = document.getElementById('emailNotificationsSettings').checked;
-            userSettings.urgentOnly = document.getElementById('urgentOnlySettings').checked;
-            userSettings.alertDays = parseInt(document.getElementById('alertDaysSettings').value);
-            userSettings.browserNotifications = document.getElementById('browserNotificationsSettings').checked;
-            userSettings.defaultCategory = document.getElementById('defaultCategorySettings').value;
-            userSettings.defaultPriority = document.getElementById('defaultPrioritySettings').value;
-            
-            try {
-                await saveUserSettings();
-                closeSettingsModal();
-                showNotification('Configurações salvas com sucesso!', 'success');
-                
-            } catch (error) {
-                showNotification('Erro ao salvar configurações: ' + error.message, 'error');
-            }
-        });
-
-        function requestNotificationPermission() {
-            if ('Notification' in window) {
-                Notification.requestPermission().then(permission => {
-                    if (permission === 'granted') {
-                        showNotification('Permissão para notificações concedida!', 'success');
-                        document.getElementById('browserNotificationsSettings').checked = true;
-                    } else {
-                        showNotification('Permissão para notificações negada.', 'error');
-                        document.getElementById('browserNotificationsSettings').checked = false;
-                    }
-                });
-            } else {
-                showNotification('Seu navegador não suporta notificações.', 'error');
-            }
-        }
-
-        function exportData() {
-            const dataToExport = {
-                user: currentUser,
-                deadlines: deadlines,
-                settings: userSettings,
-                exportDate: new Date().toISOString()
-            };
-            
-            const dataStr = JSON.stringify(dataToExport, null, 2);
-            const dataBlob = new Blob([dataStr], {type: 'application/json'});
-            
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(dataBlob);
-            link.download = `deadlinex-backup-${new Date().toISOString().split('T')[0]}.json`;
-            link.click();
-            
-            showNotification('Dados exportados com sucesso!', 'success');
-        }
-
-        function confirmDeleteAccount() {
-            if (confirm('⚠️ ATENÇÃO: Esta ação é irreversível!\n\nTodos os seus prazos e dados serão permanentemente excluídos.\n\nTem certeza que deseja excluir sua conta?')) {
-                if (prompt('Digite "EXCLUIR" para confirmar:') === 'EXCLUIR') {
-                    deleteAccount();
-                }
-            }
-        }
-
-        async function deleteAccount() {
-            try {
-                await supabase.from('deadlines').delete().eq('user_id', currentUser.id);
-                await supabase.from('user_settings').delete().eq('user_id', currentUser.id);
-                
-                showNotification('Conta excluída com sucesso.', 'success');
-                logout();
-                
-            } catch (error) {
-                showNotification('Erro ao excluir conta: ' + error.message, 'error');
-            }
+        function generateId() {
+            return Date.now() + Math.random();
         }
 
         // Modal functions
@@ -1557,11 +561,6 @@
             editingId = null;
             document.getElementById('modalTitle').textContent = 'Novo Prazo';
             document.getElementById('deadlineForm').reset();
-            
-            document.getElementById('deadlineCategory').value = userSettings.defaultCategory;
-            document.getElementById('deadlinePriority').value = userSettings.defaultPriority;
-            document.getElementById('deadlineNotification').checked = userSettings.emailNotifications;
-            
             document.getElementById('deadlineModal').classList.remove('hidden');
         }
 
@@ -1576,7 +575,7 @@
             document.getElementById('deadlineDate').value = deadline.date;
             document.getElementById('deadlineCategory').value = deadline.category;
             document.getElementById('deadlinePriority').value = deadline.priority || 'normal';
-            document.getElementById('deadlineNotification').checked = userSettings.emailNotifications;
+            document.getElementById('deadlineNotification').checked = deadline.notifications !== false;
 
             document.getElementById('deadlineModal').classList.remove('hidden');
         }
@@ -1586,8 +585,8 @@
             editingId = null;
         }
 
-        // Deadline form submission
-        document.getElementById('deadlineForm').addEventListener('submit', async function(e) {
+        // Form submission
+        document.getElementById('deadlineForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
             const title = document.getElementById('deadlineTitle').value;
@@ -1597,33 +596,32 @@
             const priority = document.getElementById('deadlinePriority').value;
             const notifications = document.getElementById('deadlineNotification').checked;
             
-            const submitBtn = e.target.querySelector('button[type="submit"]');
-            const btnText = submitBtn.querySelector('.save-btn-text');
-            btnText.innerHTML = '<div class="loading-spinner"></div>Salvando...';
-            submitBtn.disabled = true;
-            
-            try {
-                const deadlineData = {
-                    title,
-                    description,
-                    date,
-                    category,
-                    priority,
-                    notifications,
-                    completed: false
-                };
+            const deadline = {
+                id: editingId || generateId(),
+                title,
+                description,
+                date,
+                category,
+                priority,
+                notifications,
+                completed: false,
+                createdAt: editingId ? deadlines.find(d => d.id === editingId).createdAt : new Date().toISOString()
+            };
 
-                await saveDeadline(deadlineData);
-                
-                closeModal();
-                showNotification(editingId ? 'Prazo atualizado com sucesso!' : 'Prazo criado com sucesso!', 'success');
-                
-            } catch (error) {
-                showNotification('Erro ao salvar prazo: ' + error.message, 'error');
-            } finally {
-                btnText.textContent = 'Salvar';
-                submitBtn.disabled = false;
+            if (editingId) {
+                const index = deadlines.findIndex(d => d.id === editingId);
+                deadlines[index] = deadline;
+            } else {
+                deadlines.push(deadline);
             }
+
+            saveDeadlines();
+            renderDeadlines();
+            updateStats();
+            checkNotifications();
+            closeModal();
+            
+            showNotification(editingId ? 'Prazo atualizado com sucesso!' : 'Prazo criado com sucesso!', 'success');
         });
 
         // Utility functions
@@ -1740,6 +738,14 @@
                                     </button>
                                 `}
                                 
+                                ${deadline.notifications !== false ? `
+                                    <button onclick="sendEmailAlert(${deadline.id})" class="text-blue-600 hover:text-blue-800 transition-colors" title="Enviar alerta por email">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                                        </svg>
+                                    </button>
+                                ` : ''}
+                                
                                 <button onclick="openEditModal(${deadline.id})" class="text-blue-600 hover:text-blue-800 transition-colors" title="Editar">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
@@ -1811,65 +817,47 @@
             if (notificationCount > 0) {
                 badge.textContent = notificationCount;
                 badge.classList.remove('hidden');
-                
-                if (userSettings.browserNotifications && 'Notification' in window && Notification.permission === 'granted') {
-                    urgentDeadlines.forEach(deadline => {
-                        const daysUntil = getDaysUntil(deadline.date);
-                        let title = '';
-                        if (daysUntil < 0) {
-                            title = `Prazo vencido: ${deadline.title}`;
-                        } else if (daysUntil === 0) {
-                            title = `Vence hoje: ${deadline.title}`;
-                        } else if (daysUntil === 1) {
-                            title = `Vence amanhã: ${deadline.title}`;
-                        } else {
-                            title = `${daysUntil} dias restantes: ${deadline.title}`;
-                        }
-                        
-                        new Notification(title, {
-                            body: deadline.description || 'Clique para ver detalhes',
-                            icon: '/favicon.ico'
-                        });
-                    });
-                }
             } else {
                 badge.classList.add('hidden');
             }
         }
 
         // Deadline actions
-        async function toggleComplete(id) {
-            try {
-                const deadline = deadlines.find(d => d.id === id);
-                if (!deadline) return;
-
-                const newStatus = !deadline.completed;
-
-                const { error } = await supabase
-                    .from('deadlines')
-                    .update({ completed: newStatus })
-                    .eq('id', id);
-
-                if (error) throw error;
-
-                await loadUserDeadlines();
-                showNotification(newStatus ? 'Prazo concluído!' : 'Prazo marcado como pendente!', 'success');
-                
-            } catch (error) {
-                console.error('Error toggling deadline:', error);
-                showNotification('Erro ao atualizar prazo: ' + error.message, 'error');
+        function toggleComplete(id) {
+            const deadline = deadlines.find(d => d.id === id);
+            if (deadline) {
+                deadline.completed = !deadline.completed;
+                saveDeadlines();
+                renderDeadlines();
+                updateStats();
+                checkNotifications();
+                showNotification(deadline.completed ? 'Prazo concluído!' : 'Prazo marcado como pendente!', 'success');
             }
         }
 
-        async function deleteDeadline(id) {
-            if (!confirm('Tem certeza que deseja excluir este prazo?')) return;
+        function deleteDeadline(id) {
+            if (confirm('Tem certeza que deseja excluir este prazo?')) {
+                deadlines = deadlines.filter(d => d.id !== id);
+                saveDeadlines();
+                renderDeadlines();
+                updateStats();
+                checkNotifications();
+                showNotification('Prazo excluído com sucesso!', 'success');
+            }
+        }
+
+        async function sendEmailAlert(id) {
+            const deadline = deadlines.find(d => d.id === id);
+            if (!deadline) return;
+
+            const userEmail = prompt('Digite seu email para receber o alerta:');
+            if (!userEmail) return;
 
             try {
-                await deleteDeadlineFromDB(id);
-                showNotification('Prazo excluído com sucesso!', 'success');
-                
+                await sendDeadlineAlert(userEmail, deadline);
+                showNotification('Alerta enviado por email com sucesso!', 'success');
             } catch (error) {
-                showNotification('Erro ao excluir prazo: ' + error.message, 'error');
+                showNotification('Erro ao enviar alerta: ' + error.message, 'error');
             }
         }
 
@@ -1902,5 +890,6 @@
             }, 4000);
         }
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'975ba3336677c618',t:'MTc1NjI5ODQyNy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'975baf41829616b3',t:'MTc1NjI5ODkyMS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
+
