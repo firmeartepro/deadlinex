@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DeadlineX - Nunca Mais Perca um Prazo</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         body { font-family: 'Inter', sans-serif; }
@@ -88,169 +89,424 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+
+        .auth-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
     </style>
 </head>
 <body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
     
-    <!-- Header -->
-    <header class="bg-white shadow-lg border-b border-gray-200">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center py-4">
-                <div class="flex items-center space-x-3">
-                    <div class="bg-gradient-to-r from-blue-600 to-indigo-600 p-2 rounded-lg">
+    <!-- Auth Screen -->
+    <div id="authScreen" class="auth-container">
+        <div class="bg-white rounded-xl shadow-2xl max-w-md w-full mx-4">
+            <div class="p-8">
+                <div class="text-center mb-8">
+                    <div class="bg-gradient-to-r from-blue-600 to-indigo-600 p-3 rounded-lg inline-block mb-4">
                         <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                         </svg>
                     </div>
-                    <div>
-                        <h1 class="text-2xl font-bold text-gray-900">DeadlineX</h1>
-                        <p class="text-sm text-gray-600">Nunca mais perca um prazo importante</p>
-                    </div>
+                    <h1 class="text-2xl font-bold text-gray-900 mb-2">DeadlineX</h1>
+                    <p class="text-gray-600">Nunca mais perca um prazo importante</p>
                 </div>
-                <div class="flex items-center space-x-4">
-                    <div id="notificationBell" class="relative cursor-pointer">
-                        <svg class="w-6 h-6 text-gray-600 hover:text-blue-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5v-5zM10.07 2.82l3.93 3.93-3.93 3.93-3.93-3.93 3.93-3.93z"></path>
-                        </svg>
-                        <span id="notificationCount" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center notification-badge hidden">0</span>
+
+                <div id="authTabs" class="flex mb-6 bg-gray-100 rounded-lg p-1">
+                    <button id="loginTab" onclick="switchAuthTab('login')" class="flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors bg-white text-blue-600 shadow-sm">
+                        Entrar
+                    </button>
+                    <button id="signupTab" onclick="switchAuthTab('signup')" class="flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors text-gray-600 hover:text-gray-900">
+                        Criar Conta
+                    </button>
+                </div>
+
+                <!-- Login Form -->
+                <form id="loginForm" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                        <input type="email" id="loginEmail" required class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="seu@email.com">
                     </div>
-                    
-                    <!-- Email Status Indicator -->
-                    <div id="emailStatus" class="hidden">
-                        <span class="email-status email-success">
-                            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Senha</label>
+                        <input type="password" id="loginPassword" required class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Sua senha">
+                    </div>
+                    <button type="submit" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-2 px-4 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 font-medium">
+                        Entrar
+                    </button>
+                </form>
+
+                <!-- Signup Form -->
+                <form id="signupForm" class="space-y-4 hidden">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Nome</label>
+                        <input type="text" id="signupName" required class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Seu nome">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                        <input type="email" id="signupEmail" required class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="seu@email.com">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Senha</label>
+                        <input type="password" id="signupPassword" required class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Mínimo 6 caracteres">
+                    </div>
+                    <button type="submit" class="w-full bg-gradient-to-r from-green-600 to-emerald-600 text-white py-2 px-4 rounded-lg hover:from-green-700 hover:to-emerald-700 transition-all duration-200 font-medium">
+                        Criar Conta
+                    </button>
+                </form>
+
+                <div class="mt-6 text-center">
+                    <button onclick="resetPassword()" class="text-sm text-blue-600 hover:text-blue-800 transition-colors">
+                        Esqueceu sua senha?
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div id="mainApp" class="hidden">
+        <!-- Header -->
+        <header class="bg-white shadow-lg border-b border-gray-200">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center py-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="bg-gradient-to-r from-blue-600 to-indigo-600 p-2 rounded-lg">
+                            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                             </svg>
-                            Email enviado
-                        </span>
+                        </div>
+                        <div>
+                            <h1 class="text-2xl font-bold text-gray-900">DeadlineX</h1>
+                            <p class="text-sm text-gray-600">Nunca mais perca um prazo importante</p>
+                        </div>
                     </div>
-                    
-                    <button onclick="testEmailSystem()" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors font-medium text-sm">
-                        📧 Testar Email
-                    </button>
-                    
-                    <button onclick="openAddModal()" class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-2 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 font-medium shadow-md">
-                        + Novo Prazo
-                    </button>
+                    <div class="flex items-center space-x-4">
+                        <div id="notificationBell" class="relative cursor-pointer">
+                            <svg class="w-6 h-6 text-gray-600 hover:text-blue-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5v-5zM10.07 2.82l3.93 3.93-3.93 3.93-3.93-3.93 3.93-3.93z"></path>
+                            </svg>
+                            <span id="notificationCount" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center notification-badge hidden">0</span>
+                        </div>
+                        
+                        <!-- Email Status Indicator -->
+                        <div id="emailStatus" class="hidden">
+                            <span class="email-status email-success">
+                                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                </svg>
+                                Email enviado
+                            </span>
+                        </div>
+                        
+                        <button onclick="testEmailSystem()" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors font-medium text-sm">
+                            📧 Testar Email
+                        </button>
+                        
+                        <button onclick="openSettingsModal()" class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors font-medium text-sm">
+                            ⚙️ Configurações
+                        </button>
+                        
+                        <button onclick="logout()" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors font-medium text-sm">
+                            Sair
+                        </button>
+                        
+                        <button onclick="openAddModal()" class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-2 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 font-medium shadow-md">
+                            + Novo Prazo
+                        </button>
+                    </div>
                 </div>
             </div>
-        </div>
-    </header>
+        </header>
 
-    <!-- Main Content -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <!-- Stats Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-            <div class="bg-white rounded-xl shadow-md p-6 border border-gray-100">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm font-medium text-gray-600">Total de Prazos</p>
-                        <p id="totalDeadlines" class="text-3xl font-bold text-gray-900">0</p>
-                    </div>
-                    <div class="bg-blue-100 p-3 rounded-lg">
-                        <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+        <!-- Main Content -->
+        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <!-- Alert Banner for Urgent Deadlines -->
+            <div id="urgentAlert" class="hidden bg-red-50 border-l-4 border-red-400 p-4 mb-6 rounded-lg">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <svg class="h-5 w-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
                         </svg>
+                    </div>
+                    <div class="ml-3">
+                        <h3 class="text-sm font-medium text-red-800">
+                            ⚠️ Atenção! Você tem prazos urgentes
+                        </h3>
+                        <div class="mt-2 text-sm text-red-700">
+                            <p id="urgentAlertText">Existem prazos que vencem hoje ou já venceram. Verifique sua lista abaixo.</p>
+                        </div>
+                        <div class="mt-4">
+                            <div class="-mx-2 -my-1.5 flex">
+                                <button onclick="scrollToDeadlines()" class="bg-red-100 px-2 py-1.5 rounded-md text-sm font-medium text-red-800 hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-red-50 focus:ring-red-600">
+                                    Ver Prazos
+                                </button>
+                                <button onclick="hideUrgentAlert()" class="ml-3 bg-red-100 px-2 py-1.5 rounded-md text-sm font-medium text-red-800 hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-red-50 focus:ring-red-600">
+                                    Dispensar
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-            
-            <div class="bg-white rounded-xl shadow-md p-6 border border-gray-100">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm font-medium text-gray-600">Urgentes</p>
-                        <p id="urgentDeadlines" class="text-3xl font-bold text-red-600">0</p>
+            <!-- Stats Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white rounded-xl shadow-md p-6 border border-gray-100">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600">Total de Prazos</p>
+                            <p id="totalDeadlines" class="text-3xl font-bold text-gray-900">0</p>
+                        </div>
+                        <div class="bg-blue-100 p-3 rounded-lg">
+                            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                            </svg>
+                        </div>
                     </div>
-                    <div class="bg-red-100 p-3 rounded-lg">
-                        <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
-                        </svg>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="bg-white rounded-xl shadow-md p-6 border border-gray-100">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm font-medium text-gray-600">Esta Semana</p>
-                        <p id="weekDeadlines" class="text-3xl font-bold text-yellow-600">0</p>
-                    </div>
-                    <div class="bg-yellow-100 p-3 rounded-lg">
-                        <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="bg-white rounded-xl shadow-md p-6 border border-gray-100">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm font-medium text-gray-600">Concluídos</p>
-                        <p id="completedDeadlines" class="text-3xl font-bold text-green-600">0</p>
-                    </div>
-                    <div class="bg-green-100 p-3 rounded-lg">
-                        <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Filters -->
-        <div class="bg-white rounded-xl shadow-md p-6 mb-8 border border-gray-100">
-            <div class="flex flex-wrap items-center gap-4">
-                <div class="flex items-center space-x-2">
-                    <label class="text-sm font-medium text-gray-700">Categoria:</label>
-                    <select id="categoryFilter" onchange="filterDeadlines()" class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                        <option value="">Todas</option>
-                        <option value="veiculos">🚗 Veículos</option>
-                        <option value="contratos">📄 Contratos</option>
-                        <option value="manutencao">🔧 Manutenção</option>
-                        <option value="saude">🏥 Saúde</option>
-                        <option value="financeiro">💰 Financeiro</option>
-                        <option value="documentos">📋 Documentos</option>
-                        <option value="outros">📌 Outros</option>
-                    </select>
                 </div>
                 
-                <div class="flex items-center space-x-2">
-                    <label class="text-sm font-medium text-gray-700">Status:</label>
-                    <select id="statusFilter" onchange="filterDeadlines()" class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                        <option value="">Todos</option>
-                        <option value="urgent">Urgente</option>
-                        <option value="warning">Atenção</option>
-                        <option value="normal">Normal</option>
-                        <option value="completed">Concluído</option>
-                    </select>
+                <div class="bg-white rounded-xl shadow-md p-6 border border-gray-100">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600">Urgentes</p>
+                            <p id="urgentDeadlines" class="text-3xl font-bold text-red-600">0</p>
+                        </div>
+                        <div class="bg-red-100 p-3 rounded-lg">
+                            <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                            </svg>
+                        </div>
+                    </div>
                 </div>
                 
-                <div class="flex items-center space-x-2">
-                    <input type="text" id="searchInput" placeholder="Buscar prazos..." onkeyup="filterDeadlines()" class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-64">
+                <div class="bg-white rounded-xl shadow-md p-6 border border-gray-100">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600">Esta Semana</p>
+                            <p id="weekDeadlines" class="text-3xl font-bold text-yellow-600">0</p>
+                        </div>
+                        <div class="bg-yellow-100 p-3 rounded-lg">
+                            <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-xl shadow-md p-6 border border-gray-100">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600">Concluídos</p>
+                            <p id="completedDeadlines" class="text-3xl font-bold text-green-600">0</p>
+                        </div>
+                        <div class="bg-green-100 p-3 rounded-lg">
+                            <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Deadlines List -->
-        <div class="bg-white rounded-xl shadow-md border border-gray-100">
+            <!-- Filters -->
+            <div class="bg-white rounded-xl shadow-md p-6 mb-8 border border-gray-100">
+                <div class="flex flex-wrap items-center gap-4">
+                    <div class="flex items-center space-x-2">
+                        <label class="text-sm font-medium text-gray-700">Categoria:</label>
+                        <select id="categoryFilter" onchange="filterDeadlines()" class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            <option value="">Todas</option>
+                            <option value="veiculos">🚗 Veículos</option>
+                            <option value="contratos">📄 Contratos</option>
+                            <option value="manutencao">🔧 Manutenção</option>
+                            <option value="saude">🏥 Saúde</option>
+                            <option value="financeiro">💰 Financeiro</option>
+                            <option value="documentos">📋 Documentos</option>
+                            <option value="outros">📌 Outros</option>
+                        </select>
+                    </div>
+                    
+                    <div class="flex items-center space-x-2">
+                        <label class="text-sm font-medium text-gray-700">Status:</label>
+                        <select id="statusFilter" onchange="filterDeadlines()" class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            <option value="">Todos</option>
+                            <option value="urgent">Urgente</option>
+                            <option value="warning">Atenção</option>
+                            <option value="normal">Normal</option>
+                            <option value="completed">Concluído</option>
+                        </select>
+                    </div>
+                    
+                    <div class="flex items-center space-x-2">
+                        <input type="text" id="searchInput" placeholder="Buscar prazos..." onkeyup="filterDeadlines()" class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-64">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Deadlines List -->
+            <div class="bg-white rounded-xl shadow-md border border-gray-100">
+                <div class="p-6 border-b border-gray-200">
+                    <h2 class="text-xl font-semibold text-gray-900">Meus Prazos</h2>
+                </div>
+                <div id="deadlinesList" class="p-6">
+                    <div class="text-center py-12">
+                        <div class="loading-spinner mx-auto mb-4"></div>
+                        <h3 class="text-lg font-medium text-gray-900 mb-2">Carregando prazos...</h3>
+                        <p class="text-gray-600">Aguarde enquanto carregamos seus dados.</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <div class="p-6 border-b border-gray-200">
-                <h2 class="text-xl font-semibold text-gray-900">Meus Prazos</h2>
-            </div>
-            <div id="deadlinesList" class="p-6">
-                <div class="text-center py-12">
-                    <svg class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                    <h3 class="text-lg font-medium text-gray-900 mb-2">Nenhum prazo cadastrado</h3>
-                    <p class="text-gray-600 mb-4">Comece adicionando seu primeiro prazo para nunca mais esquecer datas importantes!</p>
-                    <button onclick="openAddModal()" class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-3 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 font-medium">
-                        + Adicionar Primeiro Prazo
+                <div class="flex items-center justify-between">
+                    <h3 class="text-xl font-semibold text-gray-900">⚙️ Configurações do Sistema</h3>
+                    <button onclick="closeSettingsModal()" class="text-gray-400 hover:text-gray-600 transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
                     </button>
                 </div>
             </div>
+            
+            <div class="p-6">
+                <!-- Status do Sistema de Email -->
+                <div class="bg-green-50 p-4 rounded-lg mb-6">
+                    <h4 class="font-medium text-green-900 mb-3">✅ Sistema de Email Configurado</h4>
+                    <div class="space-y-2">
+                        <p class="text-sm text-green-800">
+                            <strong>📧 Remetente:</strong> DeadlineX - Sistema de Prazos
+                        </p>
+                        <p class="text-sm text-green-700">
+                            O sistema de email está configurado e pronto para enviar seus alertas automaticamente.
+                        </p>
+                        <div class="mt-3">
+                            <button onclick="testEmailSystem()" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors text-sm font-medium">
+                                📤 Testar Envio de Email
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <form id="settingsForm" class="space-y-6">
+                    <!-- Informações do Usuário -->
+                    <div>
+                        <h4 class="font-medium text-gray-900 mb-3">👤 Informações do Usuário</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Nome</label>
+                                <input type="text" id="userName" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Seu nome">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                                <input type="email" id="userEmail" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="seu@email.com">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Notificações -->
+                    <div class="border-t border-gray-200 pt-4">
+                        <h4 class="font-medium text-gray-900 mb-3">📧 Notificações por Email</h4>
+                        <div class="space-y-3">
+                            <label class="flex items-center">
+                                <input type="checkbox" id="emailNotifications" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                                <span class="ml-2 text-sm text-gray-700">Receber alertas por email</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="checkbox" id="urgentOnly" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                                <span class="ml-2 text-sm text-gray-700">Apenas prazos urgentes (3 dias ou menos)</span>
+                            </label>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Enviar alertas quando restarem:</label>
+                                <select id="alertDays" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                    <option value="1">1 dia</option>
+                                    <option value="3" selected>3 dias</option>
+                                    <option value="7">7 dias</option>
+                                    <option value="15">15 dias</option>
+                                    <option value="30">30 dias</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Notificações do Navegador -->
+                    <div class="border-t border-gray-200 pt-4">
+                        <h4 class="font-medium text-gray-900 mb-3">🔔 Notificações do Navegador</h4>
+                        <div class="space-y-3">
+                            <label class="flex items-center">
+                                <input type="checkbox" id="browserNotifications" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                                <span class="ml-2 text-sm text-gray-700">Permitir notificações do navegador</span>
+                            </label>
+                            <button type="button" onclick="requestNotificationPermission()" class="text-sm text-blue-600 hover:text-blue-800 transition-colors">
+                                Solicitar permissão do navegador
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Preferências de Exibição -->
+                    <div class="border-t border-gray-200 pt-4">
+                        <h4 class="font-medium text-gray-900 mb-3">🎨 Preferências de Exibição</h4>
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Categoria padrão para novos prazos</label>
+                                <select id="defaultCategory" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                    <option value="outros">📌 Outros</option>
+                                    <option value="veiculos">🚗 Veículos</option>
+                                    <option value="contratos">📄 Contratos</option>
+                                    <option value="manutencao">🔧 Manutenção</option>
+                                    <option value="saude">🏥 Saúde</option>
+                                    <option value="financeiro">💰 Financeiro</option>
+                                    <option value="documentos">📋 Documentos</option>
+                                </select>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Prioridade padrão</label>
+                                <select id="defaultPriority" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                    <option value="normal">Normal</option>
+                                    <option value="high">Alta</option>
+                                    <option value="critical">Crítica</option>
+                                </select>
+                            </div>
+                            
+                            <label class="flex items-center">
+                                <input type="checkbox" id="showUrgentAlerts" checked class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                                <span class="ml-2 text-sm text-gray-700">Mostrar avisos de prazos urgentes na tela</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <!-- Dados e Backup -->
+                    <div class="border-t border-gray-200 pt-4">
+                        <h4 class="font-medium text-gray-900 mb-3">💾 Dados e Backup</h4>
+                        <div class="space-y-3">
+                            <button type="button" onclick="exportData()" class="w-full bg-blue-100 text-blue-800 py-2 px-4 rounded-lg hover:bg-blue-200 transition-colors font-medium text-sm">
+                                📥 Exportar meus dados
+                            </button>
+                            <button type="button" onclick="importData()" class="w-full bg-green-100 text-green-800 py-2 px-4 rounded-lg hover:bg-green-200 transition-colors font-medium text-sm">
+                                📤 Importar dados
+                            </button>
+                            <input type="file" id="importFile" accept=".json" class="hidden" onchange="handleImportFile(event)">
+                        </div>
+                    </div>
+                    
+                    <div class="flex space-x-3 pt-4">
+                        <button type="button" onclick="closeSettingsModal()" class="flex-1 bg-gray-200 text-gray-800 py-2 px-4 rounded-lg hover:bg-gray-300 transition-colors font-medium">
+                            Cancelar
+                        </button>
+                        <button type="submit" class="flex-1 bg-gradient-to-r from-green-600 to-emerald-600 text-white py-2 px-4 rounded-lg hover:from-green-700 hover:to-emerald-700 transition-all duration-200 font-medium">
+                            Salvar Configurações
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
-    </main>
+    </div>
 
     <!-- Add/Edit Modal -->
     <div id="deadlineModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
@@ -323,9 +579,26 @@
     </div>
 
     <script>
+        // Supabase configuration
+        const SUPABASE_URL = 'https://vastjlzaxafpoagptklu.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZhc3RqbHpheGFmcG9hZ3B0a2x1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTYyNjUzMDEsImV4cCI6MjA3MTg0MTMwMX0.4EnnkdyVDEo1qSp1C2-QgVlklUkL2W3ulqOmXX_DiVY';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
         // Global variables
         let deadlines = [];
         let editingId = null;
+        let currentUser = null;
+        let userSettings = {
+            name: '',
+            email: '',
+            emailNotifications: true,
+            urgentOnly: false,
+            alertDays: 3,
+            browserNotifications: false,
+            defaultCategory: 'outros',
+            defaultPriority: 'normal',
+            showUrgentAlerts: true
+        };
 
         // Email configuration with credentials
         const BREVO_API_KEY = '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';
@@ -348,12 +621,270 @@
             // Set minimum date to today
             document.getElementById('deadlineDate').min = new Date().toISOString().split('T')[0];
             
-            // Load data from localStorage
-            loadDeadlines();
-            renderDeadlines();
-            updateStats();
-            checkNotifications();
+            // Check authentication
+            checkAuth();
+            
+            // Listen for auth changes
+            supabase.auth.onAuthStateChange((event, session) => {
+                if (event === 'SIGNED_IN') {
+                    currentUser = session.user;
+                    showMainApp();
+                } else if (event === 'SIGNED_OUT') {
+                    currentUser = null;
+                    showAuthScreen();
+                }
+            });
         });
+
+        // Authentication functions
+        async function checkAuth() {
+            const { data: { session } } = await supabase.auth.getSession();
+            
+            if (session) {
+                currentUser = session.user;
+                showMainApp();
+            } else {
+                showAuthScreen();
+            }
+        }
+
+        function showAuthScreen() {
+            document.getElementById('authScreen').classList.remove('hidden');
+            document.getElementById('mainApp').classList.add('hidden');
+        }
+
+        function showMainApp() {
+            document.getElementById('authScreen').classList.add('hidden');
+            document.getElementById('mainApp').classList.remove('hidden');
+            
+            // Load user data
+            loadUserSettings();
+            loadDeadlines();
+        }
+
+        function switchAuthTab(tab) {
+            const loginTab = document.getElementById('loginTab');
+            const signupTab = document.getElementById('signupTab');
+            const loginForm = document.getElementById('loginForm');
+            const signupForm = document.getElementById('signupForm');
+            
+            if (tab === 'login') {
+                loginTab.classList.add('bg-white', 'text-blue-600', 'shadow-sm');
+                loginTab.classList.remove('text-gray-600', 'hover:text-gray-900');
+                signupTab.classList.remove('bg-white', 'text-blue-600', 'shadow-sm');
+                signupTab.classList.add('text-gray-600', 'hover:text-gray-900');
+                loginForm.classList.remove('hidden');
+                signupForm.classList.add('hidden');
+            } else {
+                signupTab.classList.add('bg-white', 'text-blue-600', 'shadow-sm');
+                signupTab.classList.remove('text-gray-600', 'hover:text-gray-900');
+                loginTab.classList.remove('bg-white', 'text-blue-600', 'shadow-sm');
+                loginTab.classList.add('text-gray-600', 'hover:text-gray-900');
+                signupForm.classList.remove('hidden');
+                loginForm.classList.add('hidden');
+            }
+        }
+
+        // Auth form handlers
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            try {
+                const { data, error } = await supabase.auth.signInWithPassword({
+                    email: email,
+                    password: password
+                });
+                
+                if (error) throw error;
+                
+                showNotification('Login realizado com sucesso!', 'success');
+                
+            } catch (error) {
+                showNotification('Erro no login: ' + error.message, 'error');
+            }
+        });
+
+        document.getElementById('signupForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('signupName').value;
+            const email = document.getElementById('signupEmail').value;
+            const password = document.getElementById('signupPassword').value;
+            
+            try {
+                const { data, error } = await supabase.auth.signUp({
+                    email: email,
+                    password: password,
+                    options: {
+                        data: {
+                            name: name
+                        }
+                    }
+                });
+                
+                if (error) throw error;
+                
+                showNotification('Conta criada com sucesso! Verifique seu email para confirmar.', 'success');
+                
+            } catch (error) {
+                showNotification('Erro ao criar conta: ' + error.message, 'error');
+            }
+        });
+
+        async function resetPassword() {
+            const email = prompt('Digite seu email para recuperar a senha:');
+            if (!email) return;
+            
+            try {
+                const { error } = await supabase.auth.resetPasswordForEmail(email);
+                
+                if (error) throw error;
+                
+                showNotification('Email de recuperação enviado!', 'success');
+                
+            } catch (error) {
+                showNotification('Erro ao enviar email: ' + error.message, 'error');
+            }
+        }
+
+        async function logout() {
+            try {
+                const { error } = await supabase.auth.signOut();
+                
+                if (error) throw error;
+                
+                showNotification('Logout realizado com sucesso!', 'success');
+                
+            } catch (error) {
+                showNotification('Erro no logout: ' + error.message, 'error');
+            }
+        }
+
+        // Supabase data management functions
+        async function saveUserSettings() {
+            if (!currentUser) return;
+            
+            try {
+                const { error } = await supabase
+                    .from('user_settings')
+                    .upsert({
+                        user_id: currentUser.id,
+                        settings: userSettings,
+                        updated_at: new Date().toISOString()
+                    });
+                
+                if (error) throw error;
+            } catch (error) {
+                console.error('Error saving settings:', error);
+                showNotification('Erro ao salvar configurações', 'error');
+            }
+        }
+
+        async function loadUserSettings() {
+            if (!currentUser) return;
+            
+            try {
+                const { data, error } = await supabase
+                    .from('user_settings')
+                    .select('settings')
+                    .eq('user_id', currentUser.id)
+                    .single();
+                
+                if (error && error.code !== 'PGRST116') throw error;
+                
+                if (data?.settings) {
+                    userSettings = { ...userSettings, ...data.settings };
+                }
+                
+                // Set user email from auth if not in settings
+                if (!userSettings.email && currentUser.email) {
+                    userSettings.email = currentUser.email;
+                }
+                
+                // Set user name from auth metadata if not in settings
+                if (!userSettings.name && currentUser.user_metadata?.name) {
+                    userSettings.name = currentUser.user_metadata.name;
+                }
+                
+            } catch (error) {
+                console.error('Error loading settings:', error);
+            }
+        }
+
+        async function loadDeadlines() {
+            if (!currentUser) return;
+            
+            try {
+                const { data, error } = await supabase
+                    .from('deadlines')
+                    .select('*')
+                    .eq('user_id', currentUser.id)
+                    .order('date', { ascending: true });
+                
+                if (error) throw error;
+                
+                deadlines = data || [];
+                renderDeadlines();
+                updateStats();
+                checkNotifications();
+                checkUrgentDeadlines();
+                
+            } catch (error) {
+                console.error('Error loading deadlines:', error);
+                showNotification('Erro ao carregar prazos', 'error');
+            }
+        }
+
+        async function saveDeadline(deadline) {
+            if (!currentUser) return;
+            
+            try {
+                const deadlineData = {
+                    ...deadline,
+                    user_id: currentUser.id,
+                    updated_at: new Date().toISOString()
+                };
+                
+                const { data, error } = await supabase
+                    .from('deadlines')
+                    .upsert(deadlineData)
+                    .select()
+                    .single();
+                
+                if (error) throw error;
+                
+                return data;
+            } catch (error) {
+                console.error('Error saving deadline:', error);
+                showNotification('Erro ao salvar prazo', 'error');
+                throw error;
+            }
+        }
+
+        async function deleteDeadlineFromDB(id) {
+            if (!currentUser) return;
+            
+            try {
+                const { error } = await supabase
+                    .from('deadlines')
+                    .delete()
+                    .eq('id', id)
+                    .eq('user_id', currentUser.id);
+                
+                if (error) throw error;
+            } catch (error) {
+                console.error('Error deleting deadline:', error);
+                showNotification('Erro ao excluir prazo', 'error');
+                throw error;
+            }
+        }
+
+        function generateId() {
+            return Date.now() + Math.random();
+        }
 
         // Email functions
         async function sendEmailWithBrevo(to, subject, htmlContent, textContent = '') {
@@ -487,11 +1018,14 @@
                     priority: 'normal'
                 };
 
-                // Solicitar email do usuário para teste
-                const userEmail = prompt('Digite seu email para receber o teste:');
+                // Use email from settings or ask for it
+                let userEmail = userSettings.email;
                 if (!userEmail) {
-                    showEmailStatus('error');
-                    return;
+                    userEmail = prompt('Digite seu email para receber o teste:');
+                    if (!userEmail) {
+                        showEmailStatus('error');
+                        return;
+                    }
                 }
 
                 await sendDeadlineAlert(userEmail, testDeadline);
@@ -540,20 +1074,24 @@
             }, 5000);
         }
 
-        // Data management functions
-        function saveDeadlines() {
-            localStorage.setItem('deadlines', JSON.stringify(deadlines));
+        // Settings modal functions
+        function openSettingsModal() {
+            // Load current settings into form
+            document.getElementById('userName').value = userSettings.name || '';
+            document.getElementById('userEmail').value = userSettings.email || '';
+            document.getElementById('emailNotifications').checked = userSettings.emailNotifications;
+            document.getElementById('urgentOnly').checked = userSettings.urgentOnly;
+            document.getElementById('alertDays').value = userSettings.alertDays;
+            document.getElementById('browserNotifications').checked = userSettings.browserNotifications;
+            document.getElementById('defaultCategory').value = userSettings.defaultCategory;
+            document.getElementById('defaultPriority').value = userSettings.defaultPriority;
+            document.getElementById('showUrgentAlerts').checked = userSettings.showUrgentAlerts;
+            
+            document.getElementById('settingsModal').classList.remove('hidden');
         }
 
-        function loadDeadlines() {
-            const saved = localStorage.getItem('deadlines');
-            if (saved) {
-                deadlines = JSON.parse(saved);
-            }
-        }
-
-        function generateId() {
-            return Date.now() + Math.random();
+        function closeSettingsModal() {
+            document.getElementById('settingsModal').classList.add('hidden');
         }
 
         // Modal functions
@@ -561,6 +1099,12 @@
             editingId = null;
             document.getElementById('modalTitle').textContent = 'Novo Prazo';
             document.getElementById('deadlineForm').reset();
+            
+            // Apply default settings
+            document.getElementById('deadlineCategory').value = userSettings.defaultCategory;
+            document.getElementById('deadlinePriority').value = userSettings.defaultPriority;
+            document.getElementById('deadlineNotification').checked = userSettings.emailNotifications;
+            
             document.getElementById('deadlineModal').classList.remove('hidden');
         }
 
@@ -585,8 +1129,33 @@
             editingId = null;
         }
 
+        // Settings form submission
+        document.getElementById('settingsForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // Update settings from form
+            userSettings.name = document.getElementById('userName').value;
+            userSettings.email = document.getElementById('userEmail').value;
+            userSettings.emailNotifications = document.getElementById('emailNotifications').checked;
+            userSettings.urgentOnly = document.getElementById('urgentOnly').checked;
+            userSettings.alertDays = parseInt(document.getElementById('alertDays').value);
+            userSettings.browserNotifications = document.getElementById('browserNotifications').checked;
+            userSettings.defaultCategory = document.getElementById('defaultCategory').value;
+            userSettings.defaultPriority = document.getElementById('defaultPriority').value;
+            userSettings.showUrgentAlerts = document.getElementById('showUrgentAlerts').checked;
+            
+            // Save settings
+            await saveUserSettings();
+            closeSettingsModal();
+            
+            // Update urgent alerts display
+            checkUrgentDeadlines();
+            
+            showNotification('Configurações salvas com sucesso!', 'success');
+        });
+
         // Form submission
-        document.getElementById('deadlineForm').addEventListener('submit', function(e) {
+        document.getElementById('deadlineForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
             const title = document.getElementById('deadlineTitle').value;
@@ -605,23 +1174,30 @@
                 priority,
                 notifications,
                 completed: false,
-                createdAt: editingId ? deadlines.find(d => d.id === editingId).createdAt : new Date().toISOString()
+                created_at: editingId ? deadlines.find(d => d.id === editingId).created_at : new Date().toISOString()
             };
 
-            if (editingId) {
-                const index = deadlines.findIndex(d => d.id === editingId);
-                deadlines[index] = deadline;
-            } else {
-                deadlines.push(deadline);
-            }
+            try {
+                const savedDeadline = await saveDeadline(deadline);
+                
+                if (editingId) {
+                    const index = deadlines.findIndex(d => d.id === editingId);
+                    deadlines[index] = savedDeadline;
+                } else {
+                    deadlines.push(savedDeadline);
+                }
 
-            saveDeadlines();
-            renderDeadlines();
-            updateStats();
-            checkNotifications();
-            closeModal();
-            
-            showNotification(editingId ? 'Prazo atualizado com sucesso!' : 'Prazo criado com sucesso!', 'success');
+                renderDeadlines();
+                updateStats();
+                checkNotifications();
+                checkUrgentDeadlines();
+                closeModal();
+                
+                showNotification(editingId ? 'Prazo atualizado com sucesso!' : 'Prazo criado com sucesso!', 'success');
+                
+            } catch (error) {
+                showNotification('Erro ao salvar prazo', 'error');
+            }
         });
 
         // Utility functions
@@ -817,32 +1393,178 @@
             if (notificationCount > 0) {
                 badge.textContent = notificationCount;
                 badge.classList.remove('hidden');
+                
+                // Browser notifications if enabled
+                if (userSettings.browserNotifications && 'Notification' in window && Notification.permission === 'granted') {
+                    urgentDeadlines.forEach(deadline => {
+                        const daysUntil = getDaysUntil(deadline.date);
+                        let title = '';
+                        if (daysUntil < 0) {
+                            title = `Prazo vencido: ${deadline.title}`;
+                        } else if (daysUntil === 0) {
+                            title = `Vence hoje: ${deadline.title}`;
+                        } else if (daysUntil === 1) {
+                            title = `Vence amanhã: ${deadline.title}`;
+                        } else {
+                            title = `${daysUntil} dias restantes: ${deadline.title}`;
+                        }
+                        
+                        new Notification(title, {
+                            body: deadline.description || 'Clique para ver detalhes',
+                            icon: '/favicon.ico'
+                        });
+                    });
+                }
             } else {
                 badge.classList.add('hidden');
             }
         }
 
-        // Deadline actions
-        function toggleComplete(id) {
-            const deadline = deadlines.find(d => d.id === id);
-            if (deadline) {
-                deadline.completed = !deadline.completed;
-                saveDeadlines();
-                renderDeadlines();
-                updateStats();
-                checkNotifications();
-                showNotification(deadline.completed ? 'Prazo concluído!' : 'Prazo marcado como pendente!', 'success');
+        function checkUrgentDeadlines() {
+            if (!userSettings.showUrgentAlerts) {
+                document.getElementById('urgentAlert').classList.add('hidden');
+                return;
+            }
+
+            const urgentDeadlines = deadlines.filter(d => !d.completed && getDaysUntil(d.date) <= 0);
+            const warningDeadlines = deadlines.filter(d => !d.completed && getDaysUntil(d.date) > 0 && getDaysUntil(d.date) <= 3);
+            
+            const alertElement = document.getElementById('urgentAlert');
+            const alertText = document.getElementById('urgentAlertText');
+            
+            if (urgentDeadlines.length > 0 || warningDeadlines.length > 0) {
+                let message = '';
+                if (urgentDeadlines.length > 0) {
+                    message += `${urgentDeadlines.length} prazo(s) vencido(s) ou que vencem hoje. `;
+                }
+                if (warningDeadlines.length > 0) {
+                    message += `${warningDeadlines.length} prazo(s) vencem nos próximos 3 dias.`;
+                }
+                
+                alertText.textContent = message;
+                alertElement.classList.remove('hidden');
+            } else {
+                alertElement.classList.add('hidden');
             }
         }
 
-        function deleteDeadline(id) {
+        function scrollToDeadlines() {
+            document.getElementById('deadlinesList').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function hideUrgentAlert() {
+            document.getElementById('urgentAlert').classList.add('hidden');
+        }
+
+        function requestNotificationPermission() {
+            if ('Notification' in window) {
+                Notification.requestPermission().then(permission => {
+                    if (permission === 'granted') {
+                        showNotification('Permissão para notificações concedida!', 'success');
+                        document.getElementById('browserNotifications').checked = true;
+                        userSettings.browserNotifications = true;
+                        saveUserSettings();
+                    } else {
+                        showNotification('Permissão para notificações negada.', 'error');
+                        document.getElementById('browserNotifications').checked = false;
+                    }
+                });
+            } else {
+                showNotification('Seu navegador não suporta notificações.', 'error');
+            }
+        }
+
+        function exportData() {
+            const dataToExport = {
+                deadlines: deadlines,
+                settings: userSettings,
+                exportDate: new Date().toISOString(),
+                version: '8.0'
+            };
+            
+            const dataStr = JSON.stringify(dataToExport, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(dataBlob);
+            link.download = `deadlinex-backup-${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+            
+            showNotification('Dados exportados com sucesso!', 'success');
+        }
+
+        function importData() {
+            document.getElementById('importFile').click();
+        }
+
+        async function handleImportFile(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                try {
+                    const importedData = JSON.parse(e.target.result);
+                    
+                    if (importedData.deadlines) {
+                        // Import deadlines to Supabase
+                        for (const deadline of importedData.deadlines) {
+                            deadline.user_id = currentUser.id;
+                            await saveDeadline(deadline);
+                        }
+                        
+                        // Reload deadlines
+                        await loadDeadlines();
+                    }
+                    
+                    if (importedData.settings) {
+                        userSettings = { ...userSettings, ...importedData.settings };
+                        await saveUserSettings();
+                    }
+                    
+                    showNotification('Dados importados com sucesso!', 'success');
+                    
+                } catch (error) {
+                    showNotification('Erro ao importar dados: arquivo inválido', 'error');
+                }
+            };
+            
+            reader.readAsText(file);
+            event.target.value = ''; // Reset file input
+        }
+
+        // Deadline actions
+        async function toggleComplete(id) {
+            const deadline = deadlines.find(d => d.id === id);
+            if (deadline) {
+                deadline.completed = !deadline.completed;
+                
+                try {
+                    await saveDeadline(deadline);
+                    renderDeadlines();
+                    updateStats();
+                    checkNotifications();
+                    checkUrgentDeadlines();
+                    showNotification(deadline.completed ? 'Prazo concluído!' : 'Prazo marcado como pendente!', 'success');
+                } catch (error) {
+                    showNotification('Erro ao atualizar prazo', 'error');
+                }
+            }
+        }
+
+        async function deleteDeadline(id) {
             if (confirm('Tem certeza que deseja excluir este prazo?')) {
-                deadlines = deadlines.filter(d => d.id !== id);
-                saveDeadlines();
-                renderDeadlines();
-                updateStats();
-                checkNotifications();
-                showNotification('Prazo excluído com sucesso!', 'success');
+                try {
+                    await deleteDeadlineFromDB(id);
+                    deadlines = deadlines.filter(d => d.id !== id);
+                    renderDeadlines();
+                    updateStats();
+                    checkNotifications();
+                    checkUrgentDeadlines();
+                    showNotification('Prazo excluído com sucesso!', 'success');
+                } catch (error) {
+                    showNotification('Erro ao excluir prazo', 'error');
+                }
             }
         }
 
@@ -850,8 +1572,11 @@
             const deadline = deadlines.find(d => d.id === id);
             if (!deadline) return;
 
-            const userEmail = prompt('Digite seu email para receber o alerta:');
-            if (!userEmail) return;
+            let userEmail = userSettings.email;
+            if (!userEmail) {
+                userEmail = prompt('Digite seu email para receber o alerta:');
+                if (!userEmail) return;
+            }
 
             try {
                 await sendDeadlineAlert(userEmail, deadline);
@@ -890,6 +1615,5 @@
             }, 4000);
         }
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'975baf41829616b3',t:'MTc1NjI5ODkyMS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'975bd692c202f1e7',t:'MTc1NjMwMDUzMS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
-
