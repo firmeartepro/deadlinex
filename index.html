@@ -800,10 +800,13 @@
                     
                     if (error) throw error;
                 } else {
-                    // Cria nova configuração
+                    // Cria nova configuração com upsert para evitar RLS
                     const { error } = await supabase
                         .from('user_settings')
-                        .insert([settingsData]);
+                        .upsert([settingsData], { 
+                            onConflict: 'user_id',
+                            ignoreDuplicates: false 
+                        });
                     
                     if (error) throw error;
                 }
@@ -811,7 +814,14 @@
             } catch (error) {
                 console.error('Erro ao salvar configurações:', error);
                 showDetailedError(error, 'Salvando Configurações no Supabase');
-                showNotification('Erro ao salvar configurações', 'error');
+                
+                // Tenta salvar no localStorage como fallback
+                try {
+                    localStorage.setItem('deadlinex_settings', JSON.stringify(userSettings));
+                    showNotification('Configurações salvas localmente (problema no servidor)', 'warning');
+                } catch (localError) {
+                    showNotification('Erro ao salvar configurações', 'error');
+                }
             } finally {
                 isLoading = false;
             }
@@ -833,6 +843,12 @@
                 
                 if (data?.settings) {
                     userSettings = { ...userSettings, ...data.settings };
+                } else {
+                    // Tenta carregar do localStorage como fallback
+                    const localSettings = localStorage.getItem('deadlinex_settings');
+                    if (localSettings) {
+                        userSettings = { ...userSettings, ...JSON.parse(localSettings) };
+                    }
                 }
                 
                 // Set user email from auth if not in settings
@@ -847,6 +863,16 @@
                 
             } catch (error) {
                 console.error('Erro ao carregar configurações:', error);
+                
+                // Fallback para localStorage
+                try {
+                    const localSettings = localStorage.getItem('deadlinex_settings');
+                    if (localSettings) {
+                        userSettings = { ...userSettings, ...JSON.parse(localSettings) };
+                    }
+                } catch (localError) {
+                    console.error('Erro ao carregar configurações locais:', localError);
+                }
             }
         }
 
@@ -886,6 +912,7 @@
             try {
                 isLoading = true;
                 
+                // Estrutura corrigida - removendo campo 'notifications' que não existe
                 const deadlineData = {
                     user_id: currentUser.id,
                     title: deadline.title,
@@ -893,7 +920,6 @@
                     date: deadline.date,
                     category: deadline.category,
                     priority: deadline.priority || 'normal',
-                    notifications: deadline.notifications !== false,
                     completed: deadline.completed || false
                 };
                 
@@ -1725,7 +1751,52 @@
                     console.log('✅ Tabela user_settings acessível');
                 }
                 
-                showNotification('Teste de conexão concluído - veja o console (F12)', 'info');
+                // Mostra instruções para corrigir problemas
+                const instructions = `
+🔧 INSTRUÇÕES PARA CORRIGIR SUPABASE:
+
+1️⃣ TABELA DEADLINES - Execute no SQL Editor:
+CREATE TABLE IF NOT EXISTS deadlines (
+    id SERIAL PRIMARY KEY,
+    user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+    title TEXT NOT NULL,
+    description TEXT,
+    date DATE NOT NULL,
+    category TEXT NOT NULL,
+    priority TEXT DEFAULT 'normal',
+    completed BOOLEAN DEFAULT false,
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+2️⃣ TABELA USER_SETTINGS - Execute no SQL Editor:
+CREATE TABLE IF NOT EXISTS user_settings (
+    user_id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+    settings JSONB NOT NULL DEFAULT '{}',
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+3️⃣ RLS (Row Level Security) - Execute no SQL Editor:
+-- Habilitar RLS
+ALTER TABLE deadlines ENABLE ROW LEVEL SECURITY;
+ALTER TABLE user_settings ENABLE ROW LEVEL SECURITY;
+
+-- Políticas para deadlines
+CREATE POLICY "Users can view own deadlines" ON deadlines FOR SELECT USING (auth.uid() = user_id);
+CREATE POLICY "Users can insert own deadlines" ON deadlines FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Users can update own deadlines" ON deadlines FOR UPDATE USING (auth.uid() = user_id);
+CREATE POLICY "Users can delete own deadlines" ON deadlines FOR DELETE USING (auth.uid() = user_id);
+
+-- Políticas para user_settings
+CREATE POLICY "Users can view own settings" ON user_settings FOR SELECT USING (auth.uid() = user_id);
+CREATE POLICY "Users can insert own settings" ON user_settings FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Users can update own settings" ON user_settings FOR UPDATE USING (auth.uid() = user_id);
+CREATE POLICY "Users can delete own settings" ON user_settings FOR DELETE USING (auth.uid() = user_id);
+
+4️⃣ Após executar, teste novamente!
+                `;
+                
+                console.log(instructions);
+                showNotification('Instruções de correção no console (F12)', 'info');
                 
             } catch (error) {
                 console.error('❌ Erro no teste de conexão:', error);
@@ -1762,5 +1833,5 @@
             }, 4000);
         }
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'975ede9397a02912',t:'MTc1NjMzMjMxNi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'975eebf062afd838',t:'MTc1NjMzMjg2NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
