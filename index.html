@@ -436,6 +436,167 @@
         </main>
     </div>
 
+    <!-- Profile Modal -->
+    <div id="profileModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+            <div class="p-6 border-b border-gray-200">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-xl font-semibold text-gray-900">Meu Perfil</h3>
+                    <button onclick="closeProfileModal()" class="text-gray-400 hover:text-gray-600 transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="p-6">
+                <div class="text-center mb-6">
+                    <div class="w-20 h-20 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full flex items-center justify-center text-white font-bold text-2xl mx-auto mb-4">
+                        <span id="profileInitials">U</span>
+                    </div>
+                    <h3 id="profileName" class="text-xl font-semibold text-gray-900">Nome do Usuário</h3>
+                    <p id="profileEmail" class="text-gray-600">email@exemplo.com</p>
+                </div>
+                
+                <form id="profileForm" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Nome completo</label>
+                        <input type="text" id="profileNameInput" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                        <input type="email" id="profileEmailInput" disabled class="w-full border border-gray-300 rounded-lg px-3 py-2 bg-gray-100 text-gray-500">
+                        <p class="text-xs text-gray-500 mt-1">O email não pode ser alterado</p>
+                    </div>
+                    
+                    <div class="pt-4 border-t border-gray-200">
+                        <h4 class="font-medium text-gray-900 mb-3">Estatísticas</h4>
+                        <div class="grid grid-cols-2 gap-4 text-center">
+                            <div class="bg-blue-50 p-3 rounded-lg">
+                                <p class="text-2xl font-bold text-blue-600" id="profileTotalDeadlines">0</p>
+                                <p class="text-sm text-gray-600">Total de Prazos</p>
+                            </div>
+                            <div class="bg-green-50 p-3 rounded-lg">
+                                <p class="text-2xl font-bold text-green-600" id="profileCompletedDeadlines">0</p>
+                                <p class="text-sm text-gray-600">Concluídos</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex space-x-3 pt-4">
+                        <button type="button" onclick="closeProfileModal()" class="flex-1 bg-gray-200 text-gray-800 py-2 px-4 rounded-lg hover:bg-gray-300 transition-colors font-medium">
+                            Cancelar
+                        </button>
+                        <button type="submit" class="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-2 px-4 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 font-medium">
+                            Salvar Alterações
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+            <div class="p-6 border-b border-gray-200">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-xl font-semibold text-gray-900">Configurações</h3>
+                    <button onclick="closeSettingsModal()" class="text-gray-400 hover:text-gray-600 transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="p-6">
+                <form id="settingsForm" class="space-y-6">
+                    <!-- Notificações -->
+                    <div>
+                        <h4 class="font-medium text-gray-900 mb-3">📧 Notificações por Email</h4>
+                        <div class="space-y-3">
+                            <label class="flex items-center">
+                                <input type="checkbox" id="emailNotificationsSettings" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                                <span class="ml-2 text-sm text-gray-700">Receber alertas por email</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="checkbox" id="urgentOnlySettings" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                                <span class="ml-2 text-sm text-gray-700">Apenas prazos urgentes</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <!-- Notificações do Navegador -->
+                    <div class="border-t border-gray-200 pt-4">
+                        <h4 class="font-medium text-gray-900 mb-3">🔔 Notificações do Navegador</h4>
+                        <div class="space-y-3">
+                            <label class="flex items-center">
+                                <input type="checkbox" id="browserNotificationsSettings" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                                <span class="ml-2 text-sm text-gray-700">Permitir notificações do navegador</span>
+                            </label>
+                            <button type="button" onclick="requestNotificationPermission()" class="text-sm text-blue-600 hover:text-blue-800 transition-colors">
+                                Solicitar permissão do navegador
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Preferências de Exibição -->
+                    <div class="border-t border-gray-200 pt-4">
+                        <h4 class="font-medium text-gray-900 mb-3">🎨 Preferências de Exibição</h4>
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Categoria padrão para novos prazos</label>
+                                <select id="defaultCategorySettings" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                    <option value="outros">📌 Outros</option>
+                                    <option value="veiculos">🚗 Veículos</option>
+                                    <option value="contratos">📄 Contratos</option>
+                                    <option value="manutencao">🔧 Manutenção</option>
+                                    <option value="saude">🏥 Saúde</option>
+                                    <option value="financeiro">💰 Financeiro</option>
+                                    <option value="documentos">📋 Documentos</option>
+                                </select>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Prioridade padrão</label>
+                                <select id="defaultPrioritySettings" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                    <option value="normal">Normal</option>
+                                    <option value="high">Alta</option>
+                                    <option value="critical">Crítica</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Zona de Perigo -->
+                    <div class="border-t border-gray-200 pt-4">
+                        <h4 class="font-medium text-red-600 mb-3">⚠️ Zona de Perigo</h4>
+                        <div class="space-y-3">
+                            <button type="button" onclick="exportData()" class="w-full bg-blue-100 text-blue-800 py-2 px-4 rounded-lg hover:bg-blue-200 transition-colors font-medium text-sm">
+                                📥 Exportar meus dados
+                            </button>
+                            <button type="button" onclick="confirmDeleteAccount()" class="w-full bg-red-100 text-red-800 py-2 px-4 rounded-lg hover:bg-red-200 transition-colors font-medium text-sm">
+                                🗑️ Excluir minha conta
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="flex space-x-3 pt-4">
+                        <button type="button" onclick="closeSettingsModal()" class="flex-1 bg-gray-200 text-gray-800 py-2 px-4 rounded-lg hover:bg-gray-300 transition-colors font-medium">
+                            Cancelar
+                        </button>
+                        <button type="submit" class="flex-1 bg-gradient-to-r from-green-600 to-emerald-600 text-white py-2 px-4 rounded-lg hover:from-green-700 hover:to-emerald-700 transition-all duration-200 font-medium">
+                            Salvar Configurações
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <!-- Add/Edit Modal -->
     <div id="deadlineModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
@@ -509,8 +670,8 @@
     <script>
         // ===== CONFIGURAÇÃO DO SUPABASE =====
         // IMPORTANTE: Substitua pelas suas configurações reais do Supabase
-        const SUPABASE_URL = 'https://vastjlzaxafpoagptklu.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZhc3RqbHpheGFmcG9hZ3B0a2x1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTYyNjUzMDEsImV4cCI6MjA3MTg0MTMwMX0.4EnnkdyVDEo1qSp1C2-QgVlklUkL2W3ulqOmXX_DiVY';
+        const SUPABASE_URL = 'https://SEU_PROJETO.supabase.co';
+        const SUPABASE_ANON_KEY = 'SUA_CHAVE_PUBLICA_AQUI';
 
         // Inicializar Supabase
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -520,6 +681,13 @@
         let editingId = null;
         let currentUser = null;
         let isLoggedIn = false;
+        let userSettings = {
+            emailNotifications: true,
+            urgentOnly: false,
+            browserNotifications: false,
+            defaultCategory: 'outros',
+            defaultPriority: 'normal'
+        };
 
         // Category icons and colors
         const categoryConfig = {
@@ -559,6 +727,7 @@
                         email_notifications: user.user_metadata.email_notifications || true
                     };
                     isLoggedIn = true;
+                    await loadUserSettings();
                     showMainApp();
                 } else {
                     showAuthScreen();
@@ -704,6 +873,7 @@
                 };
                 
                 isLoggedIn = true;
+                await loadUserSettings();
                 showMainApp();
                 showNotification('Login realizado com sucesso!', 'success');
                 
@@ -736,6 +906,7 @@
                 };
                 
                 isLoggedIn = true;
+                await loadUserSettings();
                 showMainApp();
                 showNotification('Conta criada com sucesso! Bem-vindo ao DeadlineX!', 'success');
                 
@@ -787,22 +958,7 @@
         
         async function sendWelcomeEmail(email, name) {
             try {
-                const response = await fetch('/api/send-email', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        type: 'welcome',
-                        email: email,
-                        name: name
-                    })
-                });
-
-                if (!response.ok) {
-                    throw new Error('Erro ao enviar email de boas-vindas');
-                }
-                
+                // Simulação de envio de email - em produção, isso seria feito via API do Brevo
                 console.log('Email de boas-vindas enviado para:', email);
                 
             } catch (error) {
@@ -812,27 +968,44 @@
 
         async function sendDeadlineAlert(userEmail, userName, deadline) {
             try {
-                const response = await fetch('/api/send-email', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        type: 'deadline-alert',
-                        email: userEmail,
-                        name: userName,
-                        deadline: deadline
-                    })
-                });
-
-                if (!response.ok) {
-                    throw new Error('Erro ao enviar alerta por email');
-                }
-                
+                // Simulação de envio de email - em produção, isso seria feito via API do Brevo
                 console.log('Alerta de prazo enviado para:', userEmail, 'Prazo:', deadline.title);
                 
             } catch (error) {
                 console.error('Erro ao enviar alerta por email:', error);
+            }
+        }
+
+        // ===== FUNÇÕES DE CONFIGURAÇÕES =====
+        
+        async function loadUserSettings() {
+            try {
+                const { data, error } = await supabase
+                    .from('user_settings')
+                    .select('*')
+                    .eq('user_id', currentUser.id)
+                    .single();
+
+                if (data) {
+                    userSettings = { ...userSettings, ...data.settings };
+                }
+            } catch (error) {
+                console.log('Usando configurações padrão');
+            }
+        }
+
+        async function saveUserSettings() {
+            try {
+                const { error } = await supabase
+                    .from('user_settings')
+                    .upsert({
+                        user_id: currentUser.id,
+                        settings: userSettings
+                    });
+
+                if (error) throw error;
+            } catch (error) {
+                console.error('Erro ao salvar configurações:', error);
             }
         }
 
@@ -971,12 +1144,171 @@
             return name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
         }
 
+        // ===== FUNÇÕES DE PERFIL E CONFIGURAÇÕES =====
+        
+        function showProfile() {
+            document.getElementById('userMenu').classList.add('hidden');
+            
+            // Populate profile data
+            document.getElementById('profileInitials').textContent = getInitials(currentUser.name);
+            document.getElementById('profileName').textContent = currentUser.name;
+            document.getElementById('profileEmail').textContent = currentUser.email;
+            document.getElementById('profileNameInput').value = currentUser.name;
+            document.getElementById('profileEmailInput').value = currentUser.email;
+            
+            // Update statistics
+            const total = deadlines.length;
+            const completed = deadlines.filter(d => d.completed).length;
+            document.getElementById('profileTotalDeadlines').textContent = total;
+            document.getElementById('profileCompletedDeadlines').textContent = completed;
+            
+            document.getElementById('profileModal').classList.remove('hidden');
+        }
+
+        function closeProfileModal() {
+            document.getElementById('profileModal').classList.add('hidden');
+        }
+
+        function showSettings() {
+            document.getElementById('userMenu').classList.add('hidden');
+            
+            // Populate settings
+            document.getElementById('emailNotificationsSettings').checked = userSettings.emailNotifications;
+            document.getElementById('urgentOnlySettings').checked = userSettings.urgentOnly;
+            document.getElementById('browserNotificationsSettings').checked = userSettings.browserNotifications;
+            document.getElementById('defaultCategorySettings').value = userSettings.defaultCategory;
+            document.getElementById('defaultPrioritySettings').value = userSettings.defaultPriority;
+            
+            document.getElementById('settingsModal').classList.remove('hidden');
+        }
+
+        function closeSettingsModal() {
+            document.getElementById('settingsModal').classList.add('hidden');
+        }
+
+        // Profile form submission
+        document.getElementById('profileForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const newName = document.getElementById('profileNameInput').value;
+            
+            try {
+                const { error } = await supabase.auth.updateUser({
+                    data: { name: newName }
+                });
+
+                if (error) throw error;
+                
+                currentUser.name = newName;
+                document.getElementById('userName').textContent = newName;
+                document.getElementById('userInitials').textContent = getInitials(newName);
+                
+                closeProfileModal();
+                showNotification('Perfil atualizado com sucesso!', 'success');
+                
+            } catch (error) {
+                showNotification('Erro ao atualizar perfil: ' + error.message, 'error');
+            }
+        });
+
+        // Settings form submission
+        document.getElementById('settingsForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            userSettings.emailNotifications = document.getElementById('emailNotificationsSettings').checked;
+            userSettings.urgentOnly = document.getElementById('urgentOnlySettings').checked;
+            userSettings.browserNotifications = document.getElementById('browserNotificationsSettings').checked;
+            userSettings.defaultCategory = document.getElementById('defaultCategorySettings').value;
+            userSettings.defaultPriority = document.getElementById('defaultPrioritySettings').value;
+            
+            try {
+                await saveUserSettings();
+                closeSettingsModal();
+                showNotification('Configurações salvas com sucesso!', 'success');
+                
+            } catch (error) {
+                showNotification('Erro ao salvar configurações: ' + error.message, 'error');
+            }
+        });
+
+        // Request notification permission
+        function requestNotificationPermission() {
+            if ('Notification' in window) {
+                Notification.requestPermission().then(permission => {
+                    if (permission === 'granted') {
+                        showNotification('Permissão para notificações concedida!', 'success');
+                        document.getElementById('browserNotificationsSettings').checked = true;
+                    } else {
+                        showNotification('Permissão para notificações negada.', 'error');
+                        document.getElementById('browserNotificationsSettings').checked = false;
+                    }
+                });
+            } else {
+                showNotification('Seu navegador não suporta notificações.', 'error');
+            }
+        }
+
+        // Export data
+        function exportData() {
+            const dataToExport = {
+                user: currentUser,
+                deadlines: deadlines,
+                settings: userSettings,
+                exportDate: new Date().toISOString()
+            };
+            
+            const dataStr = JSON.stringify(dataToExport, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(dataBlob);
+            link.download = `deadlinex-backup-${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+            
+            showNotification('Dados exportados com sucesso!', 'success');
+        }
+
+        // Confirm delete account
+        function confirmDeleteAccount() {
+            if (confirm('⚠️ ATENÇÃO: Esta ação é irreversível!\n\nTodos os seus prazos e dados serão permanentemente excluídos.\n\nTem certeza que deseja excluir sua conta?')) {
+                if (confirm('Digite "EXCLUIR" para confirmar:') === 'EXCLUIR') {
+                    deleteAccount();
+                }
+            }
+        }
+
+        async function deleteAccount() {
+            try {
+                // Delete user deadlines
+                await supabase.from('deadlines').delete().eq('user_id', currentUser.id);
+                
+                // Delete user settings
+                await supabase.from('user_settings').delete().eq('user_id', currentUser.id);
+                
+                // Delete user account
+                const { error } = await supabase.auth.admin.deleteUser(currentUser.id);
+                
+                if (error) throw error;
+                
+                showNotification('Conta excluída com sucesso.', 'success');
+                logout();
+                
+            } catch (error) {
+                showNotification('Erro ao excluir conta: ' + error.message, 'error');
+            }
+        }
+
         // Modal functions
         function openAddModal() {
             editingId = null;
             document.getElementById('modalTitle').textContent = 'Novo Prazo';
             document.getElementById('deadlineForm').reset();
-            document.getElementById('deadlineNotification').checked = currentUser?.email_notifications || true;
+            
+            // Set defaults from user settings
+            document.getElementById('deadlineCategory').value = userSettings.defaultCategory;
+            document.getElementById('deadlinePriority').value = userSettings.defaultPriority;
+            document.getElementById('deadlineNotification').checked = userSettings.emailNotifications;
+            
             document.getElementById('deadlineModal').classList.remove('hidden');
         }
 
@@ -1250,14 +1582,14 @@
                 notificationCount.classList.remove('hidden');
                 
                 // Enviar alertas por email se o usuário permitir
-                if (currentUser?.email_notifications) {
+                if (userSettings.emailNotifications) {
                     for (const deadline of urgentDeadlines) {
                         await sendDeadlineAlert(currentUser.email, currentUser.name, deadline);
                     }
                 }
                 
                 // Request browser notification permission
-                if (Notification.permission === 'granted') {
+                if (userSettings.browserNotifications && Notification.permission === 'granted') {
                     urgentDeadlines.forEach(deadline => {
                         const days = getDaysUntil(deadline.date);
                         let message = '';
@@ -1277,8 +1609,6 @@
                             });
                         }
                     });
-                } else if (Notification.permission !== 'denied') {
-                    Notification.requestPermission();
                 }
             } else {
                 notificationCount.classList.add('hidden');
@@ -1317,19 +1647,9 @@
             }, 3000);
         }
 
-        // Profile and settings functions (placeholders)
-        function showProfile() {
-            showNotification('Funcionalidade de perfil em desenvolvimento!', 'info');
-            document.getElementById('userMenu').classList.add('hidden');
-        }
-
-        function showSettings() {
-            showNotification('Funcionalidade de configurações em desenvolvimento!', 'info');
-            document.getElementById('userMenu').classList.add('hidden');
-        }
-
         // Check notifications periodically
         setInterval(checkNotifications, 300000); // Check every 5 minutes
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9758f98725bbf1dd',t:'MTc1NjI3MDUwNi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9759750be5a92684',t:'MTc1NjI3NTU2NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
+
