@@ -638,7 +638,60 @@
                     showAuthScreen();
                 }
             });
+            
+            // Auto-sync system - tenta sincronizar dados temporários a cada 30 segundos
+            setInterval(syncTemporaryData, 30000);
         });
+
+        // Sistema de sincronização automática
+        async function syncTemporaryData() {
+            if (!currentUser) return;
+            
+            try {
+                // Tenta sincronizar prazos temporários
+                const tempDeadlines = deadlines.filter(d => d.id && d.id.toString().startsWith('temp_'));
+                
+                for (const tempDeadline of tempDeadlines) {
+                    try {
+                        console.log('Syncing temporary deadline:', tempDeadline.title);
+                        
+                        // Remove o ID temporário para criar novo no Supabase
+                        const { id, ...deadlineWithoutId } = tempDeadline;
+                        const synced = await saveDeadline(deadlineWithoutId);
+                        
+                        if (synced && synced.id && typeof synced.id === 'number') {
+                            // Substitui o temporário pelo sincronizado
+                            const index = deadlines.findIndex(d => d.id === id);
+                            if (index !== -1) {
+                                deadlines[index] = synced;
+                            }
+                            console.log('Temporary deadline synced successfully');
+                        }
+                    } catch (error) {
+                        console.log('Sync failed for deadline, will retry later:', error.message);
+                    }
+                }
+                
+                // Tenta sincronizar configurações do localStorage
+                const localSettingsKey = 'deadlinex_settings_' + currentUser.id;
+                const localSettings = localStorage.getItem(localSettingsKey);
+                
+                if (localSettings) {
+                    try {
+                        const parsedSettings = JSON.parse(localSettings);
+                        userSettings = { ...userSettings, ...parsedSettings };
+                        await saveUserSettings();
+                        localStorage.removeItem(localSettingsKey);
+                        console.log('Local settings synced successfully');
+                    } catch (error) {
+                        console.log('Settings sync failed, will retry later:', error.message);
+                    }
+                }
+                
+            } catch (error) {
+                console.log('Auto-sync error:', error.message);
+            }
+        }
 
         // Authentication functions
         async function checkAuth() {
@@ -774,12 +827,22 @@
             try {
                 console.log('Saving user settings:', userSettings);
                 
-                // Tenta primeiro atualizar
-                const { data: existing } = await supabase
+                // Estrutura simplificada para configurações
+                const settingsData = {
+                    user_id: currentUser.id,
+                    settings: userSettings
+                };
+                
+                // Tenta primeiro verificar se existe
+                const { data: existing, error: selectError } = await supabase
                     .from('user_settings')
                     .select('user_id')
                     .eq('user_id', currentUser.id)
-                    .single();
+                    .maybeSingle();
+                
+                if (selectError && !selectError.message.includes('relation') && !selectError.message.includes('does not exist')) {
+                    throw selectError;
+                }
                 
                 if (existing) {
                     // Atualiza configuração existente
@@ -793,20 +856,32 @@
                     // Cria nova configuração
                     const { error } = await supabase
                         .from('user_settings')
-                        .insert([{
-                            user_id: currentUser.id,
-                            settings: userSettings
-                        }]);
+                        .insert([settingsData]);
                     
                     if (error) throw error;
                 }
                 
                 console.log('Settings saved successfully');
+                
             } catch (error) {
                 console.error('Error saving settings:', error);
                 
-                if (error.message.includes('relation') || error.message.includes('does not exist')) {
-                    showNotification('Configurando sistema... Configurações salvas localmente.', 'warning');
+                // Tratamento específico para erros de schema/cache
+                if (error.message.includes('relation') || 
+                    error.message.includes('does not exist') ||
+                    error.message.includes('schema') ||
+                    error.message.includes('cache')) {
+                    
+                    console.log('Settings schema/cache error, saving locally');
+                    
+                    // Salva no localStorage como fallback
+                    try {
+                        localStorage.setItem('deadlinex_settings_' + currentUser.id, JSON.stringify(userSettings));
+                        showNotification('Configurações salvas localmente. Serão sincronizadas automaticamente.', 'info');
+                    } catch (localError) {
+                        console.error('LocalStorage error:', localError);
+                        showNotification('Erro ao salvar configurações temporariamente.', 'warning');
+                    }
                 } else {
                     showNotification('Erro ao salvar configurações: ' + error.message, 'error');
                 }
@@ -898,24 +973,24 @@
             }
             
             try {
-                // Estrutura simplificada que funciona com qualquer schema
+                // Estrutura mínima que funciona com qualquer schema do Supabase
                 const deadlineData = {
+                    user_id: currentUser.id,
                     title: deadline.title,
-                    description: deadline.description || '',
+                    description: deadline.description || null,
                     date: deadline.date,
                     category: deadline.category,
                     priority: deadline.priority || 'normal',
                     notifications: deadline.notifications !== false,
-                    completed: deadline.completed || false,
-                    user_id: currentUser.id
+                    completed: deadline.completed || false
                 };
                 
                 console.log('Saving deadline to Supabase:', deadlineData);
                 
                 let result;
                 
-                if (deadline.id && deadline.id.startsWith('deadline_')) {
-                    // Editando prazo existente
+                if (deadline.id && typeof deadline.id === 'number') {
+                    // Editando prazo existente (ID numérico do Supabase)
                     const { data, error } = await supabase
                         .from('deadlines')
                         .update(deadlineData)
@@ -924,17 +999,23 @@
                         .select()
                         .single();
                     
-                    if (error) throw error;
+                    if (error) {
+                        console.error('Update error:', error);
+                        throw error;
+                    }
                     result = data;
                 } else {
-                    // Novo prazo - deixa o Supabase gerar o ID
+                    // Novo prazo - Supabase gera ID automaticamente
                     const { data, error } = await supabase
                         .from('deadlines')
                         .insert([deadlineData])
                         .select()
                         .single();
                     
-                    if (error) throw error;
+                    if (error) {
+                        console.error('Insert error:', error);
+                        throw error;
+                    }
                     result = data;
                 }
                 
@@ -944,13 +1025,32 @@
             } catch (error) {
                 console.error('Error saving deadline:', error);
                 
-                // Se der erro de schema, tenta criar a tabela
-                if (error.message.includes('relation') || error.message.includes('does not exist')) {
-                    showNotification('Configurando banco de dados... Tente novamente em alguns segundos.', 'warning');
+                // Tratamento específico para erros de schema/cache
+                if (error.message.includes('relation') || 
+                    error.message.includes('does not exist') ||
+                    error.message.includes('schema') ||
+                    error.message.includes('cache')) {
+                    
+                    console.log('Schema/cache error detected, using fallback');
+                    showNotification('Sistema configurando banco de dados... Aguarde alguns segundos e tente novamente.', 'warning');
+                    
+                    // Fallback: salva localmente temporariamente
+                    const tempId = 'temp_' + Date.now();
+                    const tempDeadline = { ...deadline, id: tempId };
+                    
+                    // Adiciona à lista local temporariamente
+                    if (!deadline.id) {
+                        deadlines.push(tempDeadline);
+                        renderDeadlines();
+                        updateStats();
+                        showNotification('Prazo salvo temporariamente. Será sincronizado automaticamente.', 'info');
+                    }
+                    
+                    return tempDeadline;
                 } else {
-                    showNotification('Erro ao salvar: ' + error.message, 'error');
+                    showNotification('Erro ao salvar prazo: ' + error.message, 'error');
+                    throw error;
                 }
-                throw error;
             }
         }
 
@@ -1664,6 +1764,5 @@
             }, 4000);
         }
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'975e61d6e5a1fefc',t:'MTc1NjMyNzIwNy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'975e6b0b2785f1e9',t:'MTc1NjMyNzU4NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
-
