@@ -1327,50 +1327,114 @@
         // Deadline management functions
         async function loadUserDeadlines() {
             try {
+                // First try to load from Supabase
                 const { data, error } = await supabase
                     .from('deadlines')
                     .select('*')
                     .eq('user_id', currentUser.id)
                     .order('date', { ascending: true });
 
-                if (error) throw error;
+                if (error) {
+                    console.log('Supabase error, using localStorage:', error);
+                    // Fallback to localStorage
+                    const stored = localStorage.getItem(`deadlines_${currentUser.id}`);
+                    deadlines = stored ? JSON.parse(stored) : [];
+                } else {
+                    deadlines = data || [];
+                    // Also save to localStorage as backup
+                    localStorage.setItem(`deadlines_${currentUser.id}`, JSON.stringify(deadlines));
+                }
 
-                deadlines = data || [];
                 renderDeadlines();
                 updateStats();
                 checkNotifications();
                 
             } catch (error) {
                 console.error('Error loading deadlines:', error);
-                showNotification('Erro ao carregar prazos', 'error');
+                // Fallback to localStorage
+                const stored = localStorage.getItem(`deadlines_${currentUser.id}`);
+                deadlines = stored ? JSON.parse(stored) : [];
+                renderDeadlines();
+                updateStats();
+                checkNotifications();
             }
         }
 
         async function saveDeadline(deadlineData) {
             try {
+                let savedDeadline;
+                
                 if (editingId) {
-                    const { error } = await supabase
+                    // Update existing deadline
+                    const { data, error } = await supabase
                         .from('deadlines')
                         .update(deadlineData)
-                        .eq('id', editingId);
+                        .eq('id', editingId)
+                        .select()
+                        .single();
 
-                    if (error) throw error;
+                    if (error) {
+                        console.log('Supabase update error, using localStorage:', error);
+                        // Fallback: update in localStorage
+                        const index = deadlines.findIndex(d => d.id === editingId);
+                        if (index !== -1) {
+                            deadlines[index] = { ...deadlines[index], ...deadlineData };
+                            localStorage.setItem(`deadlines_${currentUser.id}`, JSON.stringify(deadlines));
+                        }
+                    } else {
+                        savedDeadline = data;
+                    }
                 } else {
-                    const { error } = await supabase
-                        .from('deadlines')
-                        .insert([{
-                            ...deadlineData,
-                            user_id: currentUser.id
-                        }]);
+                    // Create new deadline
+                    const newDeadline = {
+                        ...deadlineData,
+                        user_id: currentUser.id,
+                        id: Date.now(), // Temporary ID for localStorage
+                        created_at: new Date().toISOString()
+                    };
 
-                    if (error) throw error;
+                    const { data, error } = await supabase
+                        .from('deadlines')
+                        .insert([newDeadline])
+                        .select()
+                        .single();
+
+                    if (error) {
+                        console.log('Supabase insert error, using localStorage:', error);
+                        // Fallback: save to localStorage
+                        deadlines.push(newDeadline);
+                        localStorage.setItem(`deadlines_${currentUser.id}`, JSON.stringify(deadlines));
+                        savedDeadline = newDeadline;
+                    } else {
+                        savedDeadline = data;
+                    }
                 }
 
                 await loadUserDeadlines();
                 
             } catch (error) {
                 console.error('Error saving deadline:', error);
-                throw error;
+                
+                // Complete fallback to localStorage
+                if (editingId) {
+                    const index = deadlines.findIndex(d => d.id === editingId);
+                    if (index !== -1) {
+                        deadlines[index] = { ...deadlines[index], ...deadlineData };
+                    }
+                } else {
+                    const newDeadline = {
+                        ...deadlineData,
+                        user_id: currentUser.id,
+                        id: Date.now(),
+                        created_at: new Date().toISOString()
+                    };
+                    deadlines.push(newDeadline);
+                }
+                
+                localStorage.setItem(`deadlines_${currentUser.id}`, JSON.stringify(deadlines));
+                renderDeadlines();
+                updateStats();
+                checkNotifications();
             }
         }
 
@@ -1381,13 +1445,23 @@
                     .delete()
                     .eq('id', id);
 
-                if (error) throw error;
-
-                await loadUserDeadlines();
+                if (error) {
+                    console.log('Supabase delete error, using localStorage:', error);
+                    // Fallback: remove from localStorage
+                    deadlines = deadlines.filter(d => d.id !== id);
+                    localStorage.setItem(`deadlines_${currentUser.id}`, JSON.stringify(deadlines));
+                } else {
+                    await loadUserDeadlines();
+                }
                 
             } catch (error) {
                 console.error('Error deleting deadline:', error);
-                throw error;
+                // Fallback: remove from localStorage
+                deadlines = deadlines.filter(d => d.id !== id);
+                localStorage.setItem(`deadlines_${currentUser.id}`, JSON.stringify(deadlines));
+                renderDeadlines();
+                updateStats();
+                checkNotifications();
             }
         }
 
@@ -1899,18 +1973,42 @@
                 const deadline = deadlines.find(d => d.id === id);
                 if (!deadline) return;
 
+                const newStatus = !deadline.completed;
+
                 const { error } = await supabase
                     .from('deadlines')
-                    .update({ completed: !deadline.completed })
+                    .update({ completed: newStatus })
                     .eq('id', id);
 
-                if (error) throw error;
+                if (error) {
+                    console.log('Supabase toggle error, using localStorage:', error);
+                    // Fallback: update in localStorage
+                    const index = deadlines.findIndex(d => d.id === id);
+                    if (index !== -1) {
+                        deadlines[index].completed = newStatus;
+                        localStorage.setItem(`deadlines_${currentUser.id}`, JSON.stringify(deadlines));
+                        renderDeadlines();
+                        updateStats();
+                        checkNotifications();
+                    }
+                } else {
+                    await loadUserDeadlines();
+                }
 
-                await loadUserDeadlines();
                 showNotification(deadline.completed ? 'Prazo marcado como pendente!' : 'Prazo concluído!', 'success');
                 
             } catch (error) {
-                showNotification('Erro ao atualizar prazo: ' + error.message, 'error');
+                console.error('Error toggling deadline:', error);
+                // Fallback: update in localStorage
+                const index = deadlines.findIndex(d => d.id === id);
+                if (index !== -1) {
+                    deadlines[index].completed = !deadlines[index].completed;
+                    localStorage.setItem(`deadlines_${currentUser.id}`, JSON.stringify(deadlines));
+                    renderDeadlines();
+                    updateStats();
+                    checkNotifications();
+                    showNotification(deadlines[index].completed ? 'Prazo concluído!' : 'Prazo marcado como pendente!', 'success');
+                }
             }
         }
 
@@ -1957,5 +2055,5 @@
             }, 4000);
         }
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'975b8d34b028a451',t:'MTc1NjI5NzUyNi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'975b954572900cec',t:'MTc1NjI5Nzg1Ny4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
