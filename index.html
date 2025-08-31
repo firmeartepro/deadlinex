@@ -3,1419 +3,353 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DeadlineX - Nunca Mais Perca um Prazo</title>
+    <title>DeadlineX - Sistema de Gestão de Prazos</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         body { font-family: 'Inter', sans-serif; }
-        
-        .deadline-card {
-            transition: all 0.3s ease;
-        }
-        
-        .deadline-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-        }
-        
-        .urgent { 
-            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
-            border-left: 4px solid #ef4444;
-        }
-        
-        .warning { 
-            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
-            border-left: 4px solid #f59e0b;
-        }
-        
-        .normal { 
-            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
-            border-left: 4px solid #3b82f6;
-        }
-        
-        .category-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        .notification-badge {
-            animation: pulse 2s infinite;
-        }
-        
+        .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .card-shadow { box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        .pulse-animation { animation: pulse 2s infinite; }
         @keyframes pulse {
             0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-
-        .whatsapp-status {
-            padding: 8px 12px;
-            border-radius: 6px;
-            font-size: 12px;
-            font-weight: 500;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .whatsapp-success {
-            background: #dcfce7;
-            color: #166534;
-        }
-
-        .whatsapp-error {
-            background: #fee2e2;
-            color: #991b1b;
-        }
-
-        .whatsapp-pending {
-            background: #fef3c7;
-            color: #92400e;
-        }
-
-        .loading-spinner {
-            border: 2px solid #f3f3f3;
-            border-top: 2px solid #3498db;
-            border-radius: 50%;
-            width: 16px;
-            height: 16px;
-            animation: spin 1s linear infinite;
-            display: inline-block;
-            margin-right: 8px;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .auth-container {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            50% { opacity: 0.7; }
         }
     </style>
 </head>
-<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
-    
-    <!-- Auth Screen -->
-    <div id="authScreen" class="auth-container">
-        <div class="bg-white rounded-xl shadow-2xl max-w-md w-full mx-4">
-            <div class="p-8">
-                <div class="text-center mb-8">
-                    <div class="bg-gradient-to-r from-blue-600 to-indigo-600 p-3 rounded-lg inline-block mb-4">
-                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Header -->
+    <header class="gradient-bg text-white shadow-lg">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-3">
+                    <div class="bg-white p-2 rounded-lg">
+                        <svg class="w-8 h-8 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                         </svg>
                     </div>
-                    <h1 class="text-2xl font-bold text-gray-900 mb-2">DeadlineX</h1>
-                    <p class="text-gray-600">Nunca mais perca um prazo importante</p>
+                    <h1 class="text-2xl font-bold">DeadlineX</h1>
                 </div>
+                <button id="logoutBtn" class="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-lg transition-colors">
+                    Sair do Sistema
+                </button>
+            </div>
+        </div>
+    </header>
 
-                <div id="authTabs" class="flex mb-6 bg-gray-100 rounded-lg p-1">
-                    <button id="loginTab" onclick="switchAuthTab('login')" class="flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors bg-white text-blue-600 shadow-sm">
-                        Entrar
-                    </button>
-                    <button id="signupTab" onclick="switchAuthTab('signup')" class="flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors text-gray-600 hover:text-gray-900">
-                        Criar Conta
-                    </button>
+    <!-- Main Container -->
+    <div class="container mx-auto px-6 py-8">
+        <!-- Action Buttons -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+            <button id="newDeadlineBtn" class="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors card-shadow">
+                ➕ Novo Prazo
+            </button>
+            <button id="configBtn" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors card-shadow">
+                ⚙️ Configurar WhatsApp
+            </button>
+            <button id="testWhatsappBtn" class="bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors card-shadow">
+                📱 Testar WhatsApp
+            </button>
+            <button id="refreshBtn" class="bg-purple-500 hover:bg-purple-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors card-shadow">
+                🔄 Atualizar
+            </button>
+        </div>
+
+        <!-- Statistics Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white p-6 rounded-lg card-shadow">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-600 text-sm">Total de Prazos</p>
+                        <p id="totalCount" class="text-2xl font-bold text-gray-800">0</p>
+                    </div>
+                    <div class="bg-blue-100 p-3 rounded-full">
+                        <svg class="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </div>
                 </div>
+            </div>
 
-                <!-- Login Form -->
-                <form id="loginForm" class="space-y-4">
+            <div class="bg-white p-6 rounded-lg card-shadow">
+                <div class="flex items-center justify-between">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
-                        <input type="email" id="loginEmail" required class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="seu@email.com">
+                        <p class="text-gray-600 text-sm">Prazos Urgentes</p>
+                        <p id="urgentCount" class="text-2xl font-bold text-red-600 pulse-animation">0</p>
                     </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Senha</label>
-                        <input type="password" id="loginPassword" required class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Sua senha">
+                    <div class="bg-red-100 p-3 rounded-full">
+                        <svg class="w-6 h-6 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/>
+                        </svg>
                     </div>
-                    <button type="submit" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-2 px-4 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 font-medium">
-                        Entrar
-                    </button>
-                </form>
+                </div>
+            </div>
 
-                <!-- Signup Form -->
-                <form id="signupForm" class="space-y-4 hidden">
+            <div class="bg-white p-6 rounded-lg card-shadow">
+                <div class="flex items-center justify-between">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Nome</label>
-                        <input type="text" id="signupName" required class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Seu nome">
+                        <p class="text-gray-600 text-sm">Esta Semana</p>
+                        <p id="weekCount" class="text-2xl font-bold text-orange-600">0</p>
                     </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
-                        <input type="email" id="signupEmail" required class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="seu@email.com">
+                    <div class="bg-orange-100 p-3 rounded-full">
+                        <svg class="w-6 h-6 text-orange-600" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5a2.25 2.25 0 002.25-2.25m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5a2.25 2.25 0 012.25 2.25v7.5"/>
+                        </svg>
                     </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Senha</label>
-                        <input type="password" id="signupPassword" required class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Mínimo 6 caracteres">
-                    </div>
-                    <button type="submit" class="w-full bg-gradient-to-r from-green-600 to-emerald-600 text-white py-2 px-4 rounded-lg hover:from-green-700 hover:to-emerald-700 transition-all duration-200 font-medium">
-                        Criar Conta
-                    </button>
-                </form>
+                </div>
+            </div>
 
-                <div class="mt-6 text-center">
-                    <button onclick="resetPassword()" class="text-sm text-blue-600 hover:text-blue-800 transition-colors">
-                        Esqueceu sua senha?
-                    </button>
+            <div class="bg-white p-6 rounded-lg card-shadow">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-600 text-sm">Concluídos</p>
+                        <p id="completedCount" class="text-2xl font-bold text-green-600">0</p>
+                    </div>
+                    <div class="bg-green-100 p-3 rounded-full">
+                        <svg class="w-6 h-6 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Deadlines List -->
+        <div class="bg-white rounded-lg card-shadow">
+            <div class="p-6 border-b border-gray-200">
+                <h2 class="text-xl font-semibold text-gray-800">Meus Prazos</h2>
+            </div>
+            <div id="deadlinesList" class="p-6">
+                <div class="text-center text-gray-500 py-8">
+                    <svg class="w-16 h-16 mx-auto mb-4 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <p>Nenhum prazo cadastrado ainda.</p>
+                    <p class="text-sm">Clique em "Novo Prazo" para começar!</p>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Main App -->
-    <div id="mainApp" class="hidden">
-        <!-- Header -->
-        <header class="bg-white shadow-lg border-b border-gray-200">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex flex-col lg:flex-row lg:justify-between lg:items-center py-4 gap-4">
-                    <div class="flex items-center space-x-3">
-                        <div class="bg-gradient-to-r from-blue-600 to-indigo-600 p-2 rounded-lg">
-                            <svg class="w-6 h-6 lg:w-8 lg:h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
-                        </div>
-                        <div>
-                            <h1 class="text-xl lg:text-2xl font-bold text-gray-900">DeadlineX</h1>
-                            <p class="text-xs lg:text-sm text-gray-600 hidden sm:block">Nunca mais perca um prazo importante</p>
-                        </div>
+    <!-- Modal: Novo Prazo -->
+    <div id="newDeadlineModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-lg max-w-md w-full p-6">
+                <h3 class="text-lg font-semibold mb-4">Novo Prazo</h3>
+                <form id="newDeadlineForm">
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Título</label>
+                        <input type="text" id="deadlineTitle" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" required>
                     </div>
-                    
-                    <!-- Botões organizados em duas linhas no mobile -->
-                    <div class="flex flex-col gap-2 lg:flex-row lg:items-center lg:space-x-4">
-                        <!-- Primeira linha: Notificação + Status + Ação Principal -->
-                        <div class="flex items-center justify-between lg:justify-start lg:space-x-4">
-                            <div class="flex items-center space-x-2">
-                                <div id="notificationBell" class="relative cursor-pointer">
-                                    <svg class="w-5 h-5 lg:w-6 lg:h-6 text-gray-600 hover:text-blue-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5v-5zM10.07 2.82l3.93 3.93-3.93 3.93-3.93-3.93 3.93-3.93z"></path>
-                                    </svg>
-                                    <span id="notificationCount" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-4 h-4 lg:w-5 lg:h-5 flex items-center justify-center notification-badge hidden text-xs">0</span>
-                                </div>
-                                
-                                <!-- WhatsApp Status Indicator -->
-                                <div id="whatsappStatus" class="hidden">
-                                    <span class="whatsapp-status whatsapp-success text-xs">
-                                        <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                                        </svg>
-                                        WhatsApp aberto
-                                    </span>
-                                </div>
-                            </div>
-                            
-                            <button onclick="openAddModal()" class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-4 py-2 lg:px-6 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 font-medium shadow-md text-sm">
-                                + Novo Prazo
-                            </button>
-                        </div>
-                        
-                        <!-- Segunda linha: Botões de ação -->
-                        <div class="flex items-center justify-between lg:justify-start lg:space-x-2">
-                            <button onclick="testWhatsAppSystem()" class="bg-green-600 text-white px-2 py-1.5 lg:px-4 lg:py-2 rounded-lg hover:bg-green-700 transition-colors font-medium text-xs lg:text-sm">
-                                📱 <span class="hidden sm:inline">WhatsApp</span>
-                            </button>
-                            
-                            <button onclick="openSettingsModal()" class="bg-gray-600 text-white px-2 py-1.5 lg:px-4 lg:py-2 rounded-lg hover:bg-gray-700 transition-colors font-medium text-xs lg:text-sm">
-                                ⚙️ <span class="hidden sm:inline">Config</span>
-                            </button>
-                            
-                            <button onclick="logout()" class="bg-red-600 text-white px-2 py-1.5 lg:px-4 lg:py-2 rounded-lg hover:bg-red-700 transition-colors font-medium text-xs lg:text-sm">
-                                <span class="sm:hidden">🚪</span><span class="hidden sm:inline">Sair</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </header>
-
-        <!-- Main Content -->
-        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <!-- Alert Banner for Urgent Deadlines -->
-            <div id="urgentAlert" class="hidden bg-red-50 border-l-4 border-red-400 p-4 mb-6 rounded-lg">
-                <div class="flex">
-                    <div class="flex-shrink-0">
-                        <svg class="h-5 w-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
-                        </svg>
-                    </div>
-                    <div class="ml-3">
-                        <h3 class="text-sm font-medium text-red-800">
-                            ⚠️ Atenção! Você tem prazos urgentes
-                        </h3>
-                        <div class="mt-2 text-sm text-red-700">
-                            <p id="urgentAlertText">Existem prazos que vencem hoje ou já venceram. Verifique sua lista abaixo.</p>
-                        </div>
-                        <div class="mt-4">
-                            <div class="-mx-2 -my-1.5 flex">
-                                <button onclick="scrollToDeadlines()" class="bg-red-100 px-2 py-1.5 rounded-md text-sm font-medium text-red-800 hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-red-50 focus:ring-red-600">
-                                    Ver Prazos
-                                </button>
-                                <button onclick="hideUrgentAlert()" class="ml-3 bg-red-100 px-2 py-1.5 rounded-md text-sm font-medium text-red-800 hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-red-50 focus:ring-red-600">
-                                    Dispensar
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- Stats Cards -->
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-                <div class="bg-white rounded-xl shadow-md p-6 border border-gray-100">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-sm font-medium text-gray-600">Total de Prazos</p>
-                            <p id="totalDeadlines" class="text-3xl font-bold text-gray-900">0</p>
-                        </div>
-                        <div class="bg-blue-100 p-3 rounded-lg">
-                            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
-                            </svg>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="bg-white rounded-xl shadow-md p-6 border border-gray-100">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-sm font-medium text-gray-600">Urgentes</p>
-                            <p id="urgentDeadlines" class="text-3xl font-bold text-red-600">0</p>
-                        </div>
-                        <div class="bg-red-100 p-3 rounded-lg">
-                            <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
-                            </svg>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="bg-white rounded-xl shadow-md p-6 border border-gray-100">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-sm font-medium text-gray-600">Esta Semana</p>
-                            <p id="weekDeadlines" class="text-3xl font-bold text-yellow-600">0</p>
-                        </div>
-                        <div class="bg-yellow-100 p-3 rounded-lg">
-                            <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="bg-white rounded-xl shadow-md p-6 border border-gray-100">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-sm font-medium text-gray-600">Concluídos</p>
-                            <p id="completedDeadlines" class="text-3xl font-bold text-green-600">0</p>
-                        </div>
-                        <div class="bg-green-100 p-3 rounded-lg">
-                            <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Filters -->
-            <div class="bg-white rounded-xl shadow-md p-6 mb-8 border border-gray-100">
-                <div class="flex flex-wrap items-center gap-4">
-                    <div class="flex items-center space-x-2">
-                        <label class="text-sm font-medium text-gray-700">Categoria:</label>
-                        <select id="categoryFilter" onchange="filterDeadlines()" class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                            <option value="">Todas</option>
-                            <option value="veiculos">🚗 Veículos</option>
-                            <option value="contratos">📄 Contratos</option>
-                            <option value="manutencao">🔧 Manutenção</option>
-                            <option value="saude">🏥 Saúde</option>
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Categoria</label>
+                        <select id="deadlineCategory" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                            <option value="trabalho">🏢 Trabalho</option>
+                            <option value="pessoal">👤 Pessoal</option>
+                            <option value="juridico">⚖️ Jurídico</option>
                             <option value="financeiro">💰 Financeiro</option>
-                            <option value="documentos">📋 Documentos</option>
-                            <option value="aniversarios">🎂 Aniversários</option>
-                            <option value="agendamentos">📅 Agendamentos</option>
-                            <option value="servicos">🛠️ Serviços</option>
-                            <option value="viagens">✈️ Viagens</option>
+                            <option value="saude">🏥 Saúde</option>
                             <option value="educacao">📚 Educação</option>
-                            <option value="encontros">👥 Encontros</option>
-                            <option value="outros">📌 Outros</option>
+                            <option value="outros">📋 Outros</option>
                         </select>
                     </div>
-                    
-                    <div class="flex items-center space-x-2">
-                        <label class="text-sm font-medium text-gray-700">Status:</label>
-                        <select id="statusFilter" onchange="filterDeadlines()" class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                            <option value="">Todos</option>
-                            <option value="urgent">Urgente</option>
-                            <option value="warning">Atenção</option>
-                            <option value="normal">Normal</option>
-                            <option value="completed">Concluído</option>
-                        </select>
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Data e Hora</label>
+                        <input type="datetime-local" id="deadlineDate" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" required>
                     </div>
-                    
-                    <div class="flex items-center space-x-2">
-                        <input type="text" id="searchInput" placeholder="Buscar prazos..." onkeyup="filterDeadlines()" class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-64">
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Descrição</label>
+                        <textarea id="deadlineDescription" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" rows="3"></textarea>
                     </div>
-                </div>
-            </div>
-
-            <!-- Deadlines List -->
-            <div class="bg-white rounded-xl shadow-md border border-gray-100">
-                <div class="p-6 border-b border-gray-200">
-                    <h2 class="text-xl font-semibold text-gray-900">Meus Prazos</h2>
-                </div>
-                <div id="deadlinesList" class="p-6">
-                    <div class="text-center py-12">
-                        <div class="loading-spinner mx-auto mb-4"></div>
-                        <h3 class="text-lg font-medium text-gray-900 mb-2">Carregando prazos...</h3>
-                        <p class="text-gray-600">Aguarde enquanto carregamos seus dados.</p>
-                    </div>
-                </div>
-            </div>
-        </main>
-    </div>
-
-    <!-- Settings Modal -->
-    <div id="settingsModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <div class="p-6 border-b border-gray-200">
-                <div class="flex items-center justify-between">
-                    <h3 class="text-xl font-semibold text-gray-900">⚙️ Configurações do Sistema</h3>
-                    <button onclick="closeSettingsModal()" class="text-gray-400 hover:text-gray-600 transition-colors">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                        </svg>
-                    </button>
-                </div>
-            </div>
-            
-            <div class="p-6">
-                <!-- Status do Sistema de WhatsApp -->
-                <div class="bg-green-50 p-4 rounded-lg mb-6">
-                    <h4 class="font-medium text-green-900 mb-3">✅ Sistema de WhatsApp Configurado</h4>
-                    <div class="space-y-2">
-                        <p class="text-sm text-green-800">
-                            <strong>📱 Método:</strong> WhatsApp Web - Gratuito para todos os usuários
-                        </p>
-                        <p class="text-sm text-green-700">
-                            Configure seu número do WhatsApp abaixo e receba alertas diretamente no seu celular, sem custos adicionais!
-                        </p>
-                        <div class="mt-3">
-                            <button onclick="testWhatsAppSystem()" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors text-sm font-medium">
-                                📱 Testar WhatsApp
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <form id="settingsForm" class="space-y-6">
-                    <!-- Informações do Usuário -->
-                    <div>
-                        <h4 class="font-medium text-gray-900 mb-3">👤 Informações do Usuário</h4>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Nome</label>
-                                <input type="text" id="userName" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Seu nome">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
-                                <input type="email" id="userEmail" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="seu@email.com">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">WhatsApp (com DDD)</label>
-                                <input type="tel" id="userWhatsApp" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="11999887766" maxlength="11">
-                                <p class="text-xs text-gray-500 mt-1">Digite apenas números, com DDD. Ex: 11999887766</p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Notificações -->
-                    <div class="border-t border-gray-200 pt-4">
-                        <h4 class="font-medium text-gray-900 mb-3">📱 Notificações por WhatsApp</h4>
-                        <div class="space-y-3">
-                            <label class="flex items-center">
-                                <input type="checkbox" id="whatsappNotifications" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
-                                <span class="ml-2 text-sm text-gray-700">Receber alertas por WhatsApp</span>
-                            </label>
-                            <label class="flex items-center">
-                                <input type="checkbox" id="urgentOnly" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
-                                <span class="ml-2 text-sm text-gray-700">Apenas prazos urgentes (3 dias ou menos)</span>
-                            </label>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Enviar alertas quando restarem:</label>
-                                <select id="alertDays" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                                    <option value="1">1 dia</option>
-                                    <option value="3" selected>3 dias</option>
-                                    <option value="7">7 dias</option>
-                                    <option value="15">15 dias</option>
-                                    <option value="30">30 dias</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Notificações do Navegador -->
-                    <div class="border-t border-gray-200 pt-4">
-                        <h4 class="font-medium text-gray-900 mb-3">🔔 Notificações do Navegador</h4>
-                        <div class="space-y-3">
-                            <label class="flex items-center">
-                                <input type="checkbox" id="browserNotifications" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
-                                <span class="ml-2 text-sm text-gray-700">Permitir notificações do navegador</span>
-                            </label>
-                            <button type="button" onclick="requestNotificationPermission()" class="text-sm text-blue-600 hover:text-blue-800 transition-colors">
-                                Solicitar permissão do navegador
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <!-- Preferências de Exibição -->
-                    <div class="border-t border-gray-200 pt-4">
-                        <h4 class="font-medium text-gray-900 mb-3">🎨 Preferências de Exibição</h4>
-                        <div class="space-y-3">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Categoria padrão para novos prazos</label>
-                                <select id="defaultCategory" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                                    <option value="outros">📌 Outros</option>
-                                    <option value="veiculos">🚗 Veículos</option>
-                                    <option value="contratos">📄 Contratos</option>
-                                    <option value="manutencao">🔧 Manutenção</option>
-                                    <option value="saude">🏥 Saúde</option>
-                                    <option value="financeiro">💰 Financeiro</option>
-                                    <option value="documentos">📋 Documentos</option>
-                                    <option value="aniversarios">🎂 Aniversários</option>
-                                    <option value="agendamentos">📅 Agendamentos</option>
-                                    <option value="servicos">🛠️ Serviços</option>
-                                    <option value="viagens">✈️ Viagens</option>
-                                    <option value="educacao">📚 Educação</option>
-                                    <option value="encontros">👥 Encontros</option>
-                                </select>
-                            </div>
-                            
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Prioridade padrão</label>
-                                <select id="defaultPriority" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                                    <option value="normal">Normal</option>
-                                    <option value="high">Alta</option>
-                                    <option value="critical">Crítica</option>
-                                </select>
-                            </div>
-                            
-                            <label class="flex items-center">
-                                <input type="checkbox" id="showUrgentAlerts" checked class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
-                                <span class="ml-2 text-sm text-gray-700">Mostrar avisos de prazos urgentes na tela</span>
-                            </label>
-                        </div>
-                    </div>
-                    
-                    <!-- Dados e Backup -->
-                    <div class="border-t border-gray-200 pt-4">
-                        <h4 class="font-medium text-gray-900 mb-3">💾 Dados e Backup</h4>
-                        <div class="space-y-3">
-                            <button type="button" onclick="exportData()" class="w-full bg-blue-100 text-blue-800 py-2 px-4 rounded-lg hover:bg-blue-200 transition-colors font-medium text-sm">
-                                📥 Exportar meus dados
-                            </button>
-                            <button type="button" onclick="importData()" class="w-full bg-green-100 text-green-800 py-2 px-4 rounded-lg hover:bg-green-200 transition-colors font-medium text-sm">
-                                📤 Importar dados
-                            </button>
-                            <input type="file" id="importFile" accept=".json" class="hidden" onchange="handleImportFile(event)">
-                        </div>
-                    </div>
-                    
-                    <div class="flex space-x-3 pt-4">
-                        <button type="button" onclick="closeSettingsModal()" class="flex-1 bg-gray-200 text-gray-800 py-2 px-4 rounded-lg hover:bg-gray-300 transition-colors font-medium">
-                            Cancelar
-                        </button>
-                        <button type="submit" class="flex-1 bg-gradient-to-r from-green-600 to-emerald-600 text-white py-2 px-4 rounded-lg hover:from-green-700 hover:to-emerald-700 transition-all duration-200 font-medium">
-                            Salvar Configurações
-                        </button>
+                    <div class="flex justify-end space-x-3">
+                        <button type="button" id="cancelNewDeadline" class="px-4 py-2 text-gray-600 hover:text-gray-800">Cancelar</button>
+                        <button type="submit" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg">Salvar</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
 
-    <!-- Add/Edit Modal -->
-    <div id="deadlineModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
-            <div class="p-6 border-b border-gray-200">
-                <div class="flex items-center justify-between">
-                    <h3 id="modalTitle" class="text-xl font-semibold text-gray-900">Novo Prazo</h3>
-                    <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600 transition-colors">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                        </svg>
-                    </button>
-                </div>
+    <!-- Modal: Configurar WhatsApp -->
+    <div id="configModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-lg max-w-md w-full p-6">
+                <h3 class="text-lg font-semibold mb-4">Configurar WhatsApp</h3>
+                <form id="configForm">
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Seu Número do WhatsApp</label>
+                        <input type="tel" id="whatsappNumber" placeholder="5511999999999" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" required>
+                        <p class="text-xs text-gray-500 mt-1">Formato: 5511999999999 (código do país + DDD + número)</p>
+                    </div>
+                    <div class="mb-4">
+                        <label class="flex items-center">
+                            <input type="checkbox" id="enableNotifications" class="mr-2">
+                            <span class="text-sm text-gray-700">Ativar notificações automáticas</span>
+                        </label>
+                    </div>
+                    <div class="flex justify-end space-x-3">
+                        <button type="button" id="cancelConfig" class="px-4 py-2 text-gray-600 hover:text-gray-800">Cancelar</button>
+                        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg">Salvar</button>
+                    </div>
+                </form>
             </div>
-            
-            <form id="deadlineForm" class="p-6 space-y-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Título *</label>
-                    <input type="text" id="deadlineTitle" required class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Ex: Renovar CNH">
-                </div>
-                
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Descrição</label>
-                    <textarea id="deadlineDescription" rows="3" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Detalhes adicionais (opcional)"></textarea>
-                </div>
-                
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Data de Vencimento *</label>
-                    <input type="date" id="deadlineDate" required class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                </div>
-                
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Categoria *</label>
-                    <select id="deadlineCategory" required class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                        <option value="">Selecione uma categoria</option>
-                        <option value="veiculos">🚗 Veículos</option>
-                        <option value="contratos">📄 Contratos</option>
-                        <option value="manutencao">🔧 Manutenção</option>
-                        <option value="saude">🏥 Saúde</option>
-                        <option value="financeiro">💰 Financeiro</option>
-                        <option value="documentos">📋 Documentos</option>
-                        <option value="aniversarios">🎂 Aniversários</option>
-                        <option value="agendamentos">📅 Agendamentos</option>
-                        <option value="servicos">🛠️ Serviços</option>
-                        <option value="viagens">✈️ Viagens</option>
-                        <option value="educacao">📚 Educação</option>
-                        <option value="encontros">👥 Encontros</option>
-                        <option value="outros">📌 Outros</option>
-                    </select>
-                </div>
-                
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Prioridade</label>
-                    <select id="deadlinePriority" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                        <option value="normal">Normal</option>
-                        <option value="high">Alta</option>
-                        <option value="critical">Crítica</option>
-                    </select>
-                </div>
-                
-                <div class="flex items-center">
-                    <input type="checkbox" id="deadlineNotification" checked class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
-                    <label for="deadlineNotification" class="ml-2 text-sm text-gray-700">Receber alertas por WhatsApp</label>
-                </div>
-                
-                <div class="flex space-x-3 pt-4">
-                    <button type="button" onclick="closeModal()" class="flex-1 bg-gray-200 text-gray-800 py-2 px-4 rounded-lg hover:bg-gray-300 transition-colors font-medium">
-                        Cancelar
-                    </button>
-                    <button type="submit" class="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-2 px-4 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 font-medium">
-                        Salvar
-                    </button>
-                </div>
-            </form>
         </div>
     </div>
 
     <script>
-        // Supabase configuration
-        const SUPABASE_URL = 'https://vastjlzaxafpoagptklu.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZhc3RqbHpheGFmcG9hZ3B0a2x1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTYyNjUzMDEsImV4cCI6MjA3MTg0MTMwMX0.4EnnkdyVDEo1qSp1C2-QgVlklUkL2W3ulqOmXX_DiVY';
+        // Configuração do Supabase
+        const SUPABASE_URL = 'https://your-project.supabase.co';
+        const SUPABASE_ANON_KEY = 'your-anon-key';
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // Global variables
+        // Estado da aplicação
         let deadlines = [];
-        let editingId = null;
-        let currentUser = null;
-        let isLoading = false; // Previne salvamentos múltiplos
-        let userSettings = {
-            name: '',
-            email: '',
+        let userConfig = {
             whatsappNumber: '',
-            whatsappNotifications: true,
-            urgentOnly: false,
-            alertDays: 3,
-            browserNotifications: false,
-            defaultCategory: 'outros',
-            defaultPriority: 'normal',
-            showUrgentAlerts: true
+            enableNotifications: false
         };
 
-        // WhatsApp configuration
-        const WHATSAPP_WEB_URL = 'https://web.whatsapp.com/send';
-
-        // Category icons and colors
-        const categoryConfig = {
-            'veiculos': { icon: '🚗', color: 'blue', name: 'Veículos' },
-            'contratos': { icon: '📄', color: 'purple', name: 'Contratos' },
-            'manutencao': { icon: '🔧', color: 'orange', name: 'Manutenção' },
-            'saude': { icon: '🏥', color: 'red', name: 'Saúde' },
-            'financeiro': { icon: '💰', color: 'green', name: 'Financeiro' },
-            'documentos': { icon: '📋', color: 'indigo', name: 'Documentos' },
-            'aniversarios': { icon: '🎂', color: 'pink', name: 'Aniversários' },
-            'agendamentos': { icon: '📅', color: 'blue', name: 'Agendamentos' },
-            'servicos': { icon: '🛠️', color: 'yellow', name: 'Serviços' },
-            'viagens': { icon: '✈️', color: 'cyan', name: 'Viagens' },
-            'educacao': { icon: '📚', color: 'emerald', name: 'Educação' },
-            'encontros': { icon: '👥', color: 'violet', name: 'Encontros' },
-            'outros': { icon: '📌', color: 'gray', name: 'Outros' }
+        // Elementos DOM
+        const elements = {
+            newDeadlineBtn: document.getElementById('newDeadlineBtn'),
+            configBtn: document.getElementById('configBtn'),
+            testWhatsappBtn: document.getElementById('testWhatsappBtn'),
+            refreshBtn: document.getElementById('refreshBtn'),
+            logoutBtn: document.getElementById('logoutBtn'),
+            newDeadlineModal: document.getElementById('newDeadlineModal'),
+            configModal: document.getElementById('configModal'),
+            deadlinesList: document.getElementById('deadlinesList'),
+            totalCount: document.getElementById('totalCount'),
+            urgentCount: document.getElementById('urgentCount'),
+            weekCount: document.getElementById('weekCount'),
+            completedCount: document.getElementById('completedCount')
         };
 
-        // Initialize app
-        document.addEventListener('DOMContentLoaded', function() {
-            // Set minimum date to today
-            document.getElementById('deadlineDate').min = new Date().toISOString().split('T')[0];
-            
-            // Check authentication
-            checkAuth();
-            
-            // Listen for auth changes
-            supabase.auth.onAuthStateChange((event, session) => {
-                if (event === 'SIGNED_IN') {
-                    currentUser = session.user;
-                    showMainApp();
-                } else if (event === 'SIGNED_OUT') {
-                    currentUser = null;
-                    showAuthScreen();
-                }
-            });
-        });
+        // Event Listeners
+        elements.newDeadlineBtn.addEventListener('click', () => openModal('newDeadlineModal'));
+        elements.configBtn.addEventListener('click', () => openModal('configModal'));
+        elements.testWhatsappBtn.addEventListener('click', testWhatsApp);
+        elements.refreshBtn.addEventListener('click', loadDeadlines);
+        elements.logoutBtn.addEventListener('click', logout);
 
-        // Authentication functions
-        async function checkAuth() {
-            const { data: { session } } = await supabase.auth.getSession();
-            
-            if (session) {
-                currentUser = session.user;
-                showMainApp();
-            } else {
-                showAuthScreen();
-            }
+        document.getElementById('cancelNewDeadline').addEventListener('click', () => closeModal('newDeadlineModal'));
+        document.getElementById('cancelConfig').addEventListener('click', () => closeModal('configModal'));
+
+        document.getElementById('newDeadlineForm').addEventListener('submit', saveDeadline);
+        document.getElementById('configForm').addEventListener('submit', saveConfig);
+
+        // Funções principais
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.remove('hidden');
         }
 
-        function showAuthScreen() {
-            document.getElementById('authScreen').classList.remove('hidden');
-            document.getElementById('mainApp').classList.add('hidden');
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.add('hidden');
         }
 
-        function showMainApp() {
-            document.getElementById('authScreen').classList.add('hidden');
-            document.getElementById('mainApp').classList.remove('hidden');
-            
-            // Load user data
-            loadUserSettings();
-            loadDeadlines();
-        }
-
-        function switchAuthTab(tab) {
-            const loginTab = document.getElementById('loginTab');
-            const signupTab = document.getElementById('signupTab');
-            const loginForm = document.getElementById('loginForm');
-            const signupForm = document.getElementById('signupForm');
-            
-            if (tab === 'login') {
-                loginTab.classList.add('bg-white', 'text-blue-600', 'shadow-sm');
-                loginTab.classList.remove('text-gray-600', 'hover:text-gray-900');
-                signupTab.classList.remove('bg-white', 'text-blue-600', 'shadow-sm');
-                signupTab.classList.add('text-gray-600', 'hover:text-gray-900');
-                loginForm.classList.remove('hidden');
-                signupForm.classList.add('hidden');
-            } else {
-                signupTab.classList.add('bg-white', 'text-blue-600', 'shadow-sm');
-                signupTab.classList.remove('text-gray-600', 'hover:text-gray-900');
-                loginTab.classList.remove('bg-white', 'text-blue-600', 'shadow-sm');
-                loginTab.classList.add('text-gray-600', 'hover:text-gray-900');
-                signupForm.classList.remove('hidden');
-                loginForm.classList.add('hidden');
-            }
-        }
-
-        // Auth form handlers
-        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+        async function saveDeadline(e) {
             e.preventDefault();
             
-            const email = document.getElementById('loginEmail').value;
-            const password = document.getElementById('loginPassword').value;
-            
-            try {
-                const { data, error } = await supabase.auth.signInWithPassword({
-                    email: email,
-                    password: password
-                });
-                
-                if (error) throw error;
-                
-                showNotification('Login realizado com sucesso!', 'success');
-                
-            } catch (error) {
-                showNotification('Erro no login: ' + error.message, 'error');
-            }
-        });
+            const deadline = {
+                title: document.getElementById('deadlineTitle').value,
+                category: document.getElementById('deadlineCategory').value,
+                date: document.getElementById('deadlineDate').value,
+                description: document.getElementById('deadlineDescription').value,
+                completed: false,
+                created_at: new Date().toISOString()
+            };
 
-        document.getElementById('signupForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const name = document.getElementById('signupName').value;
-            const email = document.getElementById('signupEmail').value;
-            const password = document.getElementById('signupPassword').value;
-            
-            try {
-                const { data, error } = await supabase.auth.signUp({
-                    email: email,
-                    password: password,
-                    options: {
-                        data: {
-                            name: name
-                        }
-                    }
-                });
-                
-                if (error) throw error;
-                
-                showNotification('Conta criada com sucesso! Verifique seu email para confirmar.', 'success');
-                
-            } catch (error) {
-                showNotification('Erro ao criar conta: ' + error.message, 'error');
-            }
-        });
-
-        async function resetPassword() {
-            const email = prompt('Digite seu email para recuperar a senha:');
-            if (!email) return;
-            
-            try {
-                const { error } = await supabase.auth.resetPasswordForEmail(email);
-                
-                if (error) throw error;
-                
-                showNotification('Email de recuperação enviado!', 'success');
-                
-            } catch (error) {
-                showNotification('Erro ao enviar email: ' + error.message, 'error');
-            }
-        }
-
-        async function logout() {
-            try {
-                const { error } = await supabase.auth.signOut();
-                
-                if (error) throw error;
-                
-                showNotification('Logout realizado com sucesso!', 'success');
-                
-            } catch (error) {
-                showNotification('Erro no logout: ' + error.message, 'error');
-            }
-        }
-
-        // Supabase data management functions - CORRIGIDAS
-        async function saveUserSettings() {
-            if (!currentUser || isLoading) return;
-            
-            try {
-                isLoading = true;
-                
-                const settingsData = {
-                    user_id: currentUser.id,
-                    settings: userSettings
-                };
-                
-                // Verifica se já existe configuração
-                const { data: existing } = await supabase
-                    .from('user_settings')
-                    .select('user_id')
-                    .eq('user_id', currentUser.id)
-                    .maybeSingle();
-                
-                if (existing) {
-                    // Atualiza configuração existente
-                    const { error } = await supabase
-                        .from('user_settings')
-                        .update({ settings: userSettings })
-                        .eq('user_id', currentUser.id);
-                    
-                    if (error) throw error;
-                } else {
-                    // Cria nova configuração com upsert para evitar RLS
-                    const { error } = await supabase
-                        .from('user_settings')
-                        .upsert([settingsData], { 
-                            onConflict: 'user_id',
-                            ignoreDuplicates: false 
-                        });
-                    
-                    if (error) throw error;
-                }
-                
-            } catch (error) {
-                console.error('Erro ao salvar configurações:', error);
-                
-                // Tenta salvar no localStorage como fallback
-                try {
-                    localStorage.setItem('deadlinex_settings', JSON.stringify(userSettings));
-                    showNotification('Configurações salvas localmente', 'warning');
-                } catch (localError) {
-                    showNotification('Erro ao salvar configurações', 'error');
-                }
-            } finally {
-                isLoading = false;
-            }
-        }
-
-        async function loadUserSettings() {
-            if (!currentUser) return;
-            
             try {
                 const { data, error } = await supabase
-                    .from('user_settings')
-                    .select('settings')
-                    .eq('user_id', currentUser.id)
-                    .single();
-                
-                if (error && error.code !== 'PGRST116') {
-                    throw error;
-                }
-                
-                if (data?.settings) {
-                    userSettings = { ...userSettings, ...data.settings };
-                } else {
-                    // Tenta carregar do localStorage como fallback
-                    const localSettings = localStorage.getItem('deadlinex_settings');
-                    if (localSettings) {
-                        userSettings = { ...userSettings, ...JSON.parse(localSettings) };
-                    }
-                }
-                
-                // Set user email from auth if not in settings
-                if (!userSettings.email && currentUser.email) {
-                    userSettings.email = currentUser.email;
-                }
-                
-                // Set user name from auth metadata if not in settings
-                if (!userSettings.name && currentUser.user_metadata?.name) {
-                    userSettings.name = currentUser.user_metadata.name;
-                }
-                
+                    .from('deadlines')
+                    .insert([deadline]);
+
+                if (error) throw error;
+
+                alert('Prazo salvo com sucesso!');
+                closeModal('newDeadlineModal');
+                document.getElementById('newDeadlineForm').reset();
+                loadDeadlines();
             } catch (error) {
-                console.error('Erro ao carregar configurações:', error);
-                
-                // Fallback para localStorage
-                try {
-                    const localSettings = localStorage.getItem('deadlinex_settings');
-                    if (localSettings) {
-                        userSettings = { ...userSettings, ...JSON.parse(localSettings) };
-                    }
-                } catch (localError) {
-                    console.error('Erro ao carregar configurações locais:', localError);
-                }
+                alert('Erro ao salvar prazo: ' + error.message);
+            }
+        }
+
+        async function saveConfig(e) {
+            e.preventDefault();
+            
+            userConfig.whatsappNumber = document.getElementById('whatsappNumber').value;
+            userConfig.enableNotifications = document.getElementById('enableNotifications').checked;
+
+            try {
+                const { data, error } = await supabase
+                    .from('user_config')
+                    .upsert([userConfig]);
+
+                if (error) throw error;
+
+                alert('Configuração salva com sucesso!');
+                closeModal('configModal');
+            } catch (error) {
+                alert('Erro ao salvar configuração: ' + error.message);
             }
         }
 
         async function loadDeadlines() {
-            if (!currentUser) return;
-            
             try {
                 const { data, error } = await supabase
                     .from('deadlines')
                     .select('*')
-                    .eq('user_id', currentUser.id)
                     .order('date', { ascending: true });
-                
+
                 if (error) throw error;
-                
+
                 deadlines = data || [];
                 renderDeadlines();
-                updateStats();
-                checkNotifications();
-                checkUrgentDeadlines();
-                
+                updateStatistics();
             } catch (error) {
                 console.error('Erro ao carregar prazos:', error);
-                deadlines = [];
-                renderDeadlines();
-                updateStats();
-                showNotification('Erro ao carregar prazos', 'error');
             }
         }
 
-        async function saveDeadline(deadline) {
-            if (!currentUser || isLoading) {
-                throw new Error('Sistema ocupado, tente novamente');
-            }
-            
-            try {
-                isLoading = true;
-                
-                // Estrutura corrigida - removendo campo 'notifications' que não existe
-                const deadlineData = {
-                    user_id: currentUser.id,
-                    title: deadline.title,
-                    description: deadline.description || null,
-                    date: deadline.date,
-                    category: deadline.category,
-                    priority: deadline.priority || 'normal',
-                    completed: deadline.completed || false
-                };
-                
-                let result;
-                
-                if (deadline.id && typeof deadline.id === 'number') {
-                    // Editando prazo existente
-                    const { data, error } = await supabase
-                        .from('deadlines')
-                        .update(deadlineData)
-                        .eq('id', deadline.id)
-                        .eq('user_id', currentUser.id)
-                        .select()
-                        .single();
-                    
-                    if (error) throw error;
-                    result = data;
-                } else {
-                    // Novo prazo
-                    const { data, error } = await supabase
-                        .from('deadlines')
-                        .insert([deadlineData])
-                        .select()
-                        .single();
-                    
-                    if (error) throw error;
-                    result = data;
-                }
-                
-                return result;
-                
-            } catch (error) {
-                console.error('Erro ao salvar prazo:', error);
-                throw error;
-            } finally {
-                isLoading = false;
-            }
-        }
-
-        async function deleteDeadlineFromDB(id) {
-            if (!currentUser || isLoading) return;
-            
-            try {
-                isLoading = true;
-                
-                const { error } = await supabase
-                    .from('deadlines')
-                    .delete()
-                    .eq('id', id)
-                    .eq('user_id', currentUser.id);
-                
-                if (error) throw error;
-                
-            } catch (error) {
-                console.error('Erro ao excluir prazo:', error);
-                throw error;
-            } finally {
-                isLoading = false;
-            }
-        }
-
-        // WhatsApp functions
-        function formatWhatsAppNumber(number) {
-            const cleanNumber = number.replace(/\D/g, '');
-            
-            if (!cleanNumber.startsWith('55')) {
-                return '55' + cleanNumber;
-            }
-            
-            return cleanNumber;
-        }
-
-        function sendWhatsAppMessage(phoneNumber, message) {
-            try {
-                const formattedNumber = formatWhatsAppNumber(phoneNumber);
-                const encodedMessage = encodeURIComponent(message);
-                const whatsappUrl = `${WHATSAPP_WEB_URL}?phone=${formattedNumber}&text=${encodedMessage}`;
-                
-                window.open(whatsappUrl, '_blank');
-                
-                return true;
-            } catch (error) {
-                console.error('WhatsApp Error:', error);
-                throw error;
-            }
-        }
-
-        function getWhatsAppMessageTemplate(deadline, daysRemaining) {
-            const urgencyEmoji = daysRemaining < 0 ? '🚨' : daysRemaining === 0 ? '⚠️' : daysRemaining <= 3 ? '⏰' : '📅';
-            const urgencyText = daysRemaining < 0 ? 'VENCIDO' : daysRemaining === 0 ? 'VENCE HOJE' : daysRemaining === 1 ? 'VENCE AMANHÃ' : `${daysRemaining} DIAS RESTANTES`;
-            const category = categoryConfig[deadline.category] || categoryConfig['outros'];
-            
-            let message = `${urgencyEmoji} *ALERTA DE PRAZO - DeadlineX*\n\n`;
-            message += `*${urgencyText}*\n\n`;
-            message += `${category.icon} *${deadline.title}*\n`;
-            message += `📂 Categoria: ${category.name}\n`;
-            
-            if (deadline.description) {
-                message += `📝 Descrição: ${deadline.description}\n`;
-            }
-            
-            message += `📅 Data: ${new Date(deadline.date).toLocaleDateString('pt-BR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}\n`;
-            
-            if (deadline.priority !== 'normal') {
-                message += `🔥 Prioridade: ${deadline.priority === 'critical' ? 'Crítica' : 'Alta'}\n`;
-            }
-            
-            message += `\n💡 *Dica:* Marque como concluído no sistema assim que finalizar!\n\n`;
-            message += `---\n*DeadlineX* - Nunca mais perca um prazo importante`;
-            
-            return message;
-        }
-
-        function sendDeadlineAlert(whatsappNumber, deadline) {
-            try {
-                const daysRemaining = getDaysUntil(deadline.date);
-                const message = getWhatsAppMessageTemplate(deadline, daysRemaining);
-                
-                sendWhatsAppMessage(whatsappNumber, message);
-                
-                showWhatsAppStatus('success');
-                
-            } catch (error) {
-                console.error('Error sending WhatsApp alert:', error);
-                showWhatsAppStatus('error');
-                showNotification('Erro ao enviar WhatsApp: ' + error.message, 'error');
-            }
-        }
-
-        function testWhatsAppSystem() {
-            try {
-                showWhatsAppStatus('pending');
-                
-                const testDeadline = {
-                    title: 'Teste do Sistema de WhatsApp',
-                    description: 'Esta é uma mensagem de teste para verificar se o sistema está funcionando corretamente.',
-                    date: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-                    category: 'outros',
-                    priority: 'normal'
-                };
-
-                let whatsappNumber = userSettings.whatsappNumber;
-                if (!whatsappNumber) {
-                    whatsappNumber = prompt('Digite seu número do WhatsApp (com DDD) para receber o teste:\nExemplo: 11999887766');
-                    if (!whatsappNumber) {
-                        showWhatsAppStatus('error');
-                        return;
-                    }
-                }
-
-                sendDeadlineAlert(whatsappNumber, testDeadline);
-                
-                showNotification('WhatsApp Web aberto! Envie a mensagem para receber o teste.', 'success');
-                
-            } catch (error) {
-                showWhatsAppStatus('error');
-                showNotification('Erro ao abrir WhatsApp: ' + error.message, 'error');
-            }
-        }
-
-        function showWhatsAppStatus(status) {
-            const whatsappStatus = document.getElementById('whatsappStatus');
-            
-            // Update status
-            const statusElement = whatsappStatus.querySelector('span');
-            whatsappStatus.classList.remove('hidden');
-            statusElement.className = 'whatsapp-status';
-            
-            let statusHTML = '';
-            if (status === 'success') {
-                statusElement.classList.add('whatsapp-success');
-                statusHTML = `
-                    <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                    </svg>
-                    WhatsApp aberto
-                `;
-            } else if (status === 'error') {
-                statusElement.classList.add('whatsapp-error');
-                statusHTML = `
-                    <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
-                    </svg>
-                    Erro no WhatsApp
-                `;
-            } else if (status === 'pending') {
-                statusElement.classList.add('whatsapp-pending');
-                statusHTML = `
-                    <div class="loading-spinner"></div>
-                    Abrindo WhatsApp...
-                `;
-            }
-            
-            statusElement.innerHTML = statusHTML;
-            
-            setTimeout(() => {
-                whatsappStatus.classList.add('hidden');
-            }, 5000);
-        }
-
-        // Settings modal functions
-        function openSettingsModal() {
-            document.getElementById('userName').value = userSettings.name || '';
-            document.getElementById('userEmail').value = userSettings.email || '';
-            document.getElementById('userWhatsApp').value = userSettings.whatsappNumber || '';
-            document.getElementById('whatsappNotifications').checked = userSettings.whatsappNotifications;
-            document.getElementById('urgentOnly').checked = userSettings.urgentOnly;
-            document.getElementById('alertDays').value = userSettings.alertDays;
-            document.getElementById('browserNotifications').checked = userSettings.browserNotifications;
-            document.getElementById('defaultCategory').value = userSettings.defaultCategory;
-            document.getElementById('defaultPriority').value = userSettings.defaultPriority;
-            document.getElementById('showUrgentAlerts').checked = userSettings.showUrgentAlerts;
-            
-            document.getElementById('settingsModal').classList.remove('hidden');
-        }
-
-        function closeSettingsModal() {
-            document.getElementById('settingsModal').classList.add('hidden');
-        }
-
-        // Modal functions
-        function openAddModal() {
-            editingId = null;
-            document.getElementById('modalTitle').textContent = 'Novo Prazo';
-            document.getElementById('deadlineForm').reset();
-            
-            document.getElementById('deadlineCategory').value = userSettings.defaultCategory;
-            document.getElementById('deadlinePriority').value = userSettings.defaultPriority;
-            document.getElementById('deadlineNotification').checked = userSettings.whatsappNotifications;
-            
-            document.getElementById('deadlineModal').classList.remove('hidden');
-        }
-
-        function openEditModal(id) {
-            const deadline = deadlines.find(d => d.id === id);
-            if (!deadline) return;
-
-            editingId = id;
-            document.getElementById('modalTitle').textContent = 'Editar Prazo';
-            document.getElementById('deadlineTitle').value = deadline.title;
-            document.getElementById('deadlineDescription').value = deadline.description || '';
-            document.getElementById('deadlineDate').value = deadline.date;
-            document.getElementById('deadlineCategory').value = deadline.category;
-            document.getElementById('deadlinePriority').value = deadline.priority || 'normal';
-            document.getElementById('deadlineNotification').checked = deadline.notifications !== false;
-
-            document.getElementById('deadlineModal').classList.remove('hidden');
-        }
-
-        function closeModal() {
-            document.getElementById('deadlineModal').classList.add('hidden');
-            editingId = null;
-        }
-
-        // Settings form submission
-        document.getElementById('settingsForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            if (isLoading) return;
-            
-            userSettings.name = document.getElementById('userName').value;
-            userSettings.email = document.getElementById('userEmail').value;
-            userSettings.whatsappNumber = document.getElementById('userWhatsApp').value;
-            userSettings.whatsappNotifications = document.getElementById('whatsappNotifications').checked;
-            userSettings.urgentOnly = document.getElementById('urgentOnly').checked;
-            userSettings.alertDays = parseInt(document.getElementById('alertDays').value);
-            userSettings.browserNotifications = document.getElementById('browserNotifications').checked;
-            userSettings.defaultCategory = document.getElementById('defaultCategory').value;
-            userSettings.defaultPriority = document.getElementById('defaultPriority').value;
-            userSettings.showUrgentAlerts = document.getElementById('showUrgentAlerts').checked;
-            
-            try {
-                await saveUserSettings();
-                closeSettingsModal();
-                checkUrgentDeadlines();
-                showNotification('Configurações salvas com sucesso!', 'success');
-            } catch (error) {
-                showNotification('Erro ao salvar configurações', 'error');
-            }
-        });
-
-        // Form submission - CORRIGIDO
-        document.getElementById('deadlineForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            if (isLoading) {
-                showNotification('Aguarde, salvando...', 'warning');
-                return;
-            }
-            
-            const title = document.getElementById('deadlineTitle').value;
-            const description = document.getElementById('deadlineDescription').value;
-            const date = document.getElementById('deadlineDate').value;
-            const category = document.getElementById('deadlineCategory').value;
-            const priority = document.getElementById('deadlinePriority').value;
-            const notifications = document.getElementById('deadlineNotification').checked;
-            
-            const deadline = {
-                title,
-                description,
-                date,
-                category,
-                priority,
-                notifications,
-                completed: false
-            };
-            
-            if (editingId) {
-                deadline.id = editingId;
-            }
-
-            try {
-                const savedDeadline = await saveDeadline(deadline);
-                
-                if (editingId) {
-                    const index = deadlines.findIndex(d => d.id === editingId);
-                    if (index !== -1) {
-                        deadlines[index] = savedDeadline;
-                    }
-                } else {
-                    deadlines.push(savedDeadline);
-                }
-
-                renderDeadlines();
-                updateStats();
-                checkNotifications();
-                checkUrgentDeadlines();
-                closeModal();
-                
-                showNotification(editingId ? 'Prazo atualizado!' : 'Prazo criado!', 'success');
-                
-            } catch (error) {
-                showNotification('Erro ao salvar prazo', 'error');
-            }
-        });
-
-        // Utility functions
-        function getDaysUntil(dateString) {
-            const today = new Date();
-            const targetDate = new Date(dateString);
-            const diffTime = targetDate - today;
-            return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-        }
-
-        function getUrgencyClass(daysUntil) {
-            if (daysUntil < 0) return 'urgent';
-            if (daysUntil <= 3) return 'urgent';
-            if (daysUntil <= 7) return 'warning';
-            return 'normal';
-        }
-
-        function formatDate(dateString) {
-            return new Date(dateString).toLocaleDateString('pt-BR', {
-                weekday: 'short',
-                day: '2-digit',
-                month: '2-digit',
-                year: 'numeric'
-            });
-        }
-
-        // Render functions
         function renderDeadlines() {
-            const container = document.getElementById('deadlinesList');
+            const container = elements.deadlinesList;
             
             if (deadlines.length === 0) {
                 container.innerHTML = `
-                    <div class="text-center py-12">
-                        <svg class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    <div class="text-center text-gray-500 py-8">
+                        <svg class="w-16 h-16 mx-auto mb-4 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                         </svg>
-                        <h3 class="text-lg font-medium text-gray-900 mb-2">Nenhum prazo cadastrado</h3>
-                        <p class="text-gray-600 mb-4">Comece adicionando seu primeiro prazo para nunca mais esquecer datas importantes!</p>
-                        <button onclick="openAddModal()" class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-3 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 font-medium">
-                            + Adicionar Primeiro Prazo
-                        </button>
+                        <p>Nenhum prazo cadastrado ainda.</p>
+                        <p class="text-sm">Clique em "Novo Prazo" para começar!</p>
                     </div>
                 `;
                 return;
             }
 
-            const filteredDeadlines = getFilteredDeadlines();
-            
-            if (filteredDeadlines.length === 0) {
-                container.innerHTML = `
-                    <div class="text-center py-12">
-                        <svg class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                        </svg>
-                        <h3 class="text-lg font-medium text-gray-900 mb-2">Nenhum prazo encontrado</h3>
-                        <p class="text-gray-600">Tente ajustar os filtros ou adicionar novos prazos.</p>
-                    </div>
-                `;
-                return;
-            }
-
-            container.innerHTML = filteredDeadlines.map(deadline => {
-                const daysUntil = getDaysUntil(deadline.date);
-                const urgencyClass = getUrgencyClass(daysUntil);
-                const category = categoryConfig[deadline.category] || categoryConfig['outros'];
-                
-                let statusText = '';
-                if (deadline.completed) {
-                    statusText = '✅ Concluído';
-                } else if (daysUntil < 0) {
-                    statusText = `🚨 Vencido há ${Math.abs(daysUntil)} dia(s)`;
-                } else if (daysUntil === 0) {
-                    statusText = '⚠️ Vence hoje';
-                } else if (daysUntil === 1) {
-                    statusText = '⏰ Vence amanhã';
-                } else {
-                    statusText = `📅 ${daysUntil} dias restantes`;
-                }
+            container.innerHTML = deadlines.map(deadline => {
+                const date = new Date(deadline.date);
+                const now = new Date();
+                const isUrgent = date <= now;
+                const isThisWeek = date <= new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
 
                 return `
-                    <div class="deadline-card ${urgencyClass} p-4 rounded-lg mb-4 ${deadline.completed ? 'opacity-60' : ''}">
-                        <div class="flex items-start justify-between">
+                    <div class="border-l-4 ${isUrgent ? 'border-red-500' : isThisWeek ? 'border-orange-500' : 'border-gray-300'} bg-gray-50 p-4 mb-4 rounded-r-lg">
+                        <div class="flex justify-between items-start">
                             <div class="flex-1">
-                                <div class="flex items-center gap-2 mb-2">
-                                    <span class="category-badge">
-                                        <span class="text-lg">${category.icon}</span>
-                                        <span class="text-xs bg-white bg-opacity-70 px-2 py-1 rounded-full font-medium">${category.name}</span>
-                                    </span>
-                                    ${deadline.priority !== 'normal' ? `<span class="text-xs bg-red-100 text-red-800 px-2 py-1 rounded-full font-medium">${deadline.priority === 'critical' ? 'Crítica' : 'Alta'}</span>` : ''}
-                                </div>
-                                
-                                <h3 class="font-semibold text-gray-900 mb-1 ${deadline.completed ? 'line-through' : ''}">${deadline.title}</h3>
-                                
-                                ${deadline.description ? `<p class="text-sm text-gray-600 mb-2">${deadline.description}</p>` : ''}
-                                
-                                <div class="flex items-center gap-4 text-sm text-gray-600">
-                                    <span>📅 ${formatDate(deadline.date)}</span>
-                                    <span class="font-medium ${deadline.completed ? 'text-green-600' : daysUntil < 0 ? 'text-red-600' : daysUntil <= 3 ? 'text-orange-600' : 'text-blue-600'}">${statusText}</span>
-                                </div>
+                                <h4 class="font-semibold text-gray-800">${deadline.title}</h4>
+                                <p class="text-sm text-gray-600">${getCategoryIcon(deadline.category)} ${deadline.category}</p>
+                                <p class="text-sm text-gray-500">${formatDate(date)}</p>
+                                ${deadline.description ? `<p class="text-sm text-gray-600 mt-2">${deadline.description}</p>` : ''}
                             </div>
-                            
-                            <div class="flex items-center gap-2 ml-4">
-                                ${!deadline.completed ? `
-                                    <button onclick="toggleComplete(${deadline.id})" class="text-green-600 hover:text-green-800 transition-colors" title="Marcar como concluído">
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                        </svg>
-                                    </button>
-                                ` : `
-                                    <button onclick="toggleComplete(${deadline.id})" class="text-gray-400 hover:text-gray-600 transition-colors" title="Marcar como pendente">
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                        </svg>
-                                    </button>
-                                `}
-                                
-                                ${deadline.notifications !== false ? `
-                                    <button onclick="sendWhatsAppAlert('${deadline.id}')" class="text-green-600 hover:text-green-800 transition-colors" title="Enviar alerta por WhatsApp">
-                                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                                            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.890-5.335 11.893-11.893A11.821 11.821 0 0020.465 3.63z"/>
-                                        </svg>
-                                    </button>
-                                ` : ''}
-                                
-                                <button onclick="openEditModal(${deadline.id})" class="text-blue-600 hover:text-blue-800 transition-colors" title="Editar">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                                    </svg>
+                            <div class="flex space-x-2">
+                                <button onclick="toggleComplete(${deadline.id})" class="text-green-600 hover:text-green-800">
+                                    ${deadline.completed ? '✅' : '⭕'}
                                 </button>
-                                
-                                <button onclick="deleteDeadline(${deadline.id})" class="text-red-600 hover:text-red-800 transition-colors" title="Excluir">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                                    </svg>
+                                <button onclick="deleteDeadline(${deadline.id})" class="text-red-600 hover:text-red-800">
+                                    🗑️
                                 </button>
                             </div>
                         </div>
@@ -1424,286 +358,116 @@
             }).join('');
         }
 
-        function getFilteredDeadlines() {
-            const categoryFilter = document.getElementById('categoryFilter').value;
-            const statusFilter = document.getElementById('statusFilter').value;
-            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+        function updateStatistics() {
+            const now = new Date();
+            const weekFromNow = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
 
-            return deadlines.filter(deadline => {
-                if (categoryFilter && deadline.category !== categoryFilter) {
-                    return false;
-                }
-
-                if (statusFilter) {
-                    const daysUntil = getDaysUntil(deadline.date);
-                    if (statusFilter === 'completed' && !deadline.completed) return false;
-                    if (statusFilter === 'urgent' && (deadline.completed || daysUntil > 3)) return false;
-                    if (statusFilter === 'warning' && (deadline.completed || daysUntil <= 3 || daysUntil > 7)) return false;
-                    if (statusFilter === 'normal' && (deadline.completed || daysUntil <= 7)) return false;
-                }
-
-                if (searchTerm) {
-                    const searchableText = `${deadline.title} ${deadline.description || ''}`.toLowerCase();
-                    if (!searchableText.includes(searchTerm)) {
-                        return false;
-                    }
-                }
-
-                return true;
-            });
-        }
-
-        function filterDeadlines() {
-            renderDeadlines();
-        }
-
-        function updateStats() {
             const total = deadlines.length;
+            const urgent = deadlines.filter(d => !d.completed && new Date(d.date) <= now).length;
+            const thisWeek = deadlines.filter(d => !d.completed && new Date(d.date) <= weekFromNow).length;
             const completed = deadlines.filter(d => d.completed).length;
-            const urgent = deadlines.filter(d => !d.completed && getDaysUntil(d.date) <= 3).length;
-            const thisWeek = deadlines.filter(d => !d.completed && getDaysUntil(d.date) <= 7 && getDaysUntil(d.date) > 3).length;
 
-            document.getElementById('totalDeadlines').textContent = total;
-            document.getElementById('completedDeadlines').textContent = completed;
-            document.getElementById('urgentDeadlines').textContent = urgent;
-            document.getElementById('weekDeadlines').textContent = thisWeek;
+            elements.totalCount.textContent = total;
+            elements.urgentCount.textContent = urgent;
+            elements.weekCount.textContent = thisWeek;
+            elements.completedCount.textContent = completed;
         }
 
-        function checkNotifications() {
-            const urgentDeadlines = deadlines.filter(d => !d.completed && getDaysUntil(d.date) <= 3);
-            const notificationCount = urgentDeadlines.length;
-
-            // Update notification badge
-            const badge = document.getElementById('notificationCount');
-            
-            if (notificationCount > 0) {
-                badge.textContent = notificationCount;
-                badge.classList.remove('hidden');
-                
-                if (userSettings.browserNotifications && 'Notification' in window && Notification.permission === 'granted') {
-                    urgentDeadlines.forEach(deadline => {
-                        const daysUntil = getDaysUntil(deadline.date);
-                        let title = '';
-                        if (daysUntil < 0) {
-                            title = `Prazo vencido: ${deadline.title}`;
-                        } else if (daysUntil === 0) {
-                            title = `Vence hoje: ${deadline.title}`;
-                        } else if (daysUntil === 1) {
-                            title = `Vence amanhã: ${deadline.title}`;
-                        } else {
-                            title = `${daysUntil} dias restantes: ${deadline.title}`;
-                        }
-                        
-                        new Notification(title, {
-                            body: deadline.description || 'Clique para ver detalhes',
-                            icon: '/favicon.ico'
-                        });
-                    });
-                }
-            } else {
-                badge.classList.add('hidden');
-            }
-        }
-
-        function checkUrgentDeadlines() {
-            if (!userSettings.showUrgentAlerts) {
-                document.getElementById('urgentAlert').classList.add('hidden');
-                return;
-            }
-
-            const urgentDeadlines = deadlines.filter(d => !d.completed && getDaysUntil(d.date) <= 0);
-            const warningDeadlines = deadlines.filter(d => !d.completed && getDaysUntil(d.date) > 0 && getDaysUntil(d.date) <= 3);
-            
-            const alertElement = document.getElementById('urgentAlert');
-            const alertText = document.getElementById('urgentAlertText');
-            
-            if (urgentDeadlines.length > 0 || warningDeadlines.length > 0) {
-                let message = '';
-                if (urgentDeadlines.length > 0) {
-                    message += `${urgentDeadlines.length} prazo(s) vencido(s) ou que vencem hoje. `;
-                }
-                if (warningDeadlines.length > 0) {
-                    message += `${warningDeadlines.length} prazo(s) vencem nos próximos 3 dias.`;
-                }
-                
-                alertText.textContent = message;
-                alertElement.classList.remove('hidden');
-            } else {
-                alertElement.classList.add('hidden');
-            }
-        }
-
-        function scrollToDeadlines() {
-            document.getElementById('deadlinesList').scrollIntoView({ behavior: 'smooth' });
-        }
-
-        function hideUrgentAlert() {
-            document.getElementById('urgentAlert').classList.add('hidden');
-        }
-
-        function requestNotificationPermission() {
-            if ('Notification' in window) {
-                Notification.requestPermission().then(permission => {
-                    if (permission === 'granted') {
-                        showNotification('Permissão para notificações concedida!', 'success');
-                        document.getElementById('browserNotifications').checked = true;
-                        userSettings.browserNotifications = true;
-                        saveUserSettings();
-                    } else {
-                        showNotification('Permissão para notificações negada.', 'error');
-                        document.getElementById('browserNotifications').checked = false;
-                    }
-                });
-            } else {
-                showNotification('Seu navegador não suporta notificações.', 'error');
-            }
-        }
-
-        function exportData() {
-            const dataToExport = {
-                deadlines: deadlines,
-                settings: userSettings,
-                exportDate: new Date().toISOString(),
-                version: '9.0'
+        function getCategoryIcon(category) {
+            const icons = {
+                trabalho: '🏢',
+                pessoal: '👤',
+                juridico: '⚖️',
+                financeiro: '💰',
+                saude: '🏥',
+                educacao: '📚',
+                outros: '📋'
             };
-            
-            const dataStr = JSON.stringify(dataToExport, null, 2);
-            const dataBlob = new Blob([dataStr], {type: 'application/json'});
-            
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(dataBlob);
-            link.download = `deadlinex-backup-${new Date().toISOString().split('T')[0]}.json`;
-            link.click();
-            
-            showNotification('Dados exportados com sucesso!', 'success');
+            return icons[category] || '📋';
         }
 
-        function importData() {
-            document.getElementById('importFile').click();
+        function formatDate(date) {
+            return date.toLocaleDateString('pt-BR') + ' às ' + date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
         }
 
-        async function handleImportFile(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            const reader = new FileReader();
-            reader.onload = async function(e) {
-                try {
-                    const importedData = JSON.parse(e.target.result);
-                    
-                    if (importedData.deadlines) {
-                        for (const deadline of importedData.deadlines) {
-                            deadline.user_id = currentUser.id;
-                            await saveDeadline(deadline);
-                        }
-                        
-                        await loadDeadlines();
-                    }
-                    
-                    if (importedData.settings) {
-                        userSettings = { ...userSettings, ...importedData.settings };
-                        await saveUserSettings();
-                    }
-                    
-                    showNotification('Dados importados com sucesso!', 'success');
-                    
-                } catch (error) {
-                    showNotification('Erro ao importar dados: arquivo inválido', 'error');
-                }
-            };
-            
-            reader.readAsText(file);
-            event.target.value = '';
-        }
-
-        // Deadline actions
         async function toggleComplete(id) {
-            if (isLoading) return;
-            
             const deadline = deadlines.find(d => d.id === id);
-            if (deadline) {
-                deadline.completed = !deadline.completed;
-                
-                try {
-                    await saveDeadline(deadline);
-                    renderDeadlines();
-                    updateStats();
-                    checkNotifications();
-                    checkUrgentDeadlines();
-                    showNotification(deadline.completed ? 'Prazo concluído!' : 'Prazo marcado como pendente!', 'success');
-                } catch (error) {
-                    showNotification('Erro ao atualizar prazo', 'error');
-                }
+            if (!deadline) return;
+
+            try {
+                const { error } = await supabase
+                    .from('deadlines')
+                    .update({ completed: !deadline.completed })
+                    .eq('id', id);
+
+                if (error) throw error;
+
+                loadDeadlines();
+            } catch (error) {
+                alert('Erro ao atualizar prazo: ' + error.message);
             }
         }
 
         async function deleteDeadline(id) {
-            if (isLoading) return;
-            
-            if (confirm('Tem certeza que deseja excluir este prazo?')) {
-                try {
-                    await deleteDeadlineFromDB(id);
-                    deadlines = deadlines.filter(d => d.id !== id);
-                    renderDeadlines();
-                    updateStats();
-                    checkNotifications();
-                    checkUrgentDeadlines();
-                    showNotification('Prazo excluído com sucesso!', 'success');
-                } catch (error) {
-                    showNotification('Erro ao excluir prazo', 'error');
-                }
-            }
-        }
-
-        function sendWhatsAppAlert(id) {
-            const deadline = deadlines.find(d => d.id == id);
-            if (!deadline) return;
-
-            let whatsappNumber = userSettings.whatsappNumber;
-            if (!whatsappNumber) {
-                whatsappNumber = prompt('Digite seu número do WhatsApp (com DDD) para receber o alerta:\nExemplo: 11999887766');
-                if (!whatsappNumber) return;
-                
-                userSettings.whatsappNumber = whatsappNumber;
-                saveUserSettings();
-            }
+            if (!confirm('Tem certeza que deseja excluir este prazo?')) return;
 
             try {
-                sendDeadlineAlert(whatsappNumber, deadline);
-                showNotification('WhatsApp Web aberto! Envie a mensagem para receber o alerta.', 'success');
+                const { error } = await supabase
+                    .from('deadlines')
+                    .delete()
+                    .eq('id', id);
+
+                if (error) throw error;
+
+                loadDeadlines();
             } catch (error) {
-                showNotification('Erro ao abrir WhatsApp: ' + error.message, 'error');
+                alert('Erro ao excluir prazo: ' + error.message);
             }
         }
 
-        // Notification system
-        function showNotification(message, type = 'info') {
-            const notification = document.createElement('div');
-            notification.className = `fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg max-w-sm transition-all duration-300 transform translate-x-full`;
-            
-            const colors = {
-                success: 'bg-green-500 text-white',
-                error: 'bg-red-500 text-white',
-                warning: 'bg-yellow-500 text-white',
-                info: 'bg-blue-500 text-white'
-            };
-            
-            notification.className += ` ${colors[type] || colors.info}`;
-            notification.textContent = message;
-            
-            document.body.appendChild(notification);
-            
-            setTimeout(() => {
-                notification.classList.remove('translate-x-full');
-            }, 100);
-            
-            setTimeout(() => {
-                notification.classList.add('translate-x-full');
-                setTimeout(() => {
-                    document.body.removeChild(notification);
-                }, 300);
-            }, 4000);
+        function testWhatsApp() {
+            if (!userConfig.whatsappNumber) {
+                alert('Configure seu número do WhatsApp primeiro!');
+                return;
+            }
+
+            const message = 'Teste do DeadlineX: Seu sistema de notificações está funcionando! 🚀';
+            const url = `https://wa.me/${userConfig.whatsappNumber}?text=${encodeURIComponent(message)}`;
+            window.open(url, '_blank');
+        }
+
+        function logout() {
+            if (confirm('Tem certeza que deseja sair do sistema?')) {
+                // Aqui você pode adicionar lógica de logout
+                alert('Logout realizado com sucesso!');
+                // window.location.href = '/login';
+            }
+        }
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', () => {
+            loadDeadlines();
+            // Carregar configurações do usuário
+            loadUserConfig();
+        });
+
+        async function loadUserConfig() {
+            try {
+                const { data, error } = await supabase
+                    .from('user_config')
+                    .select('*')
+                    .single();
+
+                if (data) {
+                    userConfig = data;
+                    document.getElementById('whatsappNumber').value = userConfig.whatsappNumber || '';
+                    document.getElementById('enableNotifications').checked = userConfig.enableNotifications || false;
+                }
+            } catch (error) {
+                console.log('Configuração não encontrada, usando padrão');
+            }
         }
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'975f7ecf04b502ec',t:'MTc1NjMzODg4MC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'977d72f425b7c4da',t:'MTc1NjY1Mjk2Ny4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
+
