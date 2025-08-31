@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DeadlineX - Sistema de Gestão de Prazos</title>
+    <title>DeadlineX v27 - Sistema de Gestão de Prazos</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
@@ -29,7 +29,7 @@
                             <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                         </svg>
                     </div>
-                    <h1 class="text-2xl font-bold">DeadlineX</h1>
+                    <h1 class="text-2xl font-bold">DeadlineX v27</h1>
                 </div>
                 <button id="logoutBtn" class="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-lg transition-colors">
                     Sair do Sistema
@@ -115,6 +115,10 @@
             </div>
         </div>
 
+        <!-- Connection Status -->
+        <div id="connectionStatus" class="mb-4 p-3 rounded-lg text-sm font-medium hidden">
+        </div>
+
         <!-- Deadlines List -->
         <div class="bg-white rounded-lg card-shadow">
             <div class="p-6 border-b border-gray-200">
@@ -125,8 +129,7 @@
                     <svg class="w-16 h-16 mx-auto mb-4 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
                         <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                     </svg>
-                    <p>Nenhum prazo cadastrado ainda.</p>
-                    <p class="text-sm">Clique em "Novo Prazo" para começar!</p>
+                    <p>Carregando prazos...</p>
                 </div>
             </div>
         </div>
@@ -198,10 +201,20 @@
     </div>
 
     <script>
-        // Configuração do Supabase
-        const SUPABASE_URL = 'https://your-project.supabase.co';
-        const SUPABASE_ANON_KEY = 'your-anon-key';
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        // Configuração do Supabase com suas credenciais reais
+        const SUPABASE_URL = 'https://vastjlzaxafpoagptklu.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZhc3RqbHpheGFmcG9hZ3B0a2x1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTYyNjUzMDEsImV4cCI6MjA3MTg0MTMwMX0.4EnnkdyVDEo1qSp1C2-QgVlklUkL2W3ulqOmXX_DiVY';
+        
+        let supabase;
+        
+        // Inicializar Supabase
+        try {
+            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            console.log('Supabase inicializado com sucesso');
+        } catch (error) {
+            console.error('Erro ao inicializar Supabase:', error);
+            showConnectionStatus('Erro ao conectar com o banco de dados', 'error');
+        }
 
         // Estado da aplicação
         let deadlines = [];
@@ -223,7 +236,8 @@
             totalCount: document.getElementById('totalCount'),
             urgentCount: document.getElementById('urgentCount'),
             weekCount: document.getElementById('weekCount'),
-            completedCount: document.getElementById('completedCount')
+            completedCount: document.getElementById('completedCount'),
+            connectionStatus: document.getElementById('connectionStatus')
         };
 
         // Event Listeners
@@ -239,7 +253,7 @@
         document.getElementById('newDeadlineForm').addEventListener('submit', saveDeadline);
         document.getElementById('configForm').addEventListener('submit', saveConfig);
 
-        // Funções principais
+        // Funções de UI
         function openModal(modalId) {
             document.getElementById(modalId).classList.remove('hidden');
         }
@@ -248,6 +262,24 @@
             document.getElementById(modalId).classList.add('hidden');
         }
 
+        function showConnectionStatus(message, type) {
+            const statusEl = elements.connectionStatus;
+            statusEl.textContent = message;
+            statusEl.className = `mb-4 p-3 rounded-lg text-sm font-medium ${
+                type === 'success' ? 'bg-green-100 text-green-800' :
+                type === 'error' ? 'bg-red-100 text-red-800' :
+                'bg-blue-100 text-blue-800'
+            }`;
+            statusEl.classList.remove('hidden');
+            
+            if (type === 'success') {
+                setTimeout(() => {
+                    statusEl.classList.add('hidden');
+                }, 3000);
+            }
+        }
+
+        // Funções do banco de dados
         async function saveDeadline(e) {
             e.preventDefault();
             
@@ -261,55 +293,109 @@
             };
 
             try {
+                showConnectionStatus('Salvando prazo...', 'info');
+                
                 const { data, error } = await supabase
                     .from('deadlines')
-                    .insert([deadline]);
+                    .insert([deadline])
+                    .select();
 
-                if (error) throw error;
+                if (error) {
+                    console.error('Erro Supabase:', error);
+                    throw error;
+                }
 
-                alert('Prazo salvo com sucesso!');
+                showConnectionStatus('Prazo salvo com sucesso!', 'success');
                 closeModal('newDeadlineModal');
                 document.getElementById('newDeadlineForm').reset();
-                loadDeadlines();
+                await loadDeadlines();
             } catch (error) {
-                alert('Erro ao salvar prazo: ' + error.message);
+                console.error('Erro ao salvar prazo:', error);
+                showConnectionStatus('Erro ao salvar prazo: ' + error.message, 'error');
             }
         }
 
         async function saveConfig(e) {
             e.preventDefault();
             
-            userConfig.whatsappNumber = document.getElementById('whatsappNumber').value;
-            userConfig.enableNotifications = document.getElementById('enableNotifications').checked;
+            const config = {
+                whatsapp_number: document.getElementById('whatsappNumber').value,
+                enable_notifications: document.getElementById('enableNotifications').checked,
+                updated_at: new Date().toISOString()
+            };
 
             try {
+                showConnectionStatus('Salvando configuração...', 'info');
+                
                 const { data, error } = await supabase
                     .from('user_config')
-                    .upsert([userConfig]);
+                    .upsert([config])
+                    .select();
 
-                if (error) throw error;
+                if (error) {
+                    console.error('Erro Supabase:', error);
+                    throw error;
+                }
 
-                alert('Configuração salva com sucesso!');
+                userConfig.whatsappNumber = config.whatsapp_number;
+                userConfig.enableNotifications = config.enable_notifications;
+                
+                showConnectionStatus('Configuração salva com sucesso!', 'success');
                 closeModal('configModal');
             } catch (error) {
-                alert('Erro ao salvar configuração: ' + error.message);
+                console.error('Erro ao salvar configuração:', error);
+                showConnectionStatus('Erro ao salvar configuração: ' + error.message, 'error');
             }
         }
 
         async function loadDeadlines() {
             try {
+                showConnectionStatus('Carregando prazos...', 'info');
+                
                 const { data, error } = await supabase
                     .from('deadlines')
                     .select('*')
                     .order('date', { ascending: true });
 
-                if (error) throw error;
+                if (error) {
+                    console.error('Erro Supabase:', error);
+                    throw error;
+                }
 
                 deadlines = data || [];
                 renderDeadlines();
                 updateStatistics();
+                
+                if (deadlines.length > 0) {
+                    showConnectionStatus(`${deadlines.length} prazos carregados com sucesso!`, 'success');
+                }
             } catch (error) {
                 console.error('Erro ao carregar prazos:', error);
+                showConnectionStatus('Erro ao carregar prazos: ' + error.message, 'error');
+                
+                // Mostrar interface mesmo com erro
+                renderDeadlines();
+                updateStatistics();
+            }
+        }
+
+        async function loadUserConfig() {
+            try {
+                const { data, error } = await supabase
+                    .from('user_config')
+                    .select('*')
+                    .limit(1)
+                    .single();
+
+                if (data) {
+                    userConfig.whatsappNumber = data.whatsapp_number || '';
+                    userConfig.enableNotifications = data.enable_notifications || false;
+                    
+                    document.getElementById('whatsappNumber').value = userConfig.whatsappNumber;
+                    document.getElementById('enableNotifications').checked = userConfig.enableNotifications;
+                }
+            } catch (error) {
+                console.log('Configuração não encontrada, usando padrão');
             }
         }
 
@@ -332,23 +418,28 @@
             container.innerHTML = deadlines.map(deadline => {
                 const date = new Date(deadline.date);
                 const now = new Date();
-                const isUrgent = date <= now;
-                const isThisWeek = date <= new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+                const isUrgent = date <= now && !deadline.completed;
+                const isThisWeek = date <= new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000) && !deadline.completed;
 
                 return `
-                    <div class="border-l-4 ${isUrgent ? 'border-red-500' : isThisWeek ? 'border-orange-500' : 'border-gray-300'} bg-gray-50 p-4 mb-4 rounded-r-lg">
+                    <div class="border-l-4 ${
+                        deadline.completed ? 'border-green-500 bg-green-50' :
+                        isUrgent ? 'border-red-500 bg-red-50' : 
+                        isThisWeek ? 'border-orange-500 bg-orange-50' : 
+                        'border-gray-300 bg-gray-50'
+                    } p-4 mb-4 rounded-r-lg">
                         <div class="flex justify-between items-start">
                             <div class="flex-1">
-                                <h4 class="font-semibold text-gray-800">${deadline.title}</h4>
+                                <h4 class="font-semibold text-gray-800 ${deadline.completed ? 'line-through' : ''}">${deadline.title}</h4>
                                 <p class="text-sm text-gray-600">${getCategoryIcon(deadline.category)} ${deadline.category}</p>
                                 <p class="text-sm text-gray-500">${formatDate(date)}</p>
                                 ${deadline.description ? `<p class="text-sm text-gray-600 mt-2">${deadline.description}</p>` : ''}
                             </div>
                             <div class="flex space-x-2">
-                                <button onclick="toggleComplete(${deadline.id})" class="text-green-600 hover:text-green-800">
+                                <button onclick="toggleComplete(${deadline.id})" class="text-green-600 hover:text-green-800" title="${deadline.completed ? 'Marcar como pendente' : 'Marcar como concluído'}">
                                     ${deadline.completed ? '✅' : '⭕'}
                                 </button>
-                                <button onclick="deleteDeadline(${deadline.id})" class="text-red-600 hover:text-red-800">
+                                <button onclick="deleteDeadline(${deadline.id})" class="text-red-600 hover:text-red-800" title="Excluir prazo">
                                     🗑️
                                 </button>
                             </div>
@@ -402,9 +493,10 @@
 
                 if (error) throw error;
 
-                loadDeadlines();
+                await loadDeadlines();
             } catch (error) {
-                alert('Erro ao atualizar prazo: ' + error.message);
+                console.error('Erro ao atualizar prazo:', error);
+                showConnectionStatus('Erro ao atualizar prazo: ' + error.message, 'error');
             }
         }
 
@@ -419,55 +511,55 @@
 
                 if (error) throw error;
 
-                loadDeadlines();
+                await loadDeadlines();
+                showConnectionStatus('Prazo excluído com sucesso!', 'success');
             } catch (error) {
-                alert('Erro ao excluir prazo: ' + error.message);
+                console.error('Erro ao excluir prazo:', error);
+                showConnectionStatus('Erro ao excluir prazo: ' + error.message, 'error');
             }
         }
 
         function testWhatsApp() {
             if (!userConfig.whatsappNumber) {
                 alert('Configure seu número do WhatsApp primeiro!');
+                openModal('configModal');
                 return;
             }
 
-            const message = 'Teste do DeadlineX: Seu sistema de notificações está funcionando! 🚀';
+            const message = 'Teste do DeadlineX v27: Seu sistema de notificações está funcionando! 🚀';
             const url = `https://wa.me/${userConfig.whatsappNumber}?text=${encodeURIComponent(message)}`;
             window.open(url, '_blank');
         }
 
         function logout() {
             if (confirm('Tem certeza que deseja sair do sistema?')) {
+                showConnectionStatus('Logout realizado com sucesso!', 'success');
                 // Aqui você pode adicionar lógica de logout
-                alert('Logout realizado com sucesso!');
                 // window.location.href = '/login';
             }
         }
 
         // Inicialização
-        document.addEventListener('DOMContentLoaded', () => {
-            loadDeadlines();
-            // Carregar configurações do usuário
-            loadUserConfig();
-        });
-
-        async function loadUserConfig() {
+        document.addEventListener('DOMContentLoaded', async () => {
+            console.log('Iniciando DeadlineX v27...');
+            
+            // Testar conexão com Supabase
             try {
-                const { data, error } = await supabase
-                    .from('user_config')
-                    .select('*')
-                    .single();
-
-                if (data) {
-                    userConfig = data;
-                    document.getElementById('whatsappNumber').value = userConfig.whatsappNumber || '';
-                    document.getElementById('enableNotifications').checked = userConfig.enableNotifications || false;
+                const { data, error } = await supabase.from('deadlines').select('count', { count: 'exact', head: true });
+                if (error && error.code !== 'PGRST116') { // PGRST116 = tabela não existe
+                    throw error;
                 }
+                console.log('Conexão com Supabase OK');
             } catch (error) {
-                console.log('Configuração não encontrada, usando padrão');
+                console.error('Erro de conexão:', error);
+                showConnectionStatus('Erro de conexão com o banco. Verifique as tabelas.', 'error');
             }
-        }
+            
+            await loadUserConfig();
+            await loadDeadlines();
+        });
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'977d72f425b7c4da',t:'MTc1NjY1Mjk2Ny4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97806ce7f337f1ee',t:'MTc1NjY4NDE3Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
+
 
