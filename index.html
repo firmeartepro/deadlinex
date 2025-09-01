@@ -199,10 +199,10 @@
                         </div>
                     </div>
                     <div class="flex items-center space-x-2">
-                        <!-- Desktop: Mostrar botão compartilhar -->
+                        <!-- Botão compartilhar responsivo -->
                         <button id="shareBtn" class="bg-white bg-opacity-20 hover:bg-opacity-30 px-4 py-2 rounded-lg transition-colors text-base items-center space-x-2 flex">
                             <span>📤</span>
-                            <span class="hidden md:inline">Compartilhar</span>
+                            <span>Compartilhar</span>
                         </button>
                     </div>
                 </div>
@@ -1010,6 +1010,34 @@
             }
         }
 
+        function showSharePrompt() {
+            // Verificar se já mostrou o prompt recentemente
+            const lastShown = localStorage.getItem('sharePromptLastShown');
+            const now = Date.now();
+            const oneDay = 24 * 60 * 60 * 1000; // 24 horas em ms
+            
+            if (lastShown && (now - parseInt(lastShown)) < oneDay) {
+                return; // Não mostrar se já mostrou nas últimas 24h
+            }
+            
+            // Mostrar prompt após 10 segundos de uso
+            setTimeout(() => {
+                const shouldShow = confirm(
+                    '🚀 Gostando do DeadlineX?\n\n' +
+                    'Que tal compartilhar com seus amigos e colegas?\n' +
+                    'Ajude outros a organizarem melhor seus prazos!\n\n' +
+                    'Clique OK para compartilhar agora 📤'
+                );
+                
+                if (shouldShow) {
+                    shareApp();
+                }
+                
+                // Marcar como mostrado
+                localStorage.setItem('sharePromptLastShown', now.toString());
+            }, 10000); // 10 segundos após login
+        }
+
         if (elements.shareBtn) {
             elements.shareBtn.addEventListener('click', shareApp);
         }
@@ -1135,6 +1163,9 @@
                     showConnectionStatus('✅ Login realizado com sucesso!', 'success');
                     await initializeApp();
                     
+                    // Mostrar prompt de compartilhamento após login
+                    showSharePrompt();
+                    
                 } catch (error) {
                     errorLog('Erro crítico no login:', error);
                     showConnectionStatus('❌ Erro de conexão: ' + error.message, 'error');
@@ -1230,6 +1261,9 @@
                     showConnectionStatus(`🎉 Conta criada com sucesso! Bem-vindo ao DeadlineX, ${name}!`, 'success');
                     
                     await initializeApp();
+                    
+                    // Mostrar prompt de compartilhamento para novos usuários
+                    showSharePrompt();
                     
                 } catch (error) {
                     errorLog('Erro crítico no cadastro:', error);
@@ -1842,6 +1876,9 @@
                     if (elements.mainApp) elements.mainApp.classList.remove('hidden');
                     
                     await initializeApp();
+                    
+                    // Mostrar prompt de compartilhamento para usuários retornando
+                    showSharePrompt();
                 } else {
                     debugLog('Nenhum usuário logado encontrado');
                     showConnectionStatus('Sistema pronto para login', 'info');
@@ -1931,8 +1968,9 @@
             filteredDeadlines: () => filteredDeadlines
         };
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9781a84227bb1acb',t:'MTc1NjY5NzA5My4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9781b467514a0133',t:'MTc1NjY5NzU5MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
+
 
 
 
