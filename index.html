@@ -404,8 +404,8 @@
 
     <script>
         // ===== SISTEMA DE VERSIONAMENTO =====
-        const SYSTEM_VERSION = 'DeadlineX-v2.1-Debug';
-        console.log(`🚀 ${SYSTEM_VERSION} - Sistema com Diagnósticos Avançados`);
+        const SYSTEM_VERSION = 'DeadlineX-v3.0-SupabaseOnly';
+        console.log(`🚀 ${SYSTEM_VERSION} - Sistema 100% Supabase`);
         
         // ===== SISTEMA DE DEBUG AVANÇADO =====
         window.debugMode = true;
@@ -422,14 +422,6 @@
                 console.error('Stack trace:', error.stack);
             }
         }
-        
-        // Salvar versão no localStorage para referência
-        localStorage.setItem('deadlineXVersion', SYSTEM_VERSION);
-        localStorage.setItem('deadlineXFeatures', JSON.stringify([
-            'PWA Completo', 'Notificações Push', 'Isolamento por Usuário', 
-            'Edição de Prazos', 'Logo Personalizada', 'Design Responsivo',
-            'Sistema de Compartilhamento', 'Instalação Automática'
-        ]));
 
         // ===== CONFIGURAÇÃO SUPABASE =====
         const SUPABASE_URL = 'https://vastjlzaxafpoagptklu.supabase.co';
@@ -672,33 +664,7 @@
             this.textContent = type === 'password' ? '👁️' : '🙈';
         });
 
-        // Função para gerar UUID válido
-        function generateUUID() {
-            const uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-                var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-                return v.toString(16);
-            });
-            debugLog('UUID gerado:', uuid);
-            return uuid;
-        }
-        
-        // Função para validar UUID
-        function isValidUUID(uuid) {
-            const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-            const isValid = uuidRegex.test(uuid);
-            debugLog('Validando UUID:', { uuid, isValid });
-            return isValid;
-        }
-        
-        // Função para corrigir UUID inválido
-        function fixUserUUID(user) {
-            if (!user.id || !isValidUUID(user.id)) {
-                const oldId = user.id;
-                user.id = generateUUID();
-                debugLog('UUID corrigido:', { oldId, newId: user.id });
-            }
-            return user;
-        }
+
 
         // Login
         elements.loginForm.addEventListener('submit', async (e) => {
@@ -709,43 +675,33 @@
             debugLog('Tentativa de login:', { email });
             
             if (email && password) {
-                // Verificar se usuário existe e senha está correta
-                const existingUsers = JSON.parse(localStorage.getItem('deadlineXUsers') || '{}');
-                const userKey = btoa(email).replace(/[^a-zA-Z0-9]/g, '').substring(0, 20);
-                
-                debugLog('Chave do usuário gerada:', userKey);
-                debugLog('Usuários existentes:', Object.keys(existingUsers));
-                
-                if (existingUsers[userKey]) {
-                    debugLog('Usuário encontrado:', existingUsers[userKey]);
+                try {
+                    showConnectionStatus('Fazendo login...', 'info');
                     
-                    // Verificar senha
-                    if (existingUsers[userKey].password === btoa(password)) {
-                        // Login bem-sucedido
-                        currentUser = existingUsers[userKey];
-                        debugLog('Login bem-sucedido, usuário antes da correção:', currentUser);
-                        
-                        // Garantir que o usuário tenha um UUID válido
-                        currentUser = fixUserUUID(currentUser);
-                        existingUsers[userKey] = currentUser;
-                        localStorage.setItem('deadlineXUsers', JSON.stringify(existingUsers));
-                        localStorage.setItem('deadlineXUser', JSON.stringify(currentUser));
-                        
-                        debugLog('Usuário após correção UUID:', currentUser);
-                        
-                        elements.userWelcome.textContent = `Bem-vindo de volta, ${currentUser.name}!`;
-                        
-                        elements.loginScreen.classList.add('hidden');
-                        elements.mainApp.classList.remove('hidden');
-                        
-                        await initializeApp();
-                    } else {
-                        errorLog('Senha incorreta para o usuário:', email);
-                        alert('Senha incorreta! Verifique sua senha e tente novamente.');
+                    const { data, error } = await supabase.auth.signInWithPassword({
+                        email: email,
+                        password: password
+                    });
+                    
+                    if (error) {
+                        errorLog('Erro no login:', error);
+                        showConnectionStatus('❌ ' + error.message, 'error');
+                        return;
                     }
-                } else {
-                    errorLog('Usuário não encontrado:', email);
-                    alert('Email não encontrado! Por favor, cadastre-se primeiro ou verifique o email digitado.');
+                    
+                    currentUser = data.user;
+                    debugLog('Login bem-sucedido:', currentUser);
+                    
+                    elements.userWelcome.textContent = `Bem-vindo de volta, ${currentUser.email}!`;
+                    
+                    elements.loginScreen.classList.add('hidden');
+                    elements.mainApp.classList.remove('hidden');
+                    
+                    await initializeApp();
+                    
+                } catch (error) {
+                    errorLog('Erro crítico no login:', error);
+                    showConnectionStatus('❌ Erro de conexão', 'error');
                 }
             }
         });
@@ -776,68 +732,68 @@
                 return;
             }
             
-            const userKey = btoa(email).replace(/[^a-zA-Z0-9]/g, '').substring(0, 20);
-            
-            // Verificar se usuário já existe
-            const existingUsers = JSON.parse(localStorage.getItem('deadlineXUsers') || '{}');
-            
-            if (existingUsers[userKey]) {
-                alert('Este email já está cadastrado! Use a aba "Entrar" para fazer login.');
-                return;
+            try {
+                showConnectionStatus('Criando conta...', 'info');
+                
+                const { data, error } = await supabase.auth.signUp({
+                    email: email,
+                    password: password,
+                    options: {
+                        data: {
+                            name: name,
+                            phone: phone
+                        }
+                    }
+                });
+                
+                if (error) {
+                    errorLog('Erro no cadastro:', error);
+                    showConnectionStatus('❌ ' + error.message, 'error');
+                    return;
+                }
+                
+                currentUser = data.user;
+                debugLog('Cadastro bem-sucedido:', currentUser);
+                
+                elements.userWelcome.textContent = `Bem-vindo, ${name}!`;
+                
+                elements.loginScreen.classList.add('hidden');
+                elements.mainApp.classList.remove('hidden');
+                
+                // Mostrar mensagem de boas-vindas
+                setTimeout(() => {
+                    showConnectionStatus(`🎉 Conta criada com sucesso! Bem-vindo ao DeadlineX, ${name}!`, 'success');
+                }, 500);
+                
+                await initializeApp();
+                
+            } catch (error) {
+                errorLog('Erro crítico no cadastro:', error);
+                showConnectionStatus('❌ Erro de conexão', 'error');
             }
-            
-            // Criar novo usuário com UUID válido
-            const newUser = {
-                id: generateUUID(), // UUID válido para o Supabase
-                name: name,
-                email: email,
-                password: btoa(password), // Criptografia básica
-                phone: phone,
-                createdAt: new Date().toISOString()
-            };
-            
-            debugLog('Novo usuário criado:', newUser);
-            debugLog('UUID do novo usuário é válido:', isValidUUID(newUser.id));
-            
-            // Salvar na lista de usuários
-            existingUsers[userKey] = newUser;
-            localStorage.setItem('deadlineXUsers', JSON.stringify(existingUsers));
-            
-            // Fazer login automático
-            currentUser = newUser;
-            localStorage.setItem('deadlineXUser', JSON.stringify(currentUser));
-            
-            debugLog('Usuário salvo no localStorage:', currentUser);
-            elements.userWelcome.textContent = `Bem-vindo, ${currentUser.name}!`;
-            
-            elements.loginScreen.classList.add('hidden');
-            elements.mainApp.classList.remove('hidden');
-            
-            // Mostrar mensagem de boas-vindas
-            setTimeout(() => {
-                showConnectionStatus(`🎉 Conta criada com sucesso! Bem-vindo ao DeadlineX, ${currentUser.name}!`, 'success');
-            }, 500);
-            
-            await initializeApp();
         });
 
-        elements.logoutBtn.addEventListener('click', () => {
+        elements.logoutBtn.addEventListener('click', async () => {
             if (confirm('Tem certeza que deseja sair do sistema?')) {
-                localStorage.removeItem('deadlineXUser');
-                currentUser = null;
-                elements.loginScreen.classList.remove('hidden');
-                elements.mainApp.classList.add('hidden');
-                
-                // Limpar campos de login
-                elements.userIdentifier.value = '';
-                elements.userPassword.value = '';
-                
-                // Limpar campos de cadastro
-                document.getElementById('registerName').value = '';
-                document.getElementById('registerEmail').value = '';
-                document.getElementById('registerPassword').value = '';
-                document.getElementById('confirmPassword').value = '';
-                document.getElementById('registerPhone').value = '';
+                try {
+                    await supabase.auth.signOut();
+                    currentUser = null;
+                    elements.loginScreen.classList.remove('hidden');
+                    elements.mainApp.classList.add('hidden');
+                    
+                    // Limpar campos de login
+                    elements.userIdentifier.value = '';
+                    elements.userPassword.value = '';
+                    
+                    // Limpar campos de cadastro
+                    document.getElementById('registerName').value = '';
+                    document.getElementById('registerEmail').value = '';
+                    document.getElementById('registerPassword').value = '';
+                    document.getElementById('confirmPassword').value = '';
+                    document.getElementById('registerPhone').value = '';
+                } catch (error) {
+                    console.error('Erro no logout:', error);
+                }
             }
         });
 
@@ -923,42 +879,32 @@
             const isEditing = elements.editingId.value !== '';
             debugLog('Modo de edição:', isEditing);
             debugLog('Usuário atual:', currentUser);
-            debugLog('UUID do usuário é válido:', isValidUUID(currentUser?.id));
             
-            // Gerar ID único para novos prazos
-            const deadlineId = isEditing ? elements.editingId.value : generateUUID();
-            debugLog('ID do prazo:', deadlineId);
+            // Validar dados antes de enviar
+            const title = document.getElementById('deadlineTitle').value.trim();
+            const category = document.getElementById('deadlineCategory').value;
+            const date = document.getElementById('deadlineDate').value;
+            const description = document.getElementById('deadlineDescription').value.trim();
             
-            const deadline = {
-                title: document.getElementById('deadlineTitle').value.trim(),
-                category: document.getElementById('deadlineCategory').value,
-                date: document.getElementById('deadlineDate').value,
-                description: document.getElementById('deadlineDescription').value.trim(),
-                user_id: currentUser.id,
-                completed: false
-            };
-
-            // Para novos prazos, incluir ID e created_at
-            if (!isEditing) {
-                deadline.id = deadlineId;
-                deadline.created_at = new Date().toISOString();
+            if (!title || !category || !date) {
+                showConnectionStatus('❌ Preencha todos os campos obrigatórios', 'error');
+                return;
             }
             
-            debugLog('Dados do prazo a ser salvo:', deadline);
-
             try {
                 showConnectionStatus('Salvando prazo...', 'info');
                 
                 let result;
+                
                 if (isEditing) {
-                    debugLog('Executando UPDATE no Supabase...');
-                    // Para UPDATE, remover campos que não devem ser atualizados
-                    const updateData = { ...deadline };
-                    delete updateData.id;
-                    delete updateData.created_at;
-                    delete updateData.user_id; // Não atualizar user_id por segurança
+                    debugLog('=== ATUALIZANDO PRAZO NO SUPABASE ===');
                     
-                    debugLog('Dados para UPDATE:', updateData);
+                    const updateData = {
+                        title: title,
+                        category: category,
+                        date: date,
+                        description: description
+                    };
                     
                     result = await supabase
                         .from('deadlines')
@@ -966,90 +912,43 @@
                         .eq('id', elements.editingId.value)
                         .eq('user_id', currentUser.id)
                         .select();
+                        
                 } else {
-                    debugLog('Executando INSERT no Supabase...');
+                    debugLog('=== CRIANDO NOVO PRAZO NO SUPABASE ===');
                     
-                    // Verificar se já existe um prazo com esse ID (prevenção extra)
-                    const { data: existingDeadline } = await supabase
-                        .from('deadlines')
-                        .select('id')
-                        .eq('id', deadlineId)
-                        .single();
-                    
-                    if (existingDeadline) {
-                        debugLog('ID já existe, gerando novo...');
-                        deadline.id = generateUUID();
-                        debugLog('Novo ID gerado:', deadline.id);
-                    }
+                    const insertData = {
+                        title: title,
+                        category: category,
+                        date: date,
+                        description: description,
+                        user_id: currentUser.id,
+                        completed: false
+                    };
                     
                     result = await supabase
                         .from('deadlines')
-                        .insert([deadline])
+                        .insert([insertData])
                         .select();
                 }
-
-                debugLog('Resultado do Supabase:', result);
-
+                
+                debugLog('Resultado Supabase:', result);
+                
                 if (result.error) {
-                    errorLog('Erro retornado pelo Supabase:', result.error);
-                    
-                    // Tratamento específico para erro 409 (conflito)
-                    if (result.error.code === '23505' || result.error.message.includes('duplicate key')) {
-                        errorLog('Erro de chave duplicada detectado');
-                        
-                        if (!isEditing) {
-                            // Tentar novamente com novo ID
-                            debugLog('Tentando novamente com novo UUID...');
-                            deadline.id = generateUUID();
-                            debugLog('Novo UUID gerado:', deadline.id);
-                            
-                            const retryResult = await supabase
-                                .from('deadlines')
-                                .insert([deadline])
-                                .select();
-                            
-                            if (retryResult.error) {
-                                throw retryResult.error;
-                            }
-                            
-                            debugLog('Prazo salvo com sucesso na segunda tentativa!');
-                            showConnectionStatus('Prazo salvo com sucesso!', 'success');
-                            closeModal('deadlineModal');
-                            await loadDeadlines();
-                            scheduleNotifications();
-                            return;
-                        }
-                    }
-                    
-                    throw result.error;
+                    errorLog('❌ Erro no Supabase:', result.error);
+                    showConnectionStatus('❌ Erro ao salvar: ' + result.error.message, 'error');
+                    return;
                 }
                 
-                debugLog('Prazo salvo com sucesso!');
-                showConnectionStatus(`Prazo ${isEditing ? 'atualizado' : 'salvo'} com sucesso!`, 'success');
+                debugLog('✅ Prazo salvo com sucesso no Supabase');
+                showConnectionStatus(`✅ Prazo ${isEditing ? 'atualizado' : 'salvo'} com sucesso!`, 'success');
+                
                 closeModal('deadlineModal');
                 await loadDeadlines();
-                scheduleNotifications(); // Reagendar notificações
+                scheduleNotifications();
+                
             } catch (error) {
-                errorLog('Erro ao salvar prazo:', error);
-                debugLog('Detalhes completos do erro:', {
-                    message: error.message,
-                    code: error.code,
-                    details: error.details,
-                    hint: error.hint,
-                    stack: error.stack
-                });
-                
-                // Mensagem de erro mais amigável
-                let errorMessage = 'Erro desconhecido';
-                if (error.message.includes('duplicate key') || error.code === '23505') {
-                    errorMessage = 'Conflito de dados. Tentando novamente...';
-                } else if (error.message.includes('violates')) {
-                    errorMessage = 'Dados inválidos. Verifique os campos.';
-                } else {
-                    errorMessage = error.message;
-                }
-                
-                showConnectionStatus('Erro ao salvar prazo: ' + errorMessage, 'error');
+                errorLog('❌ ERRO CRÍTICO ao salvar prazo:', error);
+                showConnectionStatus('❌ Erro de conexão: ' + error.message, 'error');
             }
         }
 
@@ -1059,48 +958,42 @@
                 return;
             }
 
-            debugLog('=== INICIANDO CARREGAMENTO DE PRAZOS ===');
+            debugLog('=== CARREGANDO PRAZOS DO SUPABASE ===');
             debugLog('Usuário atual:', currentUser);
-            debugLog('UUID do usuário é válido:', isValidUUID(currentUser?.id));
 
             try {
                 showConnectionStatus('Carregando prazos...', 'info');
                 
-                debugLog('Executando SELECT no Supabase...');
                 const { data, error } = await supabase
                     .from('deadlines')
                     .select('*')
                     .eq('user_id', currentUser.id)
                     .order('date', { ascending: true });
 
-                debugLog('Resultado do SELECT:', { data, error });
+                debugLog('Resultado do Supabase:', { data, error });
 
                 if (error) {
-                    errorLog('Erro retornado pelo Supabase no SELECT:', error);
-                    debugLog('Detalhes completos do erro SELECT:', {
-                        message: error.message,
-                        code: error.code,
-                        details: error.details,
-                        hint: error.hint
-                    });
-                    throw error;
+                    errorLog('❌ Erro ao carregar prazos:', error);
+                    showConnectionStatus('❌ Erro ao carregar: ' + error.message, 'error');
+                    deadlines = [];
+                } else {
+                    deadlines = data || [];
+                    debugLog(`✅ ${deadlines.length} prazos carregados do Supabase`);
+                    
+                    if (deadlines.length > 0) {
+                        showConnectionStatus(`✅ ${deadlines.length} prazos carregados!`, 'success');
+                    } else {
+                        showConnectionStatus('Nenhum prazo encontrado. Crie seu primeiro prazo!', 'info');
+                    }
                 }
-
-                deadlines = data || [];
-                debugLog(`${deadlines.length} prazos carregados do banco:`, deadlines);
                 
                 renderDeadlines();
                 updateStatistics();
-                scheduleNotifications(); // Agendar notificações
+                scheduleNotifications();
                 
-                if (deadlines.length > 0) {
-                    showConnectionStatus(`${deadlines.length} prazos carregados!`, 'success');
-                } else {
-                    showConnectionStatus('Nenhum prazo encontrado. Crie seu primeiro!', 'info');
-                }
             } catch (error) {
-                errorLog('Erro ao carregar prazos:', error);
-                showConnectionStatus('Erro ao carregar prazos: ' + error.message, 'error');
+                errorLog('❌ ERRO CRÍTICO ao carregar prazos:', error);
+                showConnectionStatus('❌ Erro de conexão: ' + error.message, 'error');
                 
                 deadlines = [];
                 renderDeadlines();
@@ -1223,12 +1116,17 @@
                     .eq('id', id)
                     .eq('user_id', currentUser.id);
 
-                if (error) throw error;
+                if (error) {
+                    errorLog('Erro ao atualizar prazo:', error);
+                    showConnectionStatus('❌ Erro ao atualizar: ' + error.message, 'error');
+                    return;
+                }
 
                 await loadDeadlines();
+                showConnectionStatus('✅ Prazo atualizado!', 'success');
             } catch (error) {
-                console.error('Erro ao atualizar prazo:', error);
-                showConnectionStatus('Erro ao atualizar prazo: ' + error.message, 'error');
+                errorLog('Erro ao atualizar prazo:', error);
+                showConnectionStatus('❌ Erro de conexão: ' + error.message, 'error');
             }
         };
 
@@ -1242,50 +1140,101 @@
                     .eq('id', id)
                     .eq('user_id', currentUser.id);
 
-                if (error) throw error;
+                if (error) {
+                    errorLog('Erro ao excluir prazo:', error);
+                    showConnectionStatus('❌ Erro ao excluir: ' + error.message, 'error');
+                    return;
+                }
 
                 await loadDeadlines();
-                showConnectionStatus('Prazo excluído com sucesso!', 'success');
+                showConnectionStatus('✅ Prazo excluído com sucesso!', 'success');
             } catch (error) {
-                console.error('Erro ao excluir prazo:', error);
-                showConnectionStatus('Erro ao excluir prazo: ' + error.message, 'error');
+                errorLog('Erro ao excluir prazo:', error);
+                showConnectionStatus('❌ Erro de conexão: ' + error.message, 'error');
             }
         };
 
         // ===== SERVICE WORKER PARA PWA =====
         
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('data:application/javascript;base64,' + btoa(`
-                const CACHE_NAME = 'deadlinex-v2.0';
+            // Criar Service Worker inline como blob
+            const swCode = `
+                const CACHE_NAME = 'deadlinex-v2.1';
                 const urlsToCache = ['/'];
 
                 self.addEventListener('install', event => {
+                    console.log('SW: Installing...');
                     event.waitUntil(
                         caches.open(CACHE_NAME)
-                            .then(cache => cache.addAll(urlsToCache))
+                            .then(cache => {
+                                console.log('SW: Cache opened');
+                                return cache.addAll(urlsToCache);
+                            })
+                            .catch(err => console.log('SW: Cache error:', err))
                     );
                 });
 
                 self.addEventListener('fetch', event => {
+                    // Só cachear requests GET
+                    if (event.request.method !== 'GET') return;
+                    
                     event.respondWith(
                         caches.match(event.request)
-                            .then(response => response || fetch(event.request))
+                            .then(response => {
+                                if (response) {
+                                    return response;
+                                }
+                                return fetch(event.request);
+                            })
+                            .catch(err => {
+                                console.log('SW: Fetch error:', err);
+                                return new Response('Offline', { status: 503 });
+                            })
                     );
                 });
 
                 self.addEventListener('notificationclick', event => {
+                    console.log('SW: Notification clicked');
                     event.notification.close();
+                    
                     if (event.action === 'view') {
                         event.waitUntil(
-                            clients.openWindow('/')
+                            clients.openWindow(self.location.origin)
                         );
                     }
                 });
-            `)).then(() => {
-                console.log('✅ Service Worker registrado');
-            }).catch(error => {
-                console.log('❌ Erro ao registrar Service Worker:', error);
-            });
+
+                self.addEventListener('activate', event => {
+                    console.log('SW: Activating...');
+                    event.waitUntil(
+                        caches.keys().then(cacheNames => {
+                            return Promise.all(
+                                cacheNames.map(cacheName => {
+                                    if (cacheName !== CACHE_NAME) {
+                                        console.log('SW: Deleting old cache:', cacheName);
+                                        return caches.delete(cacheName);
+                                    }
+                                })
+                            );
+                        })
+                    );
+                });
+            `;
+            
+            const blob = new Blob([swCode], { type: 'application/javascript' });
+            const swUrl = URL.createObjectURL(blob);
+            
+            navigator.serviceWorker.register(swUrl)
+                .then(registration => {
+                    console.log('✅ Service Worker registrado:', registration.scope);
+                    
+                    // Limpar URL do blob após registro
+                    URL.revokeObjectURL(swUrl);
+                })
+                .catch(error => {
+                    console.log('❌ Erro ao registrar Service Worker:', error);
+                    URL.revokeObjectURL(swUrl);
+                });
         }
 
         // ===== INICIALIZAÇÃO =====
@@ -1307,41 +1256,27 @@
         }
 
         // Verificar se usuário já está logado
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', async () => {
             debugLog('=== INICIALIZANDO APLICAÇÃO ===');
             
-            const savedUser = localStorage.getItem('deadlineXUser');
-            debugLog('Usuário salvo no localStorage:', savedUser);
-            
-            if (savedUser) {
-                try {
-                    currentUser = JSON.parse(savedUser);
-                    debugLog('Usuário parseado:', currentUser);
-                    debugLog('UUID do usuário salvo é válido:', isValidUUID(currentUser?.id));
+            try {
+                const { data: { session } } = await supabase.auth.getSession();
+                
+                if (session?.user) {
+                    currentUser = session.user;
+                    debugLog('Usuário logado encontrado:', currentUser);
                     
-                    // Corrigir UUID se necessário
-                    if (currentUser && (!currentUser.id || !isValidUUID(currentUser.id))) {
-                        debugLog('Corrigindo UUID do usuário salvo...');
-                        currentUser = fixUserUUID(currentUser);
-                        localStorage.setItem('deadlineXUser', JSON.stringify(currentUser));
-                        
-                        // Atualizar também na lista de usuários
-                        const existingUsers = JSON.parse(localStorage.getItem('deadlineXUsers') || '{}');
-                        const userKey = btoa(currentUser.email).replace(/[^a-zA-Z0-9]/g, '').substring(0, 20);
-                        existingUsers[userKey] = currentUser;
-                        localStorage.setItem('deadlineXUsers', JSON.stringify(existingUsers));
-                    }
-                    
-                    elements.userWelcome.textContent = `Olá, ${currentUser.name}!`;
+                    const userName = currentUser.user_metadata?.name || currentUser.email;
+                    elements.userWelcome.textContent = `Olá, ${userName}!`;
                     elements.loginScreen.classList.add('hidden');
                     elements.mainApp.classList.remove('hidden');
-                    initializeApp();
-                } catch (error) {
-                    errorLog('Erro ao parsear usuário salvo:', error);
-                    localStorage.removeItem('deadlineXUser');
+                    
+                    await initializeApp();
+                } else {
+                    debugLog('Nenhum usuário logado encontrado');
                 }
-            } else {
-                debugLog('Nenhum usuário salvo encontrado');
+            } catch (error) {
+                errorLog('Erro ao verificar sessão:', error);
             }
         });
 
@@ -1352,14 +1287,11 @@
             console.log('==================================');
             console.log('Versão:', SYSTEM_VERSION);
             console.log('Usuário atual:', currentUser);
-            console.log('UUID do usuário é válido:', currentUser ? isValidUUID(currentUser.id) : 'N/A');
             console.log('Prazos carregados:', deadlines.length);
             console.log('Supabase conectado:', !!supabase);
             console.log('Notificações:', Notification.permission);
             console.log('Service Worker:', 'serviceWorker' in navigator);
             console.log('PWA instalável:', !!deferredPrompt);
-            console.log('LocalStorage usuários:', localStorage.getItem('deadlineXUsers'));
-            console.log('LocalStorage usuário atual:', localStorage.getItem('deadlineXUser'));
             
             // Testar conexão com Supabase
             if (supabase && currentUser) {
@@ -1373,29 +1305,6 @@
                     });
             }
         };
-        
-        window.fixAllUUIDs = function() {
-            console.log('🔧 CORRIGINDO TODOS OS UUIDs...');
-            
-            // Corrigir usuário atual
-            if (currentUser) {
-                const oldId = currentUser.id;
-                currentUser = fixUserUUID(currentUser);
-                localStorage.setItem('deadlineXUser', JSON.stringify(currentUser));
-                console.log('Usuário atual corrigido:', { oldId, newId: currentUser.id });
-            }
-            
-            // Corrigir todos os usuários salvos
-            const existingUsers = JSON.parse(localStorage.getItem('deadlineXUsers') || '{}');
-            Object.keys(existingUsers).forEach(key => {
-                const oldId = existingUsers[key].id;
-                existingUsers[key] = fixUserUUID(existingUsers[key]);
-                console.log(`Usuário ${key} corrigido:`, { oldId, newId: existingUsers[key].id });
-            });
-            localStorage.setItem('deadlineXUsers', JSON.stringify(existingUsers));
-            
-            console.log('✅ Todos os UUIDs foram corrigidos!');
-        };
 
         // Disponibilizar globalmente
         window.deadlineXSystem = {
@@ -1405,8 +1314,9 @@
             deadlines: () => deadlines
         };
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9780d4322090068a',t:'MTc1NjY4ODQwNy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9780ec1b66f6a178',t:'MTc1NjY4OTM4Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
+
 
 
 
