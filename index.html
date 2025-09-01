@@ -785,18 +785,32 @@
         async function connectGoogleCalendar() {
             try {
                 console.log('🚀 INICIANDO CONEXÃO COM GOOGLE CALENDAR');
+                console.log('🔑 Client ID:', GOOGLE_CLIENT_ID);
                 showConnectionStatus('Carregando Google API...', 'info');
                 
                 // Carregar API se necessário
                 if (!isGoogleAPILoaded) {
+                    console.log('📦 Carregando Google API...');
                     const loaded = await loadGoogleAPI();
                     if (!loaded) {
                         throw new Error('Falha ao carregar Google API');
                     }
                 }
                 
+                console.log('✅ Google API carregada');
+                console.log('🔐 Estado do GoogleAuth:', googleAuth ? 'Inicializado' : 'Não inicializado');
+                
                 showConnectionStatus('Solicitando autorização...', 'info');
                 console.log('🔐 Solicitando autorização do usuário...');
+                
+                // Verificar se já está logado
+                if (googleAuth.isSignedIn.get()) {
+                    console.log('👤 Usuário já está logado no Google');
+                    const currentUser = googleAuth.currentUser.get();
+                    console.log('✅ Usuário atual:', currentUser.getBasicProfile().getName());
+                } else {
+                    console.log('🔓 Usuário não está logado, iniciando processo de login...');
+                }
                 
                 // Solicitar autorização
                 const authResult = await googleAuth.signIn();
@@ -806,6 +820,7 @@
                 }
                 
                 console.log('✅ Usuário autorizado:', authResult.getBasicProfile().getName());
+                console.log('📧 Email:', authResult.getBasicProfile().getEmail());
                 
                 // Obter tokens
                 const authResponse = authResult.getAuthResponse();
@@ -814,12 +829,14 @@
                 userConfig.googleCalendarEnabled = true;
                 
                 console.log('🔑 Tokens obtidos:', {
-                    access_token: userConfig.googleAccessToken ? 'Presente' : 'Ausente',
-                    refresh_token: userConfig.googleRefreshToken ? 'Presente' : 'Ausente'
+                    access_token: userConfig.googleAccessToken ? 'Presente (' + userConfig.googleAccessToken.substring(0, 20) + '...)' : 'Ausente',
+                    refresh_token: userConfig.googleRefreshToken ? 'Presente' : 'Ausente',
+                    expires_in: authResponse.expires_in
                 });
                 
                 // Salvar configuração no Supabase
                 if (currentUser) {
+                    console.log('💾 Salvando configuração no Supabase...');
                     await supabase
                         .from('user_configs')
                         .upsert({
@@ -829,31 +846,56 @@
                             google_refresh_token: userConfig.googleRefreshToken
                         });
                     
-                    console.log('💾 Configuração salva no Supabase');
+                    console.log('✅ Configuração salva no Supabase');
                 }
                 
                 showConnectionStatus('✅ Google Calendar conectado com sucesso!', 'success');
                 updateGoogleCalendarModal();
                 
                 // Criar agenda DeadlineX
+                console.log('📅 Criando/verificando agenda DeadlineX...');
                 await ensureDeadlineXCalendar();
                 
                 // Sincronizar prazos existentes
+                console.log('🔄 Sincronizando prazos existentes...');
                 await syncAllDeadlinesToGoogleCalendar();
                 
             } catch (error) {
-                console.error('❌ Erro ao conectar Google Calendar:', error);
+                console.error('❌ ERRO DETALHADO ao conectar Google Calendar:');
+                console.error('Tipo do erro:', error.constructor.name);
+                console.error('Mensagem:', error.message);
+                console.error('Stack:', error.stack);
+                console.error('Objeto completo:', error);
                 
                 let errorMessage = 'Erro ao conectar com Google Calendar';
-                if (error.message.includes('popup_blocked')) {
-                    errorMessage = 'Popup bloqueado. Permita popups para este site.';
+                
+                if (error.error) {
+                    console.error('Erro interno:', error.error);
+                    if (error.error === 'popup_blocked_by_browser') {
+                        errorMessage = '🚫 Popup bloqueado pelo navegador. Permita popups para este site e tente novamente.';
+                    } else if (error.error === 'access_denied') {
+                        errorMessage = '🚫 Acesso negado. Você precisa autorizar o acesso ao Google Calendar.';
+                    } else if (error.error === 'invalid_client') {
+                        errorMessage = '🔑 Credenciais inválidas. Verifique a configuração do Google Cloud.';
+                    }
+                } else if (error.message.includes('popup_blocked')) {
+                    errorMessage = '🚫 Popup bloqueado. Permita popups para este site.';
                 } else if (error.message.includes('access_denied')) {
-                    errorMessage = 'Acesso negado pelo usuário.';
+                    errorMessage = '🚫 Acesso negado pelo usuário.';
                 } else if (error.message.includes('network')) {
-                    errorMessage = 'Erro de conexão. Verifique sua internet.';
+                    errorMessage = '🌐 Erro de conexão. Verifique sua internet.';
+                } else if (error.message.includes('idpiframe_initialization_failed')) {
+                    errorMessage = '🔧 Erro de inicialização. Recarregue a página e tente novamente.';
                 }
                 
                 showConnectionStatus('❌ ' + errorMessage, 'error');
+                
+                // Mostrar instruções detalhadas
+                console.log('📋 INSTRUÇÕES PARA RESOLVER:');
+                console.log('1. Verifique se popups estão permitidos');
+                console.log('2. Verifique sua conexão com internet');
+                console.log('3. Tente recarregar a página');
+                console.log('4. Verifique se o Google Cloud Console está configurado corretamente');
             }
         }
 
@@ -1160,15 +1202,67 @@
                             </p>
                         </div>
                         
-                        <button id="connectGoogleBtn" class="bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-lg font-semibold">
-                            📅 Conectar Google Calendar
-                        </button>
+                        <div class="space-y-3">
+                            <button id="connectGoogleBtn" class="w-full bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-lg font-semibold">
+                                📅 Conectar Google Calendar
+                            </button>
+                            
+                            <button id="diagnoseGoogleBtn" class="w-full bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg text-sm">
+                                🔍 Diagnosticar Conexão
+                            </button>
+                        </div>
                     </div>
                 `;
                 
                 const connectBtn = document.getElementById('connectGoogleBtn');
+                const diagnoseBtn = document.getElementById('diagnoseGoogleBtn');
+                
                 if (connectBtn) {
                     connectBtn.addEventListener('click', connectGoogleCalendar);
+                }
+                
+                if (diagnoseBtn) {
+                    diagnoseBtn.addEventListener('click', async () => {
+                        console.log('🔍 DIAGNÓSTICO GOOGLE CALENDAR');
+                        console.log('================================');
+                        console.log('Client ID:', GOOGLE_CLIENT_ID);
+                        console.log('Discovery Doc:', DISCOVERY_DOC);
+                        console.log('Scopes:', SCOPES);
+                        console.log('Google API carregada:', isGoogleAPILoaded);
+                        console.log('Window.gapi presente:', !!window.gapi);
+                        console.log('GoogleAuth inicializado:', !!googleAuth);
+                        
+                        if (window.gapi) {
+                            console.log('GAPI client inicializado:', !!window.gapi.client);
+                            console.log('GAPI auth2 inicializado:', !!window.gapi.auth2);
+                        }
+                        
+                        // Testar carregamento da API
+                        try {
+                            showConnectionStatus('🔍 Executando diagnóstico...', 'info');
+                            
+                            if (!isGoogleAPILoaded) {
+                                console.log('📦 Tentando carregar Google API...');
+                                const loaded = await loadGoogleAPI();
+                                console.log('Resultado do carregamento:', loaded);
+                            }
+                            
+                            if (googleAuth) {
+                                console.log('Estado do login:', googleAuth.isSignedIn.get());
+                                if (googleAuth.isSignedIn.get()) {
+                                    const user = googleAuth.currentUser.get();
+                                    console.log('Usuário logado:', user.getBasicProfile().getName());
+                                    console.log('Email:', user.getBasicProfile().getEmail());
+                                }
+                            }
+                            
+                            showConnectionStatus('✅ Diagnóstico concluído! Verifique o console.', 'success');
+                            
+                        } catch (error) {
+                            console.error('❌ Erro no diagnóstico:', error);
+                            showConnectionStatus('❌ Erro no diagnóstico: ' + error.message, 'error');
+                        }
+                    });
                 }
             }
         }
@@ -2172,8 +2266,9 @@
             disconnectGoogle: disconnectGoogleCalendar
         };
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97822c85b1619615',t:'MTc1NjcwMjUxMS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97823e8491b21b30',t:'MTc1NjcwMzI0OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
+
 
 
 
