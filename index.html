@@ -115,8 +115,17 @@
             <!-- Formulário de Login -->
             <form id="loginForm" class="space-y-6">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Seu Nome ou Email</label>
-                    <input type="text" id="userIdentifier" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-lg" placeholder="Digite seu nome ou email" required>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                    <input type="email" id="userIdentifier" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-lg" placeholder="Digite seu email" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Senha</label>
+                    <div class="relative">
+                        <input type="password" id="userPassword" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-lg pr-12" placeholder="Digite sua senha" required>
+                        <button type="button" id="toggleLoginPassword" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700">
+                            👁️
+                        </button>
+                    </div>
                 </div>
                 <button type="submit" class="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white py-3 rounded-lg font-semibold text-lg hover:from-purple-700 hover:to-blue-700 transition-all duration-200 transform hover:scale-105">
                     Entrar no Sistema
@@ -132,6 +141,25 @@
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
                     <input type="email" id="registerEmail" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-lg" placeholder="Digite seu email" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Senha</label>
+                    <div class="relative">
+                        <input type="password" id="registerPassword" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-lg pr-12" placeholder="Crie uma senha segura" required>
+                        <button type="button" id="toggleRegisterPassword" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700">
+                            👁️
+                        </button>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-1">Mínimo 6 caracteres</p>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Confirmar Senha</label>
+                    <div class="relative">
+                        <input type="password" id="confirmPassword" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-lg pr-12" placeholder="Digite a senha novamente" required>
+                        <button type="button" id="toggleConfirmPassword" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700">
+                            👁️
+                        </button>
+                    </div>
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Telefone (opcional)</label>
@@ -409,6 +437,7 @@
             loginTab: document.getElementById('loginTab'),
             registerTab: document.getElementById('registerTab'),
             userIdentifier: document.getElementById('userIdentifier'),
+            userPassword: document.getElementById('userPassword'),
             userWelcome: document.getElementById('userWelcome'),
             
             newDeadlineBtn: document.getElementById('newDeadlineBtn'),
@@ -595,29 +624,57 @@
             elements.loginForm.classList.add('hidden');
         });
 
+        // Funcionalidade mostrar/ocultar senha
+        document.getElementById('toggleLoginPassword').addEventListener('click', function() {
+            const passwordField = elements.userPassword;
+            const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordField.setAttribute('type', type);
+            this.textContent = type === 'password' ? '👁️' : '🙈';
+        });
+
+        document.getElementById('toggleRegisterPassword').addEventListener('click', function() {
+            const passwordField = document.getElementById('registerPassword');
+            const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordField.setAttribute('type', type);
+            this.textContent = type === 'password' ? '👁️' : '🙈';
+        });
+
+        document.getElementById('toggleConfirmPassword').addEventListener('click', function() {
+            const passwordField = document.getElementById('confirmPassword');
+            const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordField.setAttribute('type', type);
+            this.textContent = type === 'password' ? '👁️' : '🙈';
+        });
+
         // Login
         elements.loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const identifier = elements.userIdentifier.value.trim();
+            const email = elements.userIdentifier.value.trim();
+            const password = elements.userPassword.value;
             
-            if (identifier) {
-                // Verificar se usuário existe
+            if (email && password) {
+                // Verificar se usuário existe e senha está correta
                 const existingUsers = JSON.parse(localStorage.getItem('deadlineXUsers') || '{}');
-                const userId = btoa(identifier).replace(/[^a-zA-Z0-9]/g, '').substring(0, 20);
+                const userId = btoa(email).replace(/[^a-zA-Z0-9]/g, '').substring(0, 20);
                 
                 if (existingUsers[userId]) {
-                    // Usuário existe, fazer login
-                    currentUser = existingUsers[userId];
-                    localStorage.setItem('deadlineXUser', JSON.stringify(currentUser));
-                    elements.userWelcome.textContent = `Bem-vindo de volta, ${currentUser.name}!`;
-                    
-                    elements.loginScreen.classList.add('hidden');
-                    elements.mainApp.classList.remove('hidden');
-                    
-                    await initializeApp();
+                    // Verificar senha
+                    if (existingUsers[userId].password === btoa(password)) {
+                        // Login bem-sucedido
+                        currentUser = existingUsers[userId];
+                        localStorage.setItem('deadlineXUser', JSON.stringify(currentUser));
+                        elements.userWelcome.textContent = `Bem-vindo de volta, ${currentUser.name}!`;
+                        
+                        elements.loginScreen.classList.add('hidden');
+                        elements.mainApp.classList.remove('hidden');
+                        
+                        await initializeApp();
+                    } else {
+                        alert('Senha incorreta! Verifique sua senha e tente novamente.');
+                    }
                 } else {
                     // Usuário não existe
-                    alert('Usuário não encontrado! Por favor, cadastre-se primeiro ou verifique os dados digitados.');
+                    alert('Email não encontrado! Por favor, cadastre-se primeiro ou verifique o email digitado.');
                 }
             }
         });
@@ -628,47 +685,64 @@
             
             const name = document.getElementById('registerName').value.trim();
             const email = document.getElementById('registerEmail').value.trim();
+            const password = document.getElementById('registerPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
             const phone = document.getElementById('registerPhone').value.trim();
             
-            if (name && email) {
-                const userId = btoa(email).replace(/[^a-zA-Z0-9]/g, '').substring(0, 20);
-                
-                // Verificar se usuário já existe
-                const existingUsers = JSON.parse(localStorage.getItem('deadlineXUsers') || '{}');
-                
-                if (existingUsers[userId]) {
-                    alert('Este email já está cadastrado! Use a aba "Entrar" para fazer login.');
-                    return;
-                }
-                
-                // Criar novo usuário
-                const newUser = {
-                    id: userId,
-                    name: name,
-                    email: email,
-                    phone: phone,
-                    createdAt: new Date().toISOString()
-                };
-                
-                // Salvar na lista de usuários
-                existingUsers[userId] = newUser;
-                localStorage.setItem('deadlineXUsers', JSON.stringify(existingUsers));
-                
-                // Fazer login automático
-                currentUser = newUser;
-                localStorage.setItem('deadlineXUser', JSON.stringify(currentUser));
-                elements.userWelcome.textContent = `Bem-vindo, ${currentUser.name}!`;
-                
-                elements.loginScreen.classList.add('hidden');
-                elements.mainApp.classList.remove('hidden');
-                
-                // Mostrar mensagem de boas-vindas
-                setTimeout(() => {
-                    showConnectionStatus(`🎉 Conta criada com sucesso! Bem-vindo ao DeadlineX, ${currentUser.name}!`, 'success');
-                }, 500);
-                
-                await initializeApp();
+            // Validações
+            if (!name || !email || !password) {
+                alert('Por favor, preencha todos os campos obrigatórios.');
+                return;
             }
+            
+            if (password.length < 6) {
+                alert('A senha deve ter pelo menos 6 caracteres.');
+                return;
+            }
+            
+            if (password !== confirmPassword) {
+                alert('As senhas não coincidem. Verifique e tente novamente.');
+                return;
+            }
+            
+            const userId = btoa(email).replace(/[^a-zA-Z0-9]/g, '').substring(0, 20);
+            
+            // Verificar se usuário já existe
+            const existingUsers = JSON.parse(localStorage.getItem('deadlineXUsers') || '{}');
+            
+            if (existingUsers[userId]) {
+                alert('Este email já está cadastrado! Use a aba "Entrar" para fazer login.');
+                return;
+            }
+            
+            // Criar novo usuário
+            const newUser = {
+                id: userId,
+                name: name,
+                email: email,
+                password: btoa(password), // Criptografia básica
+                phone: phone,
+                createdAt: new Date().toISOString()
+            };
+            
+            // Salvar na lista de usuários
+            existingUsers[userId] = newUser;
+            localStorage.setItem('deadlineXUsers', JSON.stringify(existingUsers));
+            
+            // Fazer login automático
+            currentUser = newUser;
+            localStorage.setItem('deadlineXUser', JSON.stringify(currentUser));
+            elements.userWelcome.textContent = `Bem-vindo, ${currentUser.name}!`;
+            
+            elements.loginScreen.classList.add('hidden');
+            elements.mainApp.classList.remove('hidden');
+            
+            // Mostrar mensagem de boas-vindas
+            setTimeout(() => {
+                showConnectionStatus(`🎉 Conta criada com sucesso! Bem-vindo ao DeadlineX, ${currentUser.name}!`, 'success');
+            }, 500);
+            
+            await initializeApp();
         });
 
         elements.logoutBtn.addEventListener('click', () => {
@@ -677,7 +751,17 @@
                 currentUser = null;
                 elements.loginScreen.classList.remove('hidden');
                 elements.mainApp.classList.add('hidden');
+                
+                // Limpar campos de login
                 elements.userIdentifier.value = '';
+                elements.userPassword.value = '';
+                
+                // Limpar campos de cadastro
+                document.getElementById('registerName').value = '';
+                document.getElementById('registerEmail').value = '';
+                document.getElementById('registerPassword').value = '';
+                document.getElementById('confirmPassword').value = '';
+                document.getElementById('registerPhone').value = '';
             }
         });
 
@@ -1058,8 +1142,9 @@
             deadlines: () => deadlines
         };
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9780b2ef05d6fd72',t:'MTc1NjY4NzA0NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9780b6f4604ca18e',t:'MTc1NjY4NzIwOS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
+
 
 
 
