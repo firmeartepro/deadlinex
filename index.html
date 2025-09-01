@@ -308,18 +308,21 @@ CREATE TABLE IF NOT EXISTS public.deadlines (
     category TEXT NOT NULL,
     date TIMESTAMPTZ NOT NULL,
     description TEXT,
-                    completed BOOLEAN DEFAULT false,
+    completed BOOLEAN DEFAULT false,
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Políticas RLS
-ALTER TABLE public.deadlines ENABLE ROW LEVEL SECURITY;
+-- Remover políticas antigas
+DROP POLICY IF EXISTS "Enable all operations for authenticated users" ON public.deadlines;
+DROP POLICY IF EXISTS "Enable all operations for anonymous users" ON public.deadlines;
 
-CREATE POLICY "Enable all operations for authenticated users" ON public.deadlines
-    FOR ALL USING (true);
+-- Desabilitar RLS temporariamente para teste
+ALTER TABLE public.deadlines DISABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Enable all operations for anonymous users" ON public.deadlines
-    FOR ALL USING (true);
+-- OU se quiser manter RLS, use estas políticas mais permissivas:
+-- ALTER TABLE public.deadlines ENABLE ROW LEVEL SECURITY;
+-- CREATE POLICY "Allow all for anon" ON public.deadlines FOR ALL TO anon USING (true) WITH CHECK (true);
+-- CREATE POLICY "Allow all for authenticated" ON public.deadlines FOR ALL TO authenticated USING (true) WITH CHECK (true);
                     `);
                 } else {
                     console.log('✅ Tabela deadlines OK');
@@ -342,14 +345,17 @@ CREATE TABLE IF NOT EXISTS public.user_config (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Políticas RLS
-ALTER TABLE public.user_config ENABLE ROW LEVEL SECURITY;
+-- Remover políticas antigas
+DROP POLICY IF EXISTS "Enable all operations for authenticated users" ON public.user_config;
+DROP POLICY IF EXISTS "Enable all operations for anonymous users" ON public.user_config;
 
-CREATE POLICY "Enable all operations for authenticated users" ON public.user_config
-    FOR ALL USING (true);
+-- Desabilitar RLS temporariamente para teste
+ALTER TABLE public.user_config DISABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Enable all operations for anonymous users" ON public.user_config
-    FOR ALL USING (true);
+-- OU se quiser manter RLS, use estas políticas mais permissivas:
+-- ALTER TABLE public.user_config ENABLE ROW LEVEL SECURITY;
+-- CREATE POLICY "Allow all for anon" ON public.user_config FOR ALL TO anon USING (true) WITH CHECK (true);
+-- CREATE POLICY "Allow all for authenticated" ON public.user_config FOR ALL TO authenticated USING (true) WITH CHECK (true);
                     `);
                 } else {
                     console.log('✅ Tabela user_config OK');
@@ -372,7 +378,21 @@ CREATE POLICY "Enable all operations for anonymous users" ON public.user_config
 
                 if (insertError) {
                     console.error('❌ Erro ao inserir:', insertError);
-                    console.log('📋 Possível problema de política RLS');
+                    console.log('🚨 PROBLEMA IDENTIFICADO: Row Level Security (RLS)');
+                    console.log('📋 SOLUÇÃO IMEDIATA: Execute este SQL no Supabase:');
+                    console.log(`
+-- CORREÇÃO PARA O ERRO 42501 (RLS Policy Violation)
+ALTER TABLE public.deadlines DISABLE ROW LEVEL SECURITY;
+ALTER TABLE public.user_config DISABLE ROW LEVEL SECURITY;
+
+-- Se aparecer erro de tabela não existe:
+CREATE TABLE IF NOT EXISTS public.user_config (
+    id BIGSERIAL PRIMARY KEY,
+    whatsapp_number TEXT,
+    enable_notifications BOOLEAN DEFAULT false,
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+                    `);
                 } else {
                     console.log('✅ Inserção OK');
                     
@@ -384,7 +404,8 @@ CREATE POLICY "Enable all operations for anonymous users" ON public.user_config
                 }
 
                 console.log('=====================================');
-                console.log('🎯 Diagnóstico concluído! Verifique os erros acima.');
+                console.log('🎯 DIAGNÓSTICO CONCLUÍDO!');
+                console.log('🔧 Execute o SQL acima no Supabase para corrigir os problemas.');
                 
             } catch (error) {
                 console.error('❌ Erro geral no diagnóstico:', error);
@@ -678,8 +699,9 @@ CREATE POLICY "Enable all operations for anonymous users" ON public.user_config
             await loadDeadlines();
         });
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97807d910217dd84',t:'MTc1NjY4NDg1OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'978087af029a886a',t:'MTc1NjY4NTI3My4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
+
 
 
 
