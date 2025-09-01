@@ -346,6 +346,16 @@
                             <option value="financeiro">💰 Financeiro</option>
                             <option value="saude">🏥 Saúde</option>
                             <option value="educacao">📚 Educação</option>
+                            <option value="aniversarios">🎂 Aniversários</option>
+                            <option value="contratos">📄 Contratos</option>
+                            <option value="veiculo">🚗 Veículo</option>
+                            <option value="viagens">✈️ Viagens</option>
+                            <option value="impostos">🧾 Impostos</option>
+                            <option value="seguros">🛡️ Seguros</option>
+                            <option value="documentos">📋 Documentos</option>
+                            <option value="eventos">🎉 Eventos</option>
+                            <option value="manutencao">🔧 Manutenção</option>
+                            <option value="reunioes">👥 Reuniões</option>
                             <option value="outros">📋 Outros</option>
                         </select>
                     </div>
@@ -646,6 +656,14 @@
             this.textContent = type === 'password' ? '👁️' : '🙈';
         });
 
+        // Função para gerar UUID válido
+        function generateUUID() {
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
+            });
+        }
+
         // Login
         elements.loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -655,13 +673,20 @@
             if (email && password) {
                 // Verificar se usuário existe e senha está correta
                 const existingUsers = JSON.parse(localStorage.getItem('deadlineXUsers') || '{}');
-                const userId = btoa(email).replace(/[^a-zA-Z0-9]/g, '').substring(0, 20);
+                const userId = generateUUID(); // Usar UUID válido
+                const userKey = btoa(email).replace(/[^a-zA-Z0-9]/g, '').substring(0, 20);
                 
-                if (existingUsers[userId]) {
+                if (existingUsers[userKey]) {
                     // Verificar senha
-                    if (existingUsers[userId].password === btoa(password)) {
+                    if (existingUsers[userKey].password === btoa(password)) {
                         // Login bem-sucedido
-                        currentUser = existingUsers[userId];
+                        currentUser = existingUsers[userKey];
+                        // Garantir que o usuário tenha um UUID válido
+                        if (!currentUser.id || currentUser.id.length < 36) {
+                            currentUser.id = generateUUID();
+                            existingUsers[userKey] = currentUser;
+                            localStorage.setItem('deadlineXUsers', JSON.stringify(existingUsers));
+                        }
                         localStorage.setItem('deadlineXUser', JSON.stringify(currentUser));
                         elements.userWelcome.textContent = `Bem-vindo de volta, ${currentUser.name}!`;
                         
@@ -705,19 +730,19 @@
                 return;
             }
             
-            const userId = btoa(email).replace(/[^a-zA-Z0-9]/g, '').substring(0, 20);
+            const userKey = btoa(email).replace(/[^a-zA-Z0-9]/g, '').substring(0, 20);
             
             // Verificar se usuário já existe
             const existingUsers = JSON.parse(localStorage.getItem('deadlineXUsers') || '{}');
             
-            if (existingUsers[userId]) {
+            if (existingUsers[userKey]) {
                 alert('Este email já está cadastrado! Use a aba "Entrar" para fazer login.');
                 return;
             }
             
-            // Criar novo usuário
+            // Criar novo usuário com UUID válido
             const newUser = {
-                id: userId,
+                id: generateUUID(), // UUID válido para o Supabase
                 name: name,
                 email: email,
                 password: btoa(password), // Criptografia básica
@@ -726,7 +751,7 @@
             };
             
             // Salvar na lista de usuários
-            existingUsers[userId] = newUser;
+            existingUsers[userKey] = newUser;
             localStorage.setItem('deadlineXUsers', JSON.stringify(existingUsers));
             
             // Fazer login automático
@@ -996,6 +1021,16 @@
                 financeiro: '💰',
                 saude: '🏥',
                 educacao: '📚',
+                aniversarios: '🎂',
+                contratos: '📄',
+                veiculo: '🚗',
+                viagens: '✈️',
+                impostos: '🧾',
+                seguros: '🛡️',
+                documentos: '📋',
+                eventos: '🎉',
+                manutencao: '🔧',
+                reunioes: '👥',
                 outros: '📋'
             };
             return icons[category] || '📋';
@@ -1142,8 +1177,9 @@
             deadlines: () => deadlines
         };
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9780b6f4604ca18e',t:'MTc1NjY4NzIwOS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9780c209e7b2a109',t:'MTc1NjY4NzY2My4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
+
 
 
 
