@@ -483,12 +483,28 @@
         let currentUser = null;
         let deferredPrompt = null;
         
-        // Inicializar Supabase
-        try {
-            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-            console.log('✅ Supabase inicializado');
-        } catch (error) {
-            console.error('❌ Erro ao inicializar Supabase:', error);
+        // Aguardar carregamento completo do Supabase
+        function initializeSupabase() {
+            return new Promise((resolve) => {
+                const checkSupabase = () => {
+                    if (window.supabase && window.supabase.createClient) {
+                        try {
+                            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                            console.log('✅ Supabase inicializado com sucesso');
+                            console.log('🔗 URL:', SUPABASE_URL);
+                            console.log('🔑 Key configurada:', SUPABASE_ANON_KEY ? 'Sim' : 'Não');
+                            resolve(true);
+                        } catch (error) {
+                            console.error('❌ Erro ao inicializar Supabase:', error);
+                            resolve(false);
+                        }
+                    } else {
+                        console.log('⏳ Aguardando carregamento do Supabase...');
+                        setTimeout(checkSupabase, 100);
+                    }
+                };
+                checkSupabase();
+            });
         }
 
         // ===== ESTADO DA APLICAÇÃO =====
@@ -972,35 +988,56 @@
             
             debugLog('Tentativa de login:', { email });
             
-            if (email && password) {
-                try {
-                    showConnectionStatus('Fazendo login...', 'info');
+            if (!email || !password) {
+                showConnectionStatus('❌ Preencha email e senha', 'error');
+                return;
+            }
+            
+            if (!supabase) {
+                errorLog('Supabase não inicializado');
+                showConnectionStatus('❌ Sistema não inicializado. Recarregue a página.', 'error');
+                return;
+            }
+            
+            try {
+                showConnectionStatus('Fazendo login...', 'info');
+                
+                const { data, error } = await supabase.auth.signInWithPassword({
+                    email: email,
+                    password: password
+                });
+                
+                if (error) {
+                    errorLog('Erro no login:', error);
+                    let errorMessage = 'Erro no login';
                     
-                    const { data, error } = await supabase.auth.signInWithPassword({
-                        email: email,
-                        password: password
-                    });
-                    
-                    if (error) {
-                        errorLog('Erro no login:', error);
-                        showConnectionStatus('❌ ' + error.message, 'error');
-                        return;
+                    if (error.message.includes('Invalid login credentials')) {
+                        errorMessage = 'Email ou senha incorretos';
+                    } else if (error.message.includes('Email not confirmed')) {
+                        errorMessage = 'Confirme seu email antes de fazer login';
+                    } else {
+                        errorMessage = error.message;
                     }
                     
-                    currentUser = data.user;
-                    debugLog('Login bem-sucedido:', currentUser);
-                    
-                    elements.userWelcome.textContent = `Bem-vindo de volta, ${currentUser.email}!`;
-                    
-                    elements.loginScreen.classList.add('hidden');
-                    elements.mainApp.classList.remove('hidden');
-                    
-                    await initializeApp();
-                    
-                } catch (error) {
-                    errorLog('Erro crítico no login:', error);
-                    showConnectionStatus('❌ Erro de conexão', 'error');
+                    showConnectionStatus('❌ ' + errorMessage, 'error');
+                    return;
                 }
+                
+                currentUser = data.user;
+                debugLog('Login bem-sucedido:', currentUser);
+                
+                const userName = currentUser.user_metadata?.name || currentUser.email;
+                elements.userWelcome.textContent = `Bem-vindo de volta, ${userName}!`;
+                
+                elements.loginScreen.classList.add('hidden');
+                elements.mainApp.classList.remove('hidden');
+                
+                showConnectionStatus('✅ Login realizado com sucesso!', 'success');
+                await initializeApp();
+                
+            } catch (error) {
+                errorLog('Erro crítico no login:', error);
+                showConnectionStatus('❌ Erro de conexão: ' + error.message, 'error');
             }
         });
 
@@ -1016,17 +1053,23 @@
             
             // Validações
             if (!name || !email || !password) {
-                alert('Por favor, preencha todos os campos obrigatórios.');
+                showConnectionStatus('❌ Preencha todos os campos obrigatórios', 'error');
                 return;
             }
             
             if (password.length < 6) {
-                alert('A senha deve ter pelo menos 6 caracteres.');
+                showConnectionStatus('❌ A senha deve ter pelo menos 6 caracteres', 'error');
                 return;
             }
             
             if (password !== confirmPassword) {
-                alert('As senhas não coincidem. Verifique e tente novamente.');
+                showConnectionStatus('❌ As senhas não coincidem', 'error');
+                return;
+            }
+            
+            if (!supabase) {
+                errorLog('Supabase não inicializado');
+                showConnectionStatus('❌ Sistema não inicializado. Recarregue a página.', 'error');
                 return;
             }
             
@@ -1046,7 +1089,17 @@
                 
                 if (error) {
                     errorLog('Erro no cadastro:', error);
-                    showConnectionStatus('❌ ' + error.message, 'error');
+                    let errorMessage = 'Erro no cadastro';
+                    
+                    if (error.message.includes('User already registered')) {
+                        errorMessage = 'Este email já está cadastrado';
+                    } else if (error.message.includes('Password should be at least')) {
+                        errorMessage = 'Senha muito fraca';
+                    } else {
+                        errorMessage = error.message;
+                    }
+                    
+                    showConnectionStatus('❌ ' + errorMessage, 'error');
                     return;
                 }
                 
@@ -1059,15 +1112,13 @@
                 elements.mainApp.classList.remove('hidden');
                 
                 // Mostrar mensagem de boas-vindas
-                setTimeout(() => {
-                    showConnectionStatus(`🎉 Conta criada com sucesso! Bem-vindo ao DeadlineX, ${name}!`, 'success');
-                }, 500);
+                showConnectionStatus(`🎉 Conta criada com sucesso! Bem-vindo ao DeadlineX, ${name}!`, 'success');
                 
                 await initializeApp();
                 
             } catch (error) {
                 errorLog('Erro crítico no cadastro:', error);
-                showConnectionStatus('❌ Erro de conexão', 'error');
+                showConnectionStatus('❌ Erro de conexão: ' + error.message, 'error');
             }
         });
 
@@ -1606,7 +1657,23 @@
             debugLog('=== INICIALIZANDO APLICAÇÃO ===');
             
             try {
-                const { data: { session } } = await supabase.auth.getSession();
+                // Primeiro inicializar o Supabase
+                const supabaseReady = await initializeSupabase();
+                
+                if (!supabaseReady) {
+                    errorLog('Falha ao inicializar Supabase');
+                    showConnectionStatus('❌ Erro de conexão com o banco de dados', 'error');
+                    return;
+                }
+                
+                // Verificar sessão existente
+                const { data: { session }, error } = await supabase.auth.getSession();
+                
+                if (error) {
+                    errorLog('Erro ao verificar sessão:', error);
+                    showConnectionStatus('❌ Erro ao verificar login: ' + error.message, 'error');
+                    return;
+                }
                 
                 if (session?.user) {
                     currentUser = session.user;
@@ -1620,9 +1687,11 @@
                     await initializeApp();
                 } else {
                     debugLog('Nenhum usuário logado encontrado');
+                    showConnectionStatus('Sistema pronto para login', 'info');
                 }
             } catch (error) {
-                errorLog('Erro ao verificar sessão:', error);
+                errorLog('Erro crítico na inicialização:', error);
+                showConnectionStatus('❌ Erro crítico: ' + error.message, 'error');
             }
         });
 
@@ -1636,13 +1705,17 @@
             console.log('Prazos carregados:', deadlines.length);
             console.log('Prazos filtrados:', filteredDeadlines.length);
             console.log('Supabase conectado:', !!supabase);
+            console.log('Supabase URL:', SUPABASE_URL);
+            console.log('Supabase Key presente:', !!SUPABASE_ANON_KEY);
             console.log('Notificações:', Notification.permission);
             console.log('Service Worker:', 'serviceWorker' in navigator);
             console.log('PWA instalável:', !!deferredPrompt);
             
             // Testar conexão com Supabase
-            if (supabase && currentUser) {
+            if (supabase) {
                 console.log('🧪 TESTANDO CONEXÃO COM SUPABASE...');
+                
+                // Teste básico de conexão
                 supabase.from('deadlines').select('count', { count: 'exact', head: true })
                     .then(result => {
                         console.log('✅ Teste de conexão Supabase:', result);
@@ -1650,6 +1723,39 @@
                     .catch(error => {
                         console.log('❌ Erro no teste de conexão Supabase:', error);
                     });
+                
+                // Teste de autenticação
+                supabase.auth.getSession()
+                    .then(result => {
+                        console.log('🔐 Status da sessão:', result);
+                    })
+                    .catch(error => {
+                        console.log('❌ Erro ao verificar sessão:', error);
+                    });
+            } else {
+                console.log('❌ Supabase não inicializado!');
+            }
+        };
+        
+        // Função para testar login (para debug)
+        window.testSupabaseConnection = async function() {
+            if (!supabase) {
+                console.log('❌ Supabase não inicializado');
+                return;
+            }
+            
+            try {
+                console.log('🧪 Testando conexão Supabase...');
+                const { data, error } = await supabase.auth.getSession();
+                console.log('Resultado:', { data, error });
+                
+                if (error) {
+                    console.log('❌ Erro na conexão:', error);
+                } else {
+                    console.log('✅ Conexão OK');
+                }
+            } catch (error) {
+                console.log('❌ Erro crítico:', error);
             }
         };
 
@@ -1662,8 +1768,9 @@
             filteredDeadlines: () => filteredDeadlines
         };
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9781869335efa499',t:'MTc1NjY5NTcxMy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97818f5ec5a2a672',t:'MTc1NjY5NjA3NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
+
 
 
 
