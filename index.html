@@ -3,11 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DeadlineX v27 - Sistema de Gestão de Prazos</title>
+    <title>DeadlineX - Sistema de Gestão de Prazos</title>
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#667eea">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="DeadlineX">
+    <meta name="description" content="Sistema profissional de gestão de prazos com notificações inteligentes">
+    
+    <!-- Favicon e Icons -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='grad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%23667eea;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%23764ba2;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='20' fill='url(%23grad)'/%3E%3Ctext x='50' y='35' font-family='Arial,sans-serif' font-size='24' font-weight='bold' text-anchor='middle' fill='white'%3E12:34%3C/text%3E%3Ctext x='50' y='55' font-family='Arial,sans-serif' font-size='12' text-anchor='middle' fill='white'%3EDEADLINE%3C/text%3E%3Ctext x='50' y='75' font-family='Arial,sans-serif' font-size='8' text-anchor='middle' fill='white'%3EMANAGER%3C/text%3E%3C/svg%3E">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='grad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%23667eea;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%23764ba2;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='20' fill='url(%23grad)'/%3E%3Ctext x='50' y='35' font-family='Arial,sans-serif' font-size='24' font-weight='bold' text-anchor='middle' fill='white'%3E12:34%3C/text%3E%3Ctext x='50' y='55' font-family='Arial,sans-serif' font-size='12' text-anchor='middle' fill='white'%3EDEADLINE%3C/text%3E%3Ctext x='50' y='75' font-family='Arial,sans-serif' font-size='8' text-anchor='middle' fill='white'%3EMANAGER%3C/text%3E%3C/svg%3E">
+    
+    <!-- Web App Manifest -->
+    <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiRGVhZGxpbmVYIiwic2hvcnRfbmFtZSI6IkRlYWRsaW5lWCIsImRlc2NyaXB0aW9uIjoiU2lzdGVtYSBwcm9maXNzaW9uYWwgZGUgZ2VzdMOjbyBkZSBwcmF6b3MgY29tIG5vdGlmaWNhw6fDtWVzIGludGVsaWdlbnRlcyIsInN0YXJ0X3VybCI6Ii8iLCJkaXNwbGF5Ijoic3RhbmRhbG9uZSIsImJhY2tncm91bmRfY29sb3IiOiIjZmZmZmZmIiwidGhlbWVfY29sb3IiOiIjNjY3ZWVhIiwiaWNvbnMiOlt7InNyYyI6ImRhdGE6aW1hZ2Uvc3ZnK3htbCwlM0NzdmcgeG1sbnM9J2h0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnJyB2aWV3Qm94PScwIDAgMTAwIDEwMCclM0UlM0NkZWZzJTNFJTNDbGluZWFyR3JhZGllbnQgaWQ9J2dyYWQnIHgxPScwJTI1JyB5MT0nMCUyNScgeDI9JzEwMCUyNScgeTI9JzEwMCUyNSclM0UlM0NzdG9wIG9mZnNldD0nMCUyNScgc3R5bGU9J3N0b3AtY29sb3I6JTIzNjY3ZWVhO3N0b3Atb3BhY2l0eToxJyAvJTNFJTNDc3RvcCBvZmZzZXQ9JzEwMCUyNScgc3R5bGU9J3N0b3AtY29sb3I6JTIzNzY0YmEyO3N0b3Atb3BhY2l0eToxJyAvJTNFJTNDL2xpbmVhckdyYWRpZW50JTNFJTNDL2RlZnMlM0UlM0NyZWN0IHdpZHRoPScxMDAnIGhlaWdodD0nMTAwJyByeD0nMjAnIGZpbGw9J3VybCglMjNncmFkKScvJTNFJTNDdGV4dCB4PSc1MCcgeT0nMzUnIGZvbnQtZmFtaWx5PSdBcmlhbCxzYW5zLXNlcmlmJyBmb250LXNpemU9JzI0JyBmb250LXdlaWdodD0nYm9sZCcgdGV4dC1hbmNob3I9J21pZGRsZScgZmlsbD0nd2hpdGUnJTNFMTI6MzQlM0MvdGV4dCUzRSUzQ3RleHQgeD0nNTAnIHk9JzU1JyBmb250LWZhbWlseT0nQXJpYWwsc2Fucy1zZXJpZicgZm9udC1zaXplPScxMicgdGV4dC1hbmNob3I9J21pZGRsZScgZmlsbD0nd2hpdGUnJTNFREVBRExJTkUlM0MvdGV4dCUzRSUzQ3RleHQgeD0nNTAnIHk9Jzc1JyBmb250LWZhbWlseT0nQXJpYWwsc2Fucy1zZXJpZicgZm9udC1zaXplPSc4JyB0ZXh0LWFuY2hvcj0nbWlkZGxlJyBmaWxsPSd3aGl0ZSclM0VNQU5BR0VSJTNDL3RleHQlM0UlM0Mvc3ZnJTNFIiwic2l6ZXMiOiI1MTJ4NTEyIiwidHlwZSI6ImltYWdlL3N2Zyt4bWwifV19">
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
         body { font-family: 'Inter', sans-serif; }
         .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
         .card-shadow { box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
@@ -16,134 +31,280 @@
             0%, 100% { opacity: 1; }
             50% { opacity: 0.7; }
         }
+        .btn-large { padding: 1rem 1.5rem; font-size: 1.1rem; min-height: 3.5rem; }
+        .mobile-optimized { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+        
+        /* PWA Install Button Animation */
+        .install-prompt {
+            animation: slideInUp 0.5s ease-out;
+        }
+        @keyframes slideInUp {
+            from { transform: translateY(100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        /* Logo Animation */
+        .logo-pulse {
+            animation: logoPulse 3s ease-in-out infinite;
+        }
+        @keyframes logoPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
     </style>
 </head>
-<body class="bg-gray-50 min-h-screen">
-    <!-- Header -->
-    <header class="gradient-bg text-white shadow-lg">
-        <div class="container mx-auto px-6 py-4">
-            <div class="flex justify-between items-center">
-                <div class="flex items-center space-x-3">
-                    <div class="bg-white p-2 rounded-lg">
-                        <svg class="w-8 h-8 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
-                            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                        </svg>
-                    </div>
-                    <h1 class="text-2xl font-bold">DeadlineX v27</h1>
-                </div>
-                <button id="logoutBtn" class="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-lg transition-colors">
-                    Sair do Sistema
-                </button>
-            </div>
-        </div>
-    </header>
-
-    <!-- Main Container -->
-    <div class="container mx-auto px-6 py-8">
-        <!-- Action Buttons -->
-        <div class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-8">
-            <button id="newDeadlineBtn" class="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors card-shadow">
-                ➕ Novo Prazo
-            </button>
-            <button id="configBtn" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors card-shadow">
-                ⚙️ Configurar WhatsApp
-            </button>
-            <button id="testWhatsappBtn" class="bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors card-shadow">
-                📱 Testar WhatsApp
-            </button>
-            <button id="refreshBtn" class="bg-purple-500 hover:bg-purple-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors card-shadow">
-                🔄 Atualizar
-            </button>
-            <button id="diagnoseBtn" class="bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors card-shadow">
-                🔍 Diagnóstico
-            </button>
-        </div>
-
-        <!-- Statistics Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-            <div class="bg-white p-6 rounded-lg card-shadow">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-gray-600 text-sm">Total de Prazos</p>
-                        <p id="totalCount" class="text-2xl font-bold text-gray-800">0</p>
-                    </div>
-                    <div class="bg-blue-100 p-3 rounded-full">
-                        <svg class="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
-                            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                        </svg>
-                    </div>
-                </div>
-            </div>
-
-            <div class="bg-white p-6 rounded-lg card-shadow">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-gray-600 text-sm">Prazos Urgentes</p>
-                        <p id="urgentCount" class="text-2xl font-bold text-red-600 pulse-animation">0</p>
-                    </div>
-                    <div class="bg-red-100 p-3 rounded-full">
-                        <svg class="w-6 h-6 text-red-600" fill="currentColor" viewBox="0 0 20 20">
-                            <path d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/>
-                        </svg>
-                    </div>
-                </div>
-            </div>
-
-            <div class="bg-white p-6 rounded-lg card-shadow">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-gray-600 text-sm">Esta Semana</p>
-                        <p id="weekCount" class="text-2xl font-bold text-orange-600">0</p>
-                    </div>
-                    <div class="bg-orange-100 p-3 rounded-full">
-                        <svg class="w-6 h-6 text-orange-600" fill="currentColor" viewBox="0 0 20 20">
-                            <path d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5a2.25 2.25 0 002.25-2.25m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5a2.25 2.25 0 012.25 2.25v7.5"/>
-                        </svg>
-                    </div>
-                </div>
-            </div>
-
-            <div class="bg-white p-6 rounded-lg card-shadow">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-gray-600 text-sm">Concluídos</p>
-                        <p id="completedCount" class="text-2xl font-bold text-green-600">0</p>
-                    </div>
-                    <div class="bg-green-100 p-3 rounded-full">
-                        <svg class="w-6 h-6 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                        </svg>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Connection Status -->
-        <div id="connectionStatus" class="mb-4 p-3 rounded-lg text-sm font-medium hidden">
-        </div>
-
-        <!-- Deadlines List -->
-        <div class="bg-white rounded-lg card-shadow">
-            <div class="p-6 border-b border-gray-200">
-                <h2 class="text-xl font-semibold text-gray-800">Meus Prazos</h2>
-            </div>
-            <div id="deadlinesList" class="p-6">
-                <div class="text-center text-gray-500 py-8">
-                    <svg class="w-16 h-16 mx-auto mb-4 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+<body class="bg-gray-50 min-h-screen mobile-optimized">
+    <!-- PWA Install Prompt -->
+    <div id="installPrompt" class="fixed bottom-0 left-0 right-0 bg-gradient-to-r from-purple-600 to-blue-600 text-white p-4 z-50 hidden install-prompt">
+        <div class="flex items-center justify-between max-w-md mx-auto">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/>
                     </svg>
-                    <p>Carregando prazos...</p>
                 </div>
+                <div>
+                    <p class="font-semibold text-sm">Instalar DeadlineX</p>
+                    <p class="text-xs opacity-90">Adicione à tela inicial</p>
+                </div>
+            </div>
+            <div class="flex space-x-2">
+                <button id="installBtn" class="bg-white text-purple-600 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-gray-100 transition-colors">
+                    Instalar
+                </button>
+                <button id="dismissInstall" class="text-white opacity-75 hover:opacity-100 p-2">
+                    ✕
+                </button>
             </div>
         </div>
     </div>
 
-    <!-- Modal: Novo Prazo -->
-    <div id="newDeadlineModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+    <!-- Login Screen -->
+    <div id="loginScreen" class="min-h-screen gradient-bg flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl p-8 max-w-md w-full card-shadow">
+            <!-- Logo -->
+            <div class="text-center mb-8">
+                <div class="inline-block logo-pulse">
+                    <svg width="80" height="80" viewBox="0 0 100 100" class="mx-auto mb-4">
+                        <defs>
+                            <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+                            </linearGradient>
+                        </defs>
+                        <rect width="100" height="100" rx="20" fill="url(#logoGrad)"/>
+                        <text x="50" y="35" font-family="Inter,sans-serif" font-size="24" font-weight="bold" text-anchor="middle" fill="white">12:34</text>
+                        <text x="50" y="55" font-family="Inter,sans-serif" font-size="12" text-anchor="middle" fill="white">DEADLINE</text>
+                        <text x="50" y="75" font-family="Inter,sans-serif" font-size="8" text-anchor="middle" fill="white">MANAGER</text>
+                    </svg>
+                </div>
+                <h1 class="text-3xl font-bold text-gray-800 mb-2">DeadlineX</h1>
+                <p class="text-gray-600">Sistema Profissional de Gestão de Prazos</p>
+            </div>
+            
+            <!-- Abas Login/Cadastro -->
+            <div class="flex mb-6 bg-gray-100 rounded-lg p-1">
+                <button id="loginTab" class="flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors bg-white text-purple-600 shadow-sm">
+                    Entrar
+                </button>
+                <button id="registerTab" class="flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors text-gray-600 hover:text-gray-800">
+                    Cadastrar
+                </button>
+            </div>
+
+            <!-- Formulário de Login -->
+            <form id="loginForm" class="space-y-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Seu Nome ou Email</label>
+                    <input type="text" id="userIdentifier" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-lg" placeholder="Digite seu nome ou email" required>
+                </div>
+                <button type="submit" class="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white py-3 rounded-lg font-semibold text-lg hover:from-purple-700 hover:to-blue-700 transition-all duration-200 transform hover:scale-105">
+                    Entrar no Sistema
+                </button>
+            </form>
+
+            <!-- Formulário de Cadastro -->
+            <form id="registerForm" class="space-y-6 hidden">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Nome Completo</label>
+                    <input type="text" id="registerName" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-lg" placeholder="Digite seu nome completo" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                    <input type="email" id="registerEmail" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-lg" placeholder="Digite seu email" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Telefone (opcional)</label>
+                    <input type="tel" id="registerPhone" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-lg" placeholder="(11) 99999-9999">
+                </div>
+                <button type="submit" class="w-full bg-gradient-to-r from-green-600 to-blue-600 text-white py-3 rounded-lg font-semibold text-lg hover:from-green-700 hover:to-blue-700 transition-all duration-200 transform hover:scale-105">
+                    Criar Conta
+                </button>
+            </form>
+            
+            <div class="mt-6 text-center">
+                <p class="text-xs text-gray-500">Seus dados ficam seguros e privados</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div id="mainApp" class="hidden">
+        <!-- Header -->
+        <header class="gradient-bg text-white shadow-lg sticky top-0 z-40">
+            <div class="container mx-auto px-4 py-4">
+                <div class="flex justify-between items-center">
+                    <div class="flex items-center space-x-3">
+                        <svg width="40" height="40" viewBox="0 0 100 100" class="flex-shrink-0">
+                            <defs>
+                                <linearGradient id="headerGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#ffffff;stop-opacity:0.9" />
+                                    <stop offset="100%" style="stop-color:#ffffff;stop-opacity:0.7" />
+                                </linearGradient>
+                            </defs>
+                            <rect width="100" height="100" rx="20" fill="url(#headerGrad)"/>
+                            <text x="50" y="35" font-family="Inter,sans-serif" font-size="24" font-weight="bold" text-anchor="middle" fill="#667eea">12:34</text>
+                            <text x="50" y="55" font-family="Inter,sans-serif" font-size="12" text-anchor="middle" fill="#667eea">DEADLINE</text>
+                            <text x="50" y="75" font-family="Inter,sans-serif" font-size="8" text-anchor="middle" fill="#667eea">MANAGER</text>
+                        </svg>
+                        <div>
+                            <h1 class="text-xl md:text-2xl font-bold">DeadlineX</h1>
+                            <p class="text-xs opacity-75" id="userWelcome">Bem-vindo!</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <button id="shareBtn" class="bg-white bg-opacity-20 hover:bg-opacity-30 p-2 md:px-4 md:py-2 rounded-lg transition-colors text-sm md:text-base">
+                            <span class="hidden md:inline">📤 Compartilhar</span>
+                            <span class="md:hidden">📤</span>
+                        </button>
+                        <button id="logoutBtn" class="bg-red-500 hover:bg-red-600 p-2 md:px-4 md:py-2 rounded-lg transition-colors text-sm md:text-base">
+                            <span class="hidden md:inline">Sair</span>
+                            <span class="md:hidden">🚪</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Container -->
+        <div class="container mx-auto px-4 py-6">
+            <!-- Action Buttons -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                <button id="newDeadlineBtn" class="bg-green-500 hover:bg-green-600 text-white btn-large rounded-xl font-semibold transition-all duration-200 transform hover:scale-105 card-shadow flex flex-col items-center space-y-2">
+                    <span class="text-2xl">➕</span>
+                    <span class="text-sm md:text-base">Novo Prazo</span>
+                </button>
+                <button id="installAppBtn" class="bg-blue-500 hover:bg-blue-600 text-white btn-large rounded-xl font-semibold transition-all duration-200 transform hover:scale-105 card-shadow flex flex-col items-center space-y-2">
+                    <span class="text-2xl">📱</span>
+                    <span class="text-sm md:text-base">Instalar App</span>
+                </button>
+                <button id="notificationBtn" class="bg-purple-500 hover:bg-purple-600 text-white btn-large rounded-xl font-semibold transition-all duration-200 transform hover:scale-105 card-shadow flex flex-col items-center space-y-2">
+                    <span class="text-2xl">🔔</span>
+                    <span class="text-sm md:text-base">Notificações</span>
+                </button>
+                <button id="refreshBtn" class="bg-orange-500 hover:bg-orange-600 text-white btn-large rounded-xl font-semibold transition-all duration-200 transform hover:scale-105 card-shadow flex flex-col items-center space-y-2">
+                    <span class="text-2xl">🔄</span>
+                    <span class="text-sm md:text-base">Atualizar</span>
+                </button>
+            </div>
+
+            <!-- Statistics Cards -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-8">
+                <div class="bg-white p-4 md:p-6 rounded-xl card-shadow">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-600 text-xs md:text-sm">Total</p>
+                            <p id="totalCount" class="text-xl md:text-2xl font-bold text-gray-800">0</p>
+                        </div>
+                        <div class="bg-blue-100 p-2 md:p-3 rounded-full">
+                            <svg class="w-4 h-4 md:w-6 md:h-6 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-4 md:p-6 rounded-xl card-shadow">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-600 text-xs md:text-sm">Urgentes</p>
+                            <p id="urgentCount" class="text-xl md:text-2xl font-bold text-red-600 pulse-animation">0</p>
+                        </div>
+                        <div class="bg-red-100 p-2 md:p-3 rounded-full">
+                            <svg class="w-4 h-4 md:w-6 md:h-6 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-4 md:p-6 rounded-xl card-shadow">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-600 text-xs md:text-sm">Esta Semana</p>
+                            <p id="weekCount" class="text-xl md:text-2xl font-bold text-orange-600">0</p>
+                        </div>
+                        <div class="bg-orange-100 p-2 md:p-3 rounded-full">
+                            <svg class="w-4 h-4 md:w-6 md:h-6 text-orange-600" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5a2.25 2.25 0 002.25-2.25m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5a2.25 2.25 0 012.25 2.25v7.5"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-4 md:p-6 rounded-xl card-shadow">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-600 text-xs md:text-sm">Concluídos</p>
+                            <p id="completedCount" class="text-xl md:text-2xl font-bold text-green-600">0</p>
+                        </div>
+                        <div class="bg-green-100 p-2 md:p-3 rounded-full">
+                            <svg class="w-4 h-4 md:w-6 md:h-6 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Connection Status -->
+            <div id="connectionStatus" class="mb-4 p-3 rounded-lg text-sm font-medium hidden">
+            </div>
+
+            <!-- Deadlines List -->
+            <div class="bg-white rounded-xl card-shadow">
+                <div class="p-4 md:p-6 border-b border-gray-200">
+                    <h2 class="text-lg md:text-xl font-semibold text-gray-800">Meus Prazos</h2>
+                </div>
+                <div id="deadlinesList" class="p-4 md:p-6">
+                    <div class="text-center text-gray-500 py-8">
+                        <svg class="w-12 h-12 md:w-16 md:h-16 mx-auto mb-4 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        <p>Carregando prazos...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Hidden WhatsApp Section (for future use) -->
+        <div id="whatsappSection" class="hidden">
+            <button id="testWhatsappBtn" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg">
+                📱 Testar WhatsApp
+            </button>
+            <button id="configBtn" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg">
+                ⚙️ Configurar WhatsApp
+            </button>
+        </div>
+    </div>
+
+    <!-- Modal: Novo/Editar Prazo -->
+    <div id="deadlineModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
         <div class="flex items-center justify-center min-h-screen p-4">
-            <div class="bg-white rounded-lg max-w-md w-full p-6">
-                <h3 class="text-lg font-semibold mb-4">Novo Prazo</h3>
-                <form id="newDeadlineForm">
+            <div class="bg-white rounded-xl max-w-md w-full p-6 max-h-screen overflow-y-auto">
+                <h3 id="modalTitle" class="text-lg font-semibold mb-4">Novo Prazo</h3>
+                <form id="deadlineForm">
+                    <input type="hidden" id="editingId" value="">
                     <div class="mb-4">
                         <label class="block text-sm font-medium text-gray-700 mb-2">Título</label>
                         <input type="text" id="deadlineTitle" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" required>
@@ -169,7 +330,7 @@
                         <textarea id="deadlineDescription" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" rows="3"></textarea>
                     </div>
                     <div class="flex justify-end space-x-3">
-                        <button type="button" id="cancelNewDeadline" class="px-4 py-2 text-gray-600 hover:text-gray-800">Cancelar</button>
+                        <button type="button" id="cancelDeadline" class="px-4 py-2 text-gray-600 hover:text-gray-800">Cancelar</button>
                         <button type="submit" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg">Salvar</button>
                     </div>
                 </form>
@@ -177,10 +338,10 @@
         </div>
     </div>
 
-    <!-- Modal: Configurar WhatsApp -->
+    <!-- Modal: Configurar WhatsApp (Hidden) -->
     <div id="configModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
         <div class="flex items-center justify-center min-h-screen p-4">
-            <div class="bg-white rounded-lg max-w-md w-full p-6">
+            <div class="bg-white rounded-xl max-w-md w-full p-6">
                 <h3 class="text-lg font-semibold mb-4">Configurar WhatsApp</h3>
                 <form id="configForm">
                     <div class="mb-4">
@@ -204,65 +365,342 @@
     </div>
 
     <script>
-        // Configuração do Supabase com suas credenciais reais
+        // ===== SISTEMA DE VERSIONAMENTO =====
+        const SYSTEM_VERSION = 'DeadlineX-v2.0-Complete';
+        console.log(`🚀 ${SYSTEM_VERSION} - Sistema Completo Carregado`);
+        
+        // Salvar versão no localStorage para referência
+        localStorage.setItem('deadlineXVersion', SYSTEM_VERSION);
+        localStorage.setItem('deadlineXFeatures', JSON.stringify([
+            'PWA Completo', 'Notificações Push', 'Isolamento por Usuário', 
+            'Edição de Prazos', 'Logo Personalizada', 'Design Responsivo',
+            'Sistema de Compartilhamento', 'Instalação Automática'
+        ]));
+
+        // ===== CONFIGURAÇÃO SUPABASE =====
         const SUPABASE_URL = 'https://vastjlzaxafpoagptklu.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZhc3RqbHpheGFmcG9hZ3B0a2x1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTYyNjUzMDEsImV4cCI6MjA3MTg0MTMwMX0.4EnnkdyVDEo1qSp1C2-QgVlklUkL2W3ulqOmXX_DiVY';
         
         let supabase;
+        let currentUser = null;
+        let deferredPrompt = null;
         
         // Inicializar Supabase
         try {
             supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-            console.log('Supabase inicializado com sucesso');
+            console.log('✅ Supabase inicializado');
         } catch (error) {
-            console.error('Erro ao inicializar Supabase:', error);
-            showConnectionStatus('Erro ao conectar com o banco de dados', 'error');
+            console.error('❌ Erro ao inicializar Supabase:', error);
         }
 
-        // Estado da aplicação
+        // ===== ESTADO DA APLICAÇÃO =====
         let deadlines = [];
         let userConfig = {
             whatsappNumber: '',
             enableNotifications: false
         };
 
-        // Elementos DOM
+        // ===== ELEMENTOS DOM =====
         const elements = {
+            loginScreen: document.getElementById('loginScreen'),
+            mainApp: document.getElementById('mainApp'),
+            loginForm: document.getElementById('loginForm'),
+            registerForm: document.getElementById('registerForm'),
+            loginTab: document.getElementById('loginTab'),
+            registerTab: document.getElementById('registerTab'),
+            userIdentifier: document.getElementById('userIdentifier'),
+            userWelcome: document.getElementById('userWelcome'),
+            
             newDeadlineBtn: document.getElementById('newDeadlineBtn'),
-            configBtn: document.getElementById('configBtn'),
-            testWhatsappBtn: document.getElementById('testWhatsappBtn'),
+            installAppBtn: document.getElementById('installAppBtn'),
+            notificationBtn: document.getElementById('notificationBtn'),
             refreshBtn: document.getElementById('refreshBtn'),
+            shareBtn: document.getElementById('shareBtn'),
             logoutBtn: document.getElementById('logoutBtn'),
-            newDeadlineModal: document.getElementById('newDeadlineModal'),
-            configModal: document.getElementById('configModal'),
+            
+            deadlineModal: document.getElementById('deadlineModal'),
+            deadlineForm: document.getElementById('deadlineForm'),
+            modalTitle: document.getElementById('modalTitle'),
+            editingId: document.getElementById('editingId'),
+            
             deadlinesList: document.getElementById('deadlinesList'),
             totalCount: document.getElementById('totalCount'),
             urgentCount: document.getElementById('urgentCount'),
             weekCount: document.getElementById('weekCount'),
             completedCount: document.getElementById('completedCount'),
-            connectionStatus: document.getElementById('connectionStatus')
+            connectionStatus: document.getElementById('connectionStatus'),
+            
+            installPrompt: document.getElementById('installPrompt'),
+            installBtn: document.getElementById('installBtn'),
+            dismissInstall: document.getElementById('dismissInstall')
         };
 
-        // Event Listeners
-        elements.newDeadlineBtn.addEventListener('click', () => openModal('newDeadlineModal'));
-        elements.configBtn.addEventListener('click', () => openModal('configModal'));
-        elements.testWhatsappBtn.addEventListener('click', testWhatsApp);
-        elements.refreshBtn.addEventListener('click', loadDeadlines);
-        elements.logoutBtn.addEventListener('click', logout);
-        document.getElementById('diagnoseBtn').addEventListener('click', () => {
-            console.log('🔍 Executando diagnóstico...');
-            diagnoseSupabase();
+        // ===== PWA E INSTALAÇÃO =====
+        
+        // Detectar se pode ser instalado
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            
+            // Mostrar prompt automático na primeira visita
+            if (!localStorage.getItem('installPromptShown')) {
+                setTimeout(() => {
+                    elements.installPrompt.classList.remove('hidden');
+                    localStorage.setItem('installPromptShown', 'true');
+                }, 3000);
+            }
         });
 
-        document.getElementById('cancelNewDeadline').addEventListener('click', () => closeModal('newDeadlineModal'));
-        document.getElementById('cancelConfig').addEventListener('click', () => closeModal('configModal'));
+        // Botão instalar no prompt
+        elements.installBtn.addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                console.log(`PWA install: ${outcome}`);
+                deferredPrompt = null;
+            }
+            elements.installPrompt.classList.add('hidden');
+        });
 
-        document.getElementById('newDeadlineForm').addEventListener('submit', saveDeadline);
-        document.getElementById('configForm').addEventListener('submit', saveConfig);
+        // Dispensar prompt
+        elements.dismissInstall.addEventListener('click', () => {
+            elements.installPrompt.classList.add('hidden');
+        });
 
-        // Funções de UI
-        function openModal(modalId) {
-            document.getElementById(modalId).classList.remove('hidden');
+        // Botão instalar no app
+        elements.installAppBtn.addEventListener('click', () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+            } else {
+                // Instruções manuais
+                alert('Para instalar:\n\n📱 Mobile: Toque no menu do navegador > "Adicionar à tela inicial"\n\n💻 Desktop: Clique no ícone de instalação na barra de endereços');
+            }
+        });
+
+        // ===== NOTIFICAÇÕES PUSH =====
+        
+        async function requestNotificationPermission() {
+            if ('Notification' in window) {
+                const permission = await Notification.requestPermission();
+                if (permission === 'granted') {
+                    showConnectionStatus('Notificações ativadas com sucesso! 🔔', 'success');
+                    scheduleNotifications();
+                } else {
+                    showConnectionStatus('Permissão de notificação negada', 'error');
+                }
+            } else {
+                showConnectionStatus('Notificações não suportadas neste navegador', 'error');
+            }
+        }
+
+        function scheduleNotifications() {
+            // Limpar notificações anteriores
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.ready.then(registration => {
+                    registration.getNotifications().then(notifications => {
+                        notifications.forEach(notification => notification.close());
+                    });
+                });
+            }
+
+            deadlines.forEach(deadline => {
+                if (deadline.completed) return;
+
+                const deadlineDate = new Date(deadline.date);
+                const now = new Date();
+
+                // Notificação 3 dias antes
+                const threeDaysBefore = new Date(deadlineDate.getTime() - 3 * 24 * 60 * 60 * 1000);
+                if (threeDaysBefore > now) {
+                    scheduleNotification(deadline, threeDaysBefore, '3 dias');
+                }
+
+                // Notificação 1 dia antes
+                const oneDayBefore = new Date(deadlineDate.getTime() - 24 * 60 * 60 * 1000);
+                if (oneDayBefore > now) {
+                    scheduleNotification(deadline, oneDayBefore, '1 dia');
+                }
+
+                // Notificação 2 horas antes
+                const twoHoursBefore = new Date(deadlineDate.getTime() - 2 * 60 * 60 * 1000);
+                if (twoHoursBefore > now) {
+                    scheduleNotification(deadline, twoHoursBefore, '2 horas');
+                }
+            });
+        }
+
+        function scheduleNotification(deadline, notifyTime, timeText) {
+            const delay = notifyTime.getTime() - new Date().getTime();
+            
+            if (delay > 0) {
+                setTimeout(() => {
+                    if ('serviceWorker' in navigator && 'Notification' in window) {
+                        navigator.serviceWorker.ready.then(registration => {
+                            registration.showNotification(`⏰ Prazo em ${timeText}!`, {
+                                body: `${deadline.title}\nVence: ${formatDate(new Date(deadline.date))}`,
+                                icon: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"%3E%3Cdefs%3E%3ClinearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%"%3E%3Cstop offset="0%" style="stop-color:%23667eea;stop-opacity:1" /%3E%3Cstop offset="100%" style="stop-color:%23764ba2;stop-opacity:1" /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width="100" height="100" rx="20" fill="url(%23grad)"/%3E%3Ctext x="50" y="35" font-family="Arial,sans-serif" font-size="24" font-weight="bold" text-anchor="middle" fill="white"%3E12:34%3C/text%3E%3Ctext x="50" y="55" font-family="Arial,sans-serif" font-size="12" text-anchor="middle" fill="white"%3EDEADLINE%3C/text%3E%3Ctext x="50" y="75" font-family="Arial,sans-serif" font-size="8" text-anchor="middle" fill="white"%3EMANAGER%3C/text%3E%3C/svg%3E',
+                                badge: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"%3E%3Ccircle cx="50" cy="50" r="50" fill="%23667eea"/%3E%3Ctext x="50" y="60" font-family="Arial,sans-serif" font-size="40" font-weight="bold" text-anchor="middle" fill="white"%3E!%3C/text%3E%3C/svg%3E',
+                                tag: `deadline-${deadline.id}`,
+                                requireInteraction: true,
+                                actions: [
+                                    { action: 'view', title: 'Ver Prazo' },
+                                    { action: 'dismiss', title: 'Dispensar' }
+                                ]
+                            });
+                        });
+                    }
+                }, delay);
+            }
+        }
+
+        elements.notificationBtn.addEventListener('click', requestNotificationPermission);
+
+        // ===== SISTEMA DE COMPARTILHAMENTO =====
+        
+        elements.shareBtn.addEventListener('click', async () => {
+            const shareData = {
+                title: 'DeadlineX - Sistema de Gestão de Prazos',
+                text: 'Organize seus prazos de forma profissional com notificações inteligentes!',
+                url: window.location.href
+            };
+
+            try {
+                if (navigator.share) {
+                    await navigator.share(shareData);
+                } else {
+                    // Fallback para navegadores sem Web Share API
+                    const text = `${shareData.title}\n${shareData.text}\n${shareData.url}`;
+                    await navigator.clipboard.writeText(text);
+                    showConnectionStatus('Link copiado para a área de transferência! 📋', 'success');
+                }
+            } catch (error) {
+                console.log('Erro ao compartilhar:', error);
+            }
+        });
+
+        // ===== SISTEMA DE AUTENTICAÇÃO =====
+        
+        // Alternar entre abas Login/Cadastro
+        elements.loginTab.addEventListener('click', () => {
+            elements.loginTab.className = "flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors bg-white text-purple-600 shadow-sm";
+            elements.registerTab.className = "flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors text-gray-600 hover:text-gray-800";
+            elements.loginForm.classList.remove('hidden');
+            elements.registerForm.classList.add('hidden');
+        });
+
+        elements.registerTab.addEventListener('click', () => {
+            elements.registerTab.className = "flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors bg-white text-purple-600 shadow-sm";
+            elements.loginTab.className = "flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors text-gray-600 hover:text-gray-800";
+            elements.registerForm.classList.remove('hidden');
+            elements.loginForm.classList.add('hidden');
+        });
+
+        // Login
+        elements.loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const identifier = elements.userIdentifier.value.trim();
+            
+            if (identifier) {
+                // Verificar se usuário existe
+                const existingUsers = JSON.parse(localStorage.getItem('deadlineXUsers') || '{}');
+                const userId = btoa(identifier).replace(/[^a-zA-Z0-9]/g, '').substring(0, 20);
+                
+                if (existingUsers[userId]) {
+                    // Usuário existe, fazer login
+                    currentUser = existingUsers[userId];
+                    localStorage.setItem('deadlineXUser', JSON.stringify(currentUser));
+                    elements.userWelcome.textContent = `Bem-vindo de volta, ${currentUser.name}!`;
+                    
+                    elements.loginScreen.classList.add('hidden');
+                    elements.mainApp.classList.remove('hidden');
+                    
+                    await initializeApp();
+                } else {
+                    // Usuário não existe
+                    alert('Usuário não encontrado! Por favor, cadastre-se primeiro ou verifique os dados digitados.');
+                }
+            }
+        });
+
+        // Cadastro
+        elements.registerForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const name = document.getElementById('registerName').value.trim();
+            const email = document.getElementById('registerEmail').value.trim();
+            const phone = document.getElementById('registerPhone').value.trim();
+            
+            if (name && email) {
+                const userId = btoa(email).replace(/[^a-zA-Z0-9]/g, '').substring(0, 20);
+                
+                // Verificar se usuário já existe
+                const existingUsers = JSON.parse(localStorage.getItem('deadlineXUsers') || '{}');
+                
+                if (existingUsers[userId]) {
+                    alert('Este email já está cadastrado! Use a aba "Entrar" para fazer login.');
+                    return;
+                }
+                
+                // Criar novo usuário
+                const newUser = {
+                    id: userId,
+                    name: name,
+                    email: email,
+                    phone: phone,
+                    createdAt: new Date().toISOString()
+                };
+                
+                // Salvar na lista de usuários
+                existingUsers[userId] = newUser;
+                localStorage.setItem('deadlineXUsers', JSON.stringify(existingUsers));
+                
+                // Fazer login automático
+                currentUser = newUser;
+                localStorage.setItem('deadlineXUser', JSON.stringify(currentUser));
+                elements.userWelcome.textContent = `Bem-vindo, ${currentUser.name}!`;
+                
+                elements.loginScreen.classList.add('hidden');
+                elements.mainApp.classList.remove('hidden');
+                
+                // Mostrar mensagem de boas-vindas
+                setTimeout(() => {
+                    showConnectionStatus(`🎉 Conta criada com sucesso! Bem-vindo ao DeadlineX, ${currentUser.name}!`, 'success');
+                }, 500);
+                
+                await initializeApp();
+            }
+        });
+
+        elements.logoutBtn.addEventListener('click', () => {
+            if (confirm('Tem certeza que deseja sair do sistema?')) {
+                localStorage.removeItem('deadlineXUser');
+                currentUser = null;
+                elements.loginScreen.classList.remove('hidden');
+                elements.mainApp.classList.add('hidden');
+                elements.userIdentifier.value = '';
+            }
+        });
+
+        // ===== FUNÇÕES DE UI =====
+        
+        function openModal(modalId, editData = null) {
+            const modal = document.getElementById(modalId);
+            modal.classList.remove('hidden');
+            
+            if (modalId === 'deadlineModal') {
+                if (editData) {
+                    elements.modalTitle.textContent = 'Editar Prazo';
+                    elements.editingId.value = editData.id;
+                    document.getElementById('deadlineTitle').value = editData.title;
+                    document.getElementById('deadlineCategory').value = editData.category;
+                    document.getElementById('deadlineDate').value = new Date(editData.date).toISOString().slice(0, 16);
+                    document.getElementById('deadlineDescription').value = editData.description || '';
+                } else {
+                    elements.modalTitle.textContent = 'Novo Prazo';
+                    elements.editingId.value = '';
+                    elements.deadlineForm.reset();
+                }
+            }
         }
 
         function closeModal(modalId) {
@@ -286,264 +724,115 @@
             }
         }
 
-        // Função de diagnóstico do Supabase
-        async function diagnoseSupabase() {
-            console.log('🔍 DIAGNÓSTICO SUPABASE - DeadlineX v27');
-            console.log('=====================================');
-            
+        // ===== EVENT LISTENERS =====
+        
+        elements.newDeadlineBtn.addEventListener('click', () => openModal('deadlineModal'));
+        elements.refreshBtn.addEventListener('click', loadDeadlines);
+        document.getElementById('cancelDeadline').addEventListener('click', () => closeModal('deadlineModal'));
+        elements.deadlineForm.addEventListener('submit', saveDeadline);
+
+        // ===== FUNÇÕES DO BANCO DE DADOS =====
+        
+        async function initializeDatabase() {
             try {
-                // Testar conexão básica
-                console.log('1. Testando conexão básica...');
-                const { data: connectionTest, error: connectionError } = await supabase
+                // Verificar se as tabelas existem e criar se necessário
+                const { error: deadlinesError } = await supabase
                     .from('deadlines')
                     .select('count', { count: 'exact', head: true });
-                
-                if (connectionError) {
-                    console.error('❌ Erro de conexão:', connectionError);
-                    console.log('📋 SOLUÇÃO: Execute este SQL no Supabase:');
-                    console.log(`
-CREATE TABLE IF NOT EXISTS public.deadlines (
-    id BIGSERIAL PRIMARY KEY,
-    title TEXT NOT NULL,
-    category TEXT NOT NULL,
-    date TIMESTAMPTZ NOT NULL,
-    description TEXT,
-    completed BOOLEAN DEFAULT false,
-    created_at TIMESTAMPTZ DEFAULT NOW()
-);
 
--- Remover políticas antigas
-DROP POLICY IF EXISTS "Enable all operations for authenticated users" ON public.deadlines;
-DROP POLICY IF EXISTS "Enable all operations for anonymous users" ON public.deadlines;
-
--- Desabilitar RLS temporariamente para teste
-ALTER TABLE public.deadlines DISABLE ROW LEVEL SECURITY;
-
--- OU se quiser manter RLS, use estas políticas mais permissivas:
--- ALTER TABLE public.deadlines ENABLE ROW LEVEL SECURITY;
--- CREATE POLICY "Allow all for anon" ON public.deadlines FOR ALL TO anon USING (true) WITH CHECK (true);
--- CREATE POLICY "Allow all for authenticated" ON public.deadlines FOR ALL TO authenticated USING (true) WITH CHECK (true);
-                    `);
-                } else {
-                    console.log('✅ Tabela deadlines OK');
+                if (deadlinesError && deadlinesError.code === '42P01') {
+                    console.log('Criando tabela deadlines...');
+                    // Tabela não existe, mas não podemos criar via JavaScript
+                    // Mostrar instruções
+                    showConnectionStatus('Configure o banco de dados primeiro', 'error');
+                    return false;
                 }
 
-                // Testar tabela user_config
-                console.log('2. Testando tabela user_config...');
-                const { data: configTest, error: configError } = await supabase
-                    .from('user_config')
-                    .select('count', { count: 'exact', head: true });
-                
-                if (configError) {
-                    console.error('❌ Erro na tabela user_config:', configError);
-                    console.log('📋 SOLUÇÃO: Execute este SQL no Supabase:');
-                    console.log(`
-CREATE TABLE IF NOT EXISTS public.user_config (
-    id BIGSERIAL PRIMARY KEY,
-    whatsapp_number TEXT,
-    enable_notifications BOOLEAN DEFAULT false,
-    updated_at TIMESTAMPTZ DEFAULT NOW()
-);
-
--- Remover políticas antigas
-DROP POLICY IF EXISTS "Enable all operations for authenticated users" ON public.user_config;
-DROP POLICY IF EXISTS "Enable all operations for anonymous users" ON public.user_config;
-
--- Desabilitar RLS temporariamente para teste
-ALTER TABLE public.user_config DISABLE ROW LEVEL SECURITY;
-
--- OU se quiser manter RLS, use estas políticas mais permissivas:
--- ALTER TABLE public.user_config ENABLE ROW LEVEL SECURITY;
--- CREATE POLICY "Allow all for anon" ON public.user_config FOR ALL TO anon USING (true) WITH CHECK (true);
--- CREATE POLICY "Allow all for authenticated" ON public.user_config FOR ALL TO authenticated USING (true) WITH CHECK (true);
-                    `);
-                } else {
-                    console.log('✅ Tabela user_config OK');
-                }
-
-                // Testar inserção
-                console.log('3. Testando inserção de dados...');
-                const testDeadline = {
-                    title: 'TESTE - Diagnóstico',
-                    category: 'outros',
-                    date: new Date().toISOString(),
-                    description: 'Teste de inserção',
-                    completed: false
-                };
-
-                const { data: insertTest, error: insertError } = await supabase
-                    .from('deadlines')
-                    .insert([testDeadline])
-                    .select();
-
-                if (insertError) {
-                    console.error('❌ Erro ao inserir:', insertError);
-                    console.log('🚨 PROBLEMA IDENTIFICADO: Row Level Security (RLS)');
-                    console.log('📋 SOLUÇÃO IMEDIATA: Execute este SQL no Supabase:');
-                    console.log(`
--- CORREÇÃO PARA O ERRO 42501 (RLS Policy Violation)
-ALTER TABLE public.deadlines DISABLE ROW LEVEL SECURITY;
-ALTER TABLE public.user_config DISABLE ROW LEVEL SECURITY;
-
--- Se aparecer erro de tabela não existe:
-CREATE TABLE IF NOT EXISTS public.user_config (
-    id BIGSERIAL PRIMARY KEY,
-    whatsapp_number TEXT,
-    enable_notifications BOOLEAN DEFAULT false,
-    updated_at TIMESTAMPTZ DEFAULT NOW()
-);
-                    `);
-                } else {
-                    console.log('✅ Inserção OK');
-                    
-                    // Limpar teste
-                    await supabase
-                        .from('deadlines')
-                        .delete()
-                        .eq('title', 'TESTE - Diagnóstico');
-                }
-
-                console.log('=====================================');
-                console.log('🎯 DIAGNÓSTICO CONCLUÍDO!');
-                console.log('🔧 Execute o SQL acima no Supabase para corrigir os problemas.');
-                
+                return true;
             } catch (error) {
-                console.error('❌ Erro geral no diagnóstico:', error);
+                console.error('Erro ao inicializar banco:', error);
+                return false;
             }
         }
 
-        // Funções do banco de dados
         async function saveDeadline(e) {
             e.preventDefault();
             
+            const isEditing = elements.editingId.value !== '';
             const deadline = {
                 title: document.getElementById('deadlineTitle').value,
                 category: document.getElementById('deadlineCategory').value,
                 date: document.getElementById('deadlineDate').value,
                 description: document.getElementById('deadlineDescription').value,
-                completed: false,
-                created_at: new Date().toISOString()
+                user_id: currentUser.id,
+                completed: false
             };
+
+            if (!isEditing) {
+                deadline.created_at = new Date().toISOString();
+            }
 
             try {
                 showConnectionStatus('Salvando prazo...', 'info');
                 
-                const { data, error } = await supabase
-                    .from('deadlines')
-                    .insert([deadline])
-                    .select();
-
-                if (error) {
-                    console.error('❌ Erro Supabase ao salvar prazo:', error);
-                    console.log('📋 Execute o diagnóstico: diagnoseSupabase()');
-                    throw error;
+                let result;
+                if (isEditing) {
+                    result = await supabase
+                        .from('deadlines')
+                        .update(deadline)
+                        .eq('id', elements.editingId.value)
+                        .eq('user_id', currentUser.id)
+                        .select();
+                } else {
+                    result = await supabase
+                        .from('deadlines')
+                        .insert([deadline])
+                        .select();
                 }
+
+                if (result.error) throw result.error;
                 
-                showConnectionStatus('Prazo salvo com sucesso!', 'success');
-                closeModal('newDeadlineModal');
-                document.getElementById('newDeadlineForm').reset();
+                showConnectionStatus(`Prazo ${isEditing ? 'atualizado' : 'salvo'} com sucesso!`, 'success');
+                closeModal('deadlineModal');
                 await loadDeadlines();
+                scheduleNotifications(); // Reagendar notificações
             } catch (error) {
                 console.error('Erro ao salvar prazo:', error);
                 showConnectionStatus('Erro ao salvar prazo: ' + error.message, 'error');
             }
         }
 
-        async function saveConfig(e) {
-            e.preventDefault();
-            
-            const config = {
-                id: 1, // ID fixo para configuração única
-                whatsapp_number: document.getElementById('whatsappNumber').value,
-                enable_notifications: document.getElementById('enableNotifications').checked,
-                updated_at: new Date().toISOString()
-            };
-
-            try {
-                showConnectionStatus('Salvando configuração...', 'info');
-                
-                const { data, error } = await supabase
-                    .from('user_config')
-                    .upsert([config])
-                    .select();
-
-                if (error) {
-                    console.error('❌ Erro Supabase ao salvar config:', error);
-                    console.log('📋 Execute o diagnóstico: diagnoseSupabase()');
-                    throw error;
-                }
-                
-                userConfig.whatsappNumber = config.whatsapp_number;
-                userConfig.enableNotifications = config.enable_notifications;
-                
-                showConnectionStatus('Configuração salva com sucesso!', 'success');
-                closeModal('configModal');
-            } catch (error) {
-                console.error('Erro ao salvar configuração:', error);
-                showConnectionStatus('Erro ao salvar configuração: ' + error.message, 'error');
-            }
-        }
-
         async function loadDeadlines() {
+            if (!currentUser) return;
+
             try {
                 showConnectionStatus('Carregando prazos...', 'info');
                 
                 const { data, error } = await supabase
                     .from('deadlines')
                     .select('*')
+                    .eq('user_id', currentUser.id)
                     .order('date', { ascending: true });
 
-                if (error) {
-                    console.error('❌ Erro Supabase ao carregar prazos:', error);
-                    console.log('📋 Execute o diagnóstico: diagnoseSupabase()');
-                    throw error;
-                }
+                if (error) throw error;
 
                 deadlines = data || [];
                 renderDeadlines();
                 updateStatistics();
+                scheduleNotifications(); // Agendar notificações
                 
                 if (deadlines.length > 0) {
-                    showConnectionStatus(`${deadlines.length} prazos carregados com sucesso!`, 'success');
+                    showConnectionStatus(`${deadlines.length} prazos carregados!`, 'success');
                 } else {
-                    showConnectionStatus('Nenhum prazo encontrado. Crie seu primeiro prazo!', 'info');
+                    showConnectionStatus('Nenhum prazo encontrado. Crie seu primeiro!', 'info');
                 }
             } catch (error) {
                 console.error('Erro ao carregar prazos:', error);
                 showConnectionStatus('Erro ao carregar prazos: ' + error.message, 'error');
                 
-                // Mostrar interface mesmo com erro
                 deadlines = [];
                 renderDeadlines();
                 updateStatistics();
-            }
-        }
-
-        async function loadUserConfig() {
-            try {
-                const { data, error } = await supabase
-                    .from('user_config')
-                    .select('*')
-                    .limit(1)
-                    .single();
-
-                if (error && error.code !== 'PGRST116') {
-                    console.error('❌ Erro ao carregar config:', error);
-                    console.log('📋 Execute o diagnóstico: diagnoseSupabase()');
-                }
-
-                if (data) {
-                    userConfig.whatsappNumber = data.whatsapp_number || '';
-                    userConfig.enableNotifications = data.enable_notifications || false;
-                } else {
-                    console.log('ℹ️ Nenhuma configuração encontrada, usando padrão');
-                }
-
-                // Atualizar campos do formulário
-                document.getElementById('whatsappNumber').value = userConfig.whatsappNumber;
-                document.getElementById('enableNotifications').checked = userConfig.enableNotifications;
-            } catch (error) {
-                console.log('Configuração não encontrada, usando padrão');
             }
         }
 
@@ -553,11 +842,11 @@ CREATE TABLE IF NOT EXISTS public.user_config (
             if (deadlines.length === 0) {
                 container.innerHTML = `
                     <div class="text-center text-gray-500 py-8">
-                        <svg class="w-16 h-16 mx-auto mb-4 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
+                        <svg class="w-12 h-12 md:w-16 md:h-16 mx-auto mb-4 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
                             <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                         </svg>
-                        <p>Nenhum prazo cadastrado ainda.</p>
-                        <p class="text-sm">Clique em "Novo Prazo" para começar!</p>
+                        <p class="text-base md:text-lg">Nenhum prazo cadastrado ainda.</p>
+                        <p class="text-sm text-gray-400">Clique em "Novo Prazo" para começar!</p>
                     </div>
                 `;
                 return;
@@ -575,20 +864,23 @@ CREATE TABLE IF NOT EXISTS public.user_config (
                         isUrgent ? 'border-red-500 bg-red-50' : 
                         isThisWeek ? 'border-orange-500 bg-orange-50' : 
                         'border-gray-300 bg-gray-50'
-                    } p-4 mb-4 rounded-r-lg">
+                    } p-4 mb-4 rounded-r-xl">
                         <div class="flex justify-between items-start">
                             <div class="flex-1">
-                                <h4 class="font-semibold text-gray-800 ${deadline.completed ? 'line-through' : ''}">${deadline.title}</h4>
+                                <h4 class="font-semibold text-gray-800 text-base md:text-lg ${deadline.completed ? 'line-through' : ''}">${deadline.title}</h4>
                                 <p class="text-sm text-gray-600">${getCategoryIcon(deadline.category)} ${deadline.category}</p>
                                 <p class="text-sm text-gray-500">${formatDate(date)}</p>
                                 ${deadline.description ? `<p class="text-sm text-gray-600 mt-2">${deadline.description}</p>` : ''}
                             </div>
-                            <div class="flex space-x-2">
-                                <button onclick="toggleComplete(${deadline.id})" class="text-green-600 hover:text-green-800" title="${deadline.completed ? 'Marcar como pendente' : 'Marcar como concluído'}">
-                                    ${deadline.completed ? '✅' : '⭕'}
+                            <div class="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2 ml-4">
+                                <button onclick="editDeadline(${deadline.id})" class="text-blue-600 hover:text-blue-800 p-2 rounded-lg hover:bg-blue-100 transition-colors" title="Editar prazo">
+                                    <span class="text-lg">✏️</span>
                                 </button>
-                                <button onclick="deleteDeadline(${deadline.id})" class="text-red-600 hover:text-red-800" title="Excluir prazo">
-                                    🗑️
+                                <button onclick="toggleComplete(${deadline.id})" class="text-green-600 hover:text-green-800 p-2 rounded-lg hover:bg-green-100 transition-colors" title="${deadline.completed ? 'Marcar como pendente' : 'Marcar como concluído'}">
+                                    <span class="text-lg">${deadline.completed ? '✅' : '⭕'}</span>
+                                </button>
+                                <button onclick="deleteDeadline(${deadline.id})" class="text-red-600 hover:text-red-800 p-2 rounded-lg hover:bg-red-100 transition-colors" title="Excluir prazo">
+                                    <span class="text-lg">🗑️</span>
                                 </button>
                             </div>
                         </div>
@@ -629,7 +921,16 @@ CREATE TABLE IF NOT EXISTS public.user_config (
             return date.toLocaleDateString('pt-BR') + ' às ' + date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
         }
 
-        async function toggleComplete(id) {
+        // ===== FUNÇÕES GLOBAIS PARA BOTÕES =====
+        
+        window.editDeadline = function(id) {
+            const deadline = deadlines.find(d => d.id === id);
+            if (deadline) {
+                openModal('deadlineModal', deadline);
+            }
+        };
+
+        window.toggleComplete = async function(id) {
             const deadline = deadlines.find(d => d.id === id);
             if (!deadline) return;
 
@@ -637,7 +938,8 @@ CREATE TABLE IF NOT EXISTS public.user_config (
                 const { error } = await supabase
                     .from('deadlines')
                     .update({ completed: !deadline.completed })
-                    .eq('id', id);
+                    .eq('id', id)
+                    .eq('user_id', currentUser.id);
 
                 if (error) throw error;
 
@@ -646,16 +948,17 @@ CREATE TABLE IF NOT EXISTS public.user_config (
                 console.error('Erro ao atualizar prazo:', error);
                 showConnectionStatus('Erro ao atualizar prazo: ' + error.message, 'error');
             }
-        }
+        };
 
-        async function deleteDeadline(id) {
+        window.deleteDeadline = async function(id) {
             if (!confirm('Tem certeza que deseja excluir este prazo?')) return;
 
             try {
                 const { error } = await supabase
                     .from('deadlines')
                     .delete()
-                    .eq('id', id);
+                    .eq('id', id)
+                    .eq('user_id', currentUser.id);
 
                 if (error) throw error;
 
@@ -665,42 +968,99 @@ CREATE TABLE IF NOT EXISTS public.user_config (
                 console.error('Erro ao excluir prazo:', error);
                 showConnectionStatus('Erro ao excluir prazo: ' + error.message, 'error');
             }
+        };
+
+        // ===== SERVICE WORKER PARA PWA =====
+        
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('data:application/javascript;base64,' + btoa(`
+                const CACHE_NAME = 'deadlinex-v2.0';
+                const urlsToCache = ['/'];
+
+                self.addEventListener('install', event => {
+                    event.waitUntil(
+                        caches.open(CACHE_NAME)
+                            .then(cache => cache.addAll(urlsToCache))
+                    );
+                });
+
+                self.addEventListener('fetch', event => {
+                    event.respondWith(
+                        caches.match(event.request)
+                            .then(response => response || fetch(event.request))
+                    );
+                });
+
+                self.addEventListener('notificationclick', event => {
+                    event.notification.close();
+                    if (event.action === 'view') {
+                        event.waitUntil(
+                            clients.openWindow('/')
+                        );
+                    }
+                });
+            `)).then(() => {
+                console.log('✅ Service Worker registrado');
+            }).catch(error => {
+                console.log('❌ Erro ao registrar Service Worker:', error);
+            });
         }
 
-        function testWhatsApp() {
-            if (!userConfig.whatsappNumber) {
-                alert('Configure seu número do WhatsApp primeiro!');
-                openModal('configModal');
-                return;
-            }
-
-            const message = 'Teste do DeadlineX v27: Seu sistema de notificações está funcionando! 🚀';
-            const url = `https://wa.me/${userConfig.whatsappNumber}?text=${encodeURIComponent(message)}`;
-            window.open(url, '_blank');
-        }
-
-        function logout() {
-            if (confirm('Tem certeza que deseja sair do sistema?')) {
-                showConnectionStatus('Logout realizado com sucesso!', 'success');
-                // Aqui você pode adicionar lógica de logout
-                // window.location.href = '/login';
-            }
-        }
-
-        // Inicialização
-        document.addEventListener('DOMContentLoaded', async () => {
-            console.log('🚀 Iniciando DeadlineX v27...');
-            console.log('📋 Para diagnóstico completo, clique no botão "Diagnóstico" ou execute: diagnoseSupabase()');
+        // ===== INICIALIZAÇÃO =====
+        
+        async function initializeApp() {
+            console.log(`🚀 Inicializando ${SYSTEM_VERSION}...`);
             
-            // Disponibilizar função globalmente para console
-            window.diagnoseSupabase = diagnoseSupabase;
+            const dbReady = await initializeDatabase();
+            if (dbReady) {
+                await loadDeadlines();
+            }
             
-            await loadUserConfig();
-            await loadDeadlines();
+            // Solicitar permissão de notificação automaticamente
+            if ('Notification' in window && Notification.permission === 'default') {
+                setTimeout(() => {
+                    requestNotificationPermission();
+                }, 2000);
+            }
+        }
+
+        // Verificar se usuário já está logado
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedUser = localStorage.getItem('deadlineXUser');
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+                elements.userWelcome.textContent = `Olá, ${currentUser.name}!`;
+                elements.loginScreen.classList.add('hidden');
+                elements.mainApp.classList.remove('hidden');
+                initializeApp();
+            }
         });
+
+        // ===== FUNÇÕES DE DIAGNÓSTICO (PARA DESENVOLVIMENTO) =====
+        
+        window.diagnoseSystem = function() {
+            console.log('🔍 DIAGNÓSTICO DO SISTEMA');
+            console.log('========================');
+            console.log('Versão:', SYSTEM_VERSION);
+            console.log('Usuário atual:', currentUser);
+            console.log('Prazos carregados:', deadlines.length);
+            console.log('Supabase conectado:', !!supabase);
+            console.log('Notificações:', Notification.permission);
+            console.log('Service Worker:', 'serviceWorker' in navigator);
+            console.log('PWA instalável:', !!deferredPrompt);
+        };
+
+        // Disponibilizar globalmente
+        window.deadlineXSystem = {
+            version: SYSTEM_VERSION,
+            diagnose: window.diagnoseSystem,
+            currentUser: () => currentUser,
+            deadlines: () => deadlines
+        };
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'978087af029a886a',t:'MTc1NjY4NTI3My4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9780b2ef05d6fd72',t:'MTc1NjY4NzA0NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
+
 
 
 
