@@ -454,8 +454,8 @@
 
     <script>
         // ===== SISTEMA DE VERSIONAMENTO =====
-        const SYSTEM_VERSION = 'DeadlineX-v3.3-CriticalFix';
-        console.log(`🚀 ${SYSTEM_VERSION} - Correção Crítica de Elementos Nulos`);
+        const SYSTEM_VERSION = 'DeadlineX-v4.0-GoogleCalendarReal';
+        console.log(`🚀 ${SYSTEM_VERSION} - Integração Real com Google Calendar`);
         
         // ===== CRIAÇÃO DINÂMICA DO MANIFEST PWA =====
         function createManifest() {
@@ -543,7 +543,9 @@
             whatsappNumber: '',
             enableNotifications: false,
             googleCalendarEnabled: false,
-            googleAccessToken: null
+            googleAccessToken: null,
+            googleRefreshToken: null,
+            deadlineXCalendarId: null
         };
 
         // ===== ELEMENTOS DOM COM VERIFICAÇÃO SEGURA =====
@@ -725,37 +727,47 @@
             elements.notificationBtn.addEventListener('click', requestNotificationPermission);
         }
 
-        // ===== SISTEMA GOOGLE CALENDAR =====
+        // ===== SISTEMA GOOGLE CALENDAR REAL =====
         
-        const GOOGLE_CLIENT_ID = 'demo-client-id'; // Em produção, usar Client ID real
-        const GOOGLE_API_KEY = 'demo-api-key'; // Em produção, usar API Key real
+        const GOOGLE_CLIENT_ID = '335209075366-ad0pstc045slgc98dtkut3sj1ao5m4ut.apps.googleusercontent.com';
         const DISCOVERY_DOC = 'https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest';
-        const SCOPES = 'https://www.googleapis.com/auth/calendar.events';
+        const SCOPES = 'https://www.googleapis.com/auth/calendar.events https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email';
 
         let gapi, googleAuth;
+        let isGoogleAPILoaded = false;
 
-        async function initializeGoogleAPI() {
+        async function loadGoogleAPI() {
             try {
-                // Carregar Google API
+                console.log('🔄 Carregando Google API...');
+                
+                // Carregar Google API Script
                 if (!window.gapi) {
                     await loadScript('https://apis.google.com/js/api.js');
                 }
                 
+                // Aguardar carregamento completo
                 await new Promise((resolve) => {
                     gapi.load('client:auth2', resolve);
                 });
 
+                // Inicializar cliente
                 await gapi.client.init({
-                    apiKey: GOOGLE_API_KEY,
                     clientId: GOOGLE_CLIENT_ID,
                     discoveryDocs: [DISCOVERY_DOC],
                     scope: SCOPES
                 });
 
                 googleAuth = gapi.auth2.getAuthInstance();
+                isGoogleAPILoaded = true;
+                
+                console.log('✅ Google API carregada com sucesso');
+                console.log('🔑 Client ID:', GOOGLE_CLIENT_ID);
+                console.log('🔐 Scopes:', SCOPES);
+                
                 return true;
             } catch (error) {
-                console.error('Erro ao inicializar Google API:', error);
+                console.error('❌ Erro ao carregar Google API:', error);
+                showConnectionStatus('❌ Erro ao carregar Google API: ' + error.message, 'error');
                 return false;
             }
         }
@@ -772,13 +784,39 @@
 
         async function connectGoogleCalendar() {
             try {
-                showConnectionStatus('Conectando com Google Agenda...', 'info');
+                console.log('🚀 INICIANDO CONEXÃO COM GOOGLE CALENDAR');
+                showConnectionStatus('Carregando Google API...', 'info');
                 
-                // Simular conexão (em produção seria real)
-                await new Promise(resolve => setTimeout(resolve, 1500));
+                // Carregar API se necessário
+                if (!isGoogleAPILoaded) {
+                    const loaded = await loadGoogleAPI();
+                    if (!loaded) {
+                        throw new Error('Falha ao carregar Google API');
+                    }
+                }
                 
+                showConnectionStatus('Solicitando autorização...', 'info');
+                console.log('🔐 Solicitando autorização do usuário...');
+                
+                // Solicitar autorização
+                const authResult = await googleAuth.signIn();
+                
+                if (!authResult) {
+                    throw new Error('Autorização cancelada pelo usuário');
+                }
+                
+                console.log('✅ Usuário autorizado:', authResult.getBasicProfile().getName());
+                
+                // Obter tokens
+                const authResponse = authResult.getAuthResponse();
+                userConfig.googleAccessToken = authResponse.access_token;
+                userConfig.googleRefreshToken = authResponse.refresh_token || null;
                 userConfig.googleCalendarEnabled = true;
-                userConfig.googleAccessToken = 'demo-token-' + Date.now();
+                
+                console.log('🔑 Tokens obtidos:', {
+                    access_token: userConfig.googleAccessToken ? 'Presente' : 'Ausente',
+                    refresh_token: userConfig.googleRefreshToken ? 'Presente' : 'Ausente'
+                });
                 
                 // Salvar configuração no Supabase
                 if (currentUser) {
@@ -787,57 +825,142 @@
                         .upsert({
                             user_id: currentUser.id,
                             google_calendar_enabled: true,
-                            google_access_token: userConfig.googleAccessToken
+                            google_access_token: userConfig.googleAccessToken,
+                            google_refresh_token: userConfig.googleRefreshToken
                         });
+                    
+                    console.log('💾 Configuração salva no Supabase');
                 }
                 
-                showConnectionStatus('✅ Google Agenda conectado com sucesso!', 'success');
+                showConnectionStatus('✅ Google Calendar conectado com sucesso!', 'success');
                 updateGoogleCalendarModal();
+                
+                // Criar agenda DeadlineX
+                await ensureDeadlineXCalendar();
                 
                 // Sincronizar prazos existentes
                 await syncAllDeadlinesToGoogleCalendar();
                 
             } catch (error) {
-                console.error('Erro ao conectar Google Calendar:', error);
-                showConnectionStatus('❌ Erro ao conectar com Google Agenda', 'error');
+                console.error('❌ Erro ao conectar Google Calendar:', error);
+                
+                let errorMessage = 'Erro ao conectar com Google Calendar';
+                if (error.message.includes('popup_blocked')) {
+                    errorMessage = 'Popup bloqueado. Permita popups para este site.';
+                } else if (error.message.includes('access_denied')) {
+                    errorMessage = 'Acesso negado pelo usuário.';
+                } else if (error.message.includes('network')) {
+                    errorMessage = 'Erro de conexão. Verifique sua internet.';
+                }
+                
+                showConnectionStatus('❌ ' + errorMessage, 'error');
             }
         }
 
         async function disconnectGoogleCalendar() {
             try {
+                console.log('🔌 Desconectando Google Calendar...');
+                
+                // Desconectar da API
+                if (googleAuth && googleAuth.isSignedIn.get()) {
+                    await googleAuth.signOut();
+                }
+                
+                // Limpar configurações
                 userConfig.googleCalendarEnabled = false;
                 userConfig.googleAccessToken = null;
+                userConfig.googleRefreshToken = null;
+                userConfig.deadlineXCalendarId = null;
                 
-                // Remover configuração do Supabase
+                // Remover do Supabase
                 if (currentUser) {
                     await supabase
                         .from('user_configs')
                         .upsert({
                             user_id: currentUser.id,
                             google_calendar_enabled: false,
-                            google_access_token: null
+                            google_access_token: null,
+                            google_refresh_token: null,
+                            deadlinex_calendar_id: null
                         });
                 }
                 
-                showConnectionStatus('Google Agenda desconectado', 'info');
+                showConnectionStatus('Google Calendar desconectado', 'info');
                 updateGoogleCalendarModal();
                 
             } catch (error) {
-                console.error('Erro ao desconectar Google Calendar:', error);
+                console.error('❌ Erro ao desconectar:', error);
+                showConnectionStatus('❌ Erro ao desconectar: ' + error.message, 'error');
+            }
+        }
+
+        async function ensureDeadlineXCalendar() {
+            try {
+                console.log('📅 Verificando agenda DeadlineX...');
+                
+                // Verificar se já temos o ID da agenda
+                if (userConfig.deadlineXCalendarId) {
+                    console.log('✅ Agenda DeadlineX já existe:', userConfig.deadlineXCalendarId);
+                    return userConfig.deadlineXCalendarId;
+                }
+                
+                // Criar nova agenda
+                const calendar = {
+                    summary: 'DeadlineX - Prazos Importantes',
+                    description: 'Agenda criada automaticamente pelo DeadlineX para organizar seus prazos e compromissos importantes.',
+                    timeZone: 'America/Sao_Paulo'
+                };
+                
+                console.log('🆕 Criando nova agenda DeadlineX...');
+                
+                const response = await gapi.client.calendar.calendars.insert({
+                    resource: calendar
+                });
+                
+                userConfig.deadlineXCalendarId = response.result.id;
+                
+                console.log('✅ Agenda DeadlineX criada:', userConfig.deadlineXCalendarId);
+                
+                // Salvar no Supabase
+                if (currentUser) {
+                    await supabase
+                        .from('user_configs')
+                        .upsert({
+                            user_id: currentUser.id,
+                            google_calendar_enabled: true,
+                            google_access_token: userConfig.googleAccessToken,
+                            google_refresh_token: userConfig.googleRefreshToken,
+                            deadlinex_calendar_id: userConfig.deadlineXCalendarId
+                        });
+                }
+                
+                showConnectionStatus('📅 Agenda "DeadlineX" criada no Google Calendar!', 'success');
+                
+                return userConfig.deadlineXCalendarId;
+                
+            } catch (error) {
+                console.error('❌ Erro ao criar agenda DeadlineX:', error);
+                showConnectionStatus('❌ Erro ao criar agenda: ' + error.message, 'error');
+                return 'primary'; // Usar agenda principal como fallback
             }
         }
 
         async function syncDeadlineToGoogleCalendar(deadline) {
-            if (!userConfig.googleCalendarEnabled) return;
+            if (!userConfig.googleCalendarEnabled || !isGoogleAPILoaded) {
+                console.log('⚠️ Google Calendar não conectado');
+                return false;
+            }
             
             try {
-                // Em produção, faria chamada real para Google Calendar API
-                console.log('📅 Sincronizando prazo com Google Agenda:', deadline.title);
+                console.log('📅 Sincronizando prazo:', deadline.title);
                 
-                // Simular criação de evento
+                // Garantir que temos uma agenda
+                const calendarId = userConfig.deadlineXCalendarId || 'primary';
+                
+                // Criar evento
                 const event = {
                     summary: `⏰ ${deadline.title}`,
-                    description: `${deadline.description || ''}\n\nCriado pelo DeadlineX`,
+                    description: `${deadline.description || ''}\n\n📋 Categoria: ${getCategoryName(deadline.category)}\n🚀 Criado pelo DeadlineX\n\n⚠️ IMPORTANTE: Este é um prazo que precisa da sua atenção!`,
                     start: {
                         dateTime: new Date(deadline.date).toISOString(),
                         timeZone: 'America/Sao_Paulo'
@@ -846,26 +969,52 @@
                         dateTime: new Date(new Date(deadline.date).getTime() + 60 * 60 * 1000).toISOString(),
                         timeZone: 'America/Sao_Paulo'
                     },
+                    colorId: '11', // Vermelho para destacar
                     reminders: {
                         useDefault: false,
                         overrides: [
                             { method: 'popup', minutes: 60 },
-                            { method: 'popup', minutes: 1440 } // 1 dia antes
+                            { method: 'popup', minutes: 1440 }, // 1 dia antes
+                            { method: 'popup', minutes: 4320 }  // 3 dias antes
                         ]
                     }
                 };
                 
-                // Salvar ID do evento no Supabase para futuras atualizações
+                console.log('📤 Enviando evento para Google Calendar...');
+                
+                const response = await gapi.client.calendar.events.insert({
+                    calendarId: calendarId,
+                    resource: event
+                });
+                
+                console.log('✅ Evento criado:', response.result.id);
+                
+                // Salvar ID do evento no Supabase
                 await supabase
                     .from('deadlines')
                     .update({ 
-                        google_event_id: `demo-event-${deadline.id}-${Date.now()}` 
+                        google_event_id: response.result.id,
+                        google_calendar_synced: true
                     })
                     .eq('id', deadline.id);
                 
+                showConnectionStatus(`📅 "${deadline.title}" adicionado ao Google Calendar!`, 'success');
+                
                 return true;
+                
             } catch (error) {
-                console.error('Erro ao sincronizar com Google Calendar:', error);
+                console.error('❌ Erro ao sincronizar:', error);
+                
+                let errorMessage = 'Erro ao sincronizar com Google Calendar';
+                if (error.status === 401) {
+                    errorMessage = 'Token expirado. Reconecte o Google Calendar.';
+                    userConfig.googleCalendarEnabled = false;
+                    updateGoogleCalendarModal();
+                } else if (error.status === 403) {
+                    errorMessage = 'Sem permissão para criar eventos.';
+                }
+                
+                showConnectionStatus(`❌ ${errorMessage}`, 'error');
                 return false;
             }
         }
@@ -873,17 +1022,47 @@
         async function syncAllDeadlinesToGoogleCalendar() {
             if (!userConfig.googleCalendarEnabled) return;
             
+            console.log('🔄 Sincronizando todos os prazos...');
+            
             let synced = 0;
             for (const deadline of deadlines) {
                 if (!deadline.completed && !deadline.google_event_id) {
                     const success = await syncDeadlineToGoogleCalendar(deadline);
                     if (success) synced++;
+                    
+                    // Pequena pausa para não sobrecarregar a API
+                    await new Promise(resolve => setTimeout(resolve, 500));
                 }
             }
             
             if (synced > 0) {
-                showConnectionStatus(`📅 ${synced} prazos sincronizados com Google Agenda!`, 'success');
+                showConnectionStatus(`📅 ${synced} prazos sincronizados com Google Calendar!`, 'success');
             }
+            
+            console.log(`✅ Sincronização concluída: ${synced} prazos`);
+        }
+
+        function getCategoryName(category) {
+            const names = {
+                trabalho: 'Trabalho',
+                pessoal: 'Pessoal',
+                juridico: 'Jurídico',
+                financeiro: 'Financeiro',
+                saude: 'Saúde',
+                educacao: 'Educação',
+                aniversarios: 'Aniversários',
+                contratos: 'Contratos',
+                veiculo: 'Veículo',
+                viagens: 'Viagens',
+                impostos: 'Impostos',
+                seguros: 'Seguros',
+                documentos: 'Documentos',
+                eventos: 'Eventos',
+                manutencao: 'Manutenção',
+                reunioes: 'Reuniões',
+                outros: 'Outros'
+            };
+            return names[category] || 'Outros';
         }
 
         function updateGoogleCalendarModal() {
@@ -897,37 +1076,64 @@
                             <span class="text-2xl">✅</span>
                         </div>
                         <h4 class="font-semibold text-green-800 mb-2">Conectado com Sucesso!</h4>
-                        <p class="text-sm text-gray-600 mb-4">Seus prazos são sincronizados automaticamente com o Google Agenda.</p>
+                        <p class="text-sm text-gray-600 mb-4">Seus prazos são sincronizados automaticamente com o Google Calendar.</p>
                         
                         <div class="bg-green-50 p-4 rounded-lg mb-4">
                             <h5 class="font-medium text-green-800 mb-2">✨ Recursos Ativos:</h5>
                             <ul class="text-sm text-green-700 space-y-1">
-                                <li>• Criação automática de eventos</li>
-                                <li>• Lembretes 1 dia e 1 hora antes</li>
+                                <li>• Agenda "DeadlineX" dedicada</li>
+                                <li>• Lembretes 1h, 1 dia e 3 dias antes</li>
                                 <li>• Sincronização em tempo real</li>
-                                <li>• Atualização de alterações</li>
+                                <li>• Notificações no celular</li>
                             </ul>
                         </div>
                         
-                        <button id="syncNowBtn" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg mr-2 mb-2">
-                            🔄 Sincronizar Agora
-                        </button>
-                        <button id="disconnectGoogleBtn" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg mb-2">
-                            🔌 Desconectar
-                        </button>
+                        <div class="flex flex-wrap gap-2 justify-center">
+                            <button id="syncNowBtn" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm">
+                                🔄 Sincronizar Agora
+                            </button>
+                            <button id="testGoogleBtn" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg text-sm">
+                                🧪 Testar Evento
+                            </button>
+                            <button id="disconnectGoogleBtn" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm">
+                                🔌 Desconectar
+                            </button>
+                        </div>
                     </div>
                 `;
                 
                 const syncBtn = document.getElementById('syncNowBtn');
+                const testBtn = document.getElementById('testGoogleBtn');
                 const disconnectBtn = document.getElementById('disconnectGoogleBtn');
                 
                 if (syncBtn) {
                     syncBtn.addEventListener('click', syncAllDeadlinesToGoogleCalendar);
                 }
                 
+                if (testBtn) {
+                    testBtn.addEventListener('click', async () => {
+                        const testDeadline = {
+                            id: 'test-' + Date.now(),
+                            title: 'Teste de Sincronização DeadlineX',
+                            description: 'Este é um evento de teste para verificar a integração com Google Calendar',
+                            category: 'outros',
+                            date: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+                            completed: false
+                        };
+                        
+                        const success = await syncDeadlineToGoogleCalendar(testDeadline);
+                        
+                        if (success) {
+                            alert('✅ Teste concluído!\n\nEvento de teste criado no seu Google Calendar.\nVerifique a agenda "DeadlineX" no seu celular ou computador!');
+                        } else {
+                            alert('❌ Erro no teste. Verifique o console para mais detalhes.');
+                        }
+                    });
+                }
+                
                 if (disconnectBtn) {
                     disconnectBtn.addEventListener('click', () => {
-                        if (confirm('Deseja desconectar do Google Agenda?')) {
+                        if (confirm('Deseja desconectar do Google Calendar?')) {
                             disconnectGoogleCalendar();
                         }
                     });
@@ -939,21 +1145,23 @@
                         <div class="bg-gray-50 p-6 rounded-lg mb-4">
                             <h4 class="font-semibold text-gray-800 mb-3">🚀 Sincronização Automática</h4>
                             <ul class="text-sm text-gray-600 space-y-2 mb-4">
-                                <li>✅ Todos os prazos aparecem no Google Agenda</li>
+                                <li>✅ Todos os prazos aparecem no Google Calendar</li>
                                 <li>⏰ Lembretes automáticos no celular</li>
                                 <li>🔄 Sincronização em tempo real</li>
                                 <li>📱 Acesso em todos os dispositivos</li>
+                                <li>📅 Agenda "DeadlineX" dedicada</li>
                             </ul>
                         </div>
                         
                         <div class="bg-blue-50 p-4 rounded-lg mb-4">
-                            <p class="text-xs text-blue-700">
-                                <strong>Nota:</strong> Esta é uma versão demonstrativa. Em produção, seria necessário configurar as credenciais do Google API para funcionalidade completa.
+                            <p class="text-xs text-blue-700 mb-3">
+                                <strong>✨ Agora com integração REAL!</strong><br>
+                                Conecte sua conta Google e seus prazos aparecerão automaticamente no Google Calendar.
                             </p>
                         </div>
                         
                         <button id="connectGoogleBtn" class="bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-lg font-semibold">
-                            📅 Conectar Google Agenda
+                            📅 Conectar Google Calendar
                         </button>
                     </div>
                 `;
@@ -1522,6 +1730,8 @@
                 if (data && !error) {
                     userConfig.googleCalendarEnabled = data.google_calendar_enabled || false;
                     userConfig.googleAccessToken = data.google_access_token || null;
+                    userConfig.googleRefreshToken = data.google_refresh_token || null;
+                    userConfig.deadlineXCalendarId = data.deadlinex_calendar_id || null;
                     debugLog('Configuração do usuário carregada:', userConfig);
                 }
             } catch (error) {
@@ -1620,6 +1830,7 @@
                                 <p class="text-sm text-gray-600">${getCategoryIcon(deadline.category)} ${deadline.category}</p>
                                 <p class="text-sm text-gray-500">${formatDate(date)}</p>
                                 ${deadline.description ? `<p class="text-sm text-gray-600 mt-2">${deadline.description}</p>` : ''}
+                                ${deadline.google_calendar_synced ? '<p class="text-xs text-green-600 mt-1">📅 Sincronizado com Google Calendar</p>' : ''}
                             </div>
                             <div class="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2 ml-4">
                                 <button onclick="editDeadline(${deadline.id})" class="text-blue-600 hover:text-blue-800 p-2 rounded-lg hover:bg-blue-100 transition-colors" title="Editar prazo">
@@ -1744,7 +1955,7 @@
         if ('serviceWorker' in navigator) {
             // Criar Service Worker inline como blob
             const swCode = `
-                const CACHE_NAME = 'deadlinex-v3.3';
+                const CACHE_NAME = 'deadlinex-v4.0';
                 const urlsToCache = ['/'];
 
                 self.addEventListener('install', event => {
@@ -1901,6 +2112,9 @@
             console.log('Supabase conectado:', !!supabase);
             console.log('Supabase URL:', SUPABASE_URL);
             console.log('Supabase Key presente:', !!SUPABASE_ANON_KEY);
+            console.log('Google API carregada:', isGoogleAPILoaded);
+            console.log('Google Calendar conectado:', userConfig.googleCalendarEnabled);
+            console.log('Google Client ID:', GOOGLE_CLIENT_ID);
             console.log('Notificações:', Notification.permission);
             console.log('Service Worker:', 'serviceWorker' in navigator);
             console.log('PWA instalável:', !!deferredPrompt);
@@ -1935,41 +2149,32 @@
             } else {
                 console.log('❌ Supabase não inicializado!');
             }
+            
+            // Testar Google API
+            if (isGoogleAPILoaded) {
+                console.log('🧪 TESTANDO GOOGLE API...');
+                console.log('Google Auth:', !!googleAuth);
+                console.log('Usuário logado no Google:', googleAuth ? googleAuth.isSignedIn.get() : 'N/A');
+            } else {
+                console.log('❌ Google API não carregada!');
+            }
         };
         
-        // Função para testar login (para debug)
-        window.testSupabaseConnection = async function() {
-            if (!supabase) {
-                console.log('❌ Supabase não inicializado');
-                return;
-            }
-            
-            try {
-                console.log('🧪 Testando conexão Supabase...');
-                const { data, error } = await supabase.auth.getSession();
-                console.log('Resultado:', { data, error });
-                
-                if (error) {
-                    console.log('❌ Erro na conexão:', error);
-                } else {
-                    console.log('✅ Conexão OK');
-                }
-            } catch (error) {
-                console.log('❌ Erro crítico:', error);
-            }
-        };
-
         // Disponibilizar globalmente
         window.deadlineXSystem = {
             version: SYSTEM_VERSION,
             diagnose: window.diagnoseSystem,
             currentUser: () => currentUser,
             deadlines: () => deadlines,
-            filteredDeadlines: () => filteredDeadlines
+            filteredDeadlines: () => filteredDeadlines,
+            userConfig: () => userConfig,
+            connectGoogle: connectGoogleCalendar,
+            disconnectGoogle: disconnectGoogleCalendar
         };
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9781b467514a0133',t:'MTc1NjY5NzU5MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97822c85b1619615',t:'MTc1NjcwMjUxMS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
+
 
 
 
