@@ -8,6 +8,7 @@
     <!-- PWA Meta Tags -->
     <meta name="theme-color" content="#667eea">
     <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="DeadlineX">
     <meta name="description" content="Sistema profissional de gestão de prazos com notificações inteligentes">
@@ -15,9 +16,6 @@
     <!-- Favicon e Icons -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='grad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%23667eea;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%23764ba2;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='20' fill='url(%23grad)'/%3E%3Ctext x='50' y='35' font-family='Arial,sans-serif' font-size='24' font-weight='bold' text-anchor='middle' fill='white'%3E12:34%3C/text%3E%3Ctext x='50' y='55' font-family='Arial,sans-serif' font-size='12' text-anchor='middle' fill='white'%3EDEADLINE%3C/text%3E%3Ctext x='50' y='75' font-family='Arial,sans-serif' font-size='8' text-anchor='middle' fill='white'%3EMANAGER%3C/text%3E%3C/svg%3E">
     <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='grad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%23667eea;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%23764ba2;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='20' fill='url(%23grad)'/%3E%3Ctext x='50' y='35' font-family='Arial,sans-serif' font-size='24' font-weight='bold' text-anchor='middle' fill='white'%3E12:34%3C/text%3E%3Ctext x='50' y='55' font-family='Arial,sans-serif' font-size='12' text-anchor='middle' fill='white'%3EDEADLINE%3C/text%3E%3Ctext x='50' y='75' font-family='Arial,sans-serif' font-size='8' text-anchor='middle' fill='white'%3EMANAGER%3C/text%3E%3C/svg%3E">
-    
-    <!-- Web App Manifest -->
-    <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiRGVhZGxpbmVYIiwic2hvcnRfbmFtZSI6IkRlYWRsaW5lWCIsImRlc2NyaXB0aW9uIjoiU2lzdGVtYSBwcm9maXNzaW9uYWwgZGUgZ2VzdMOjbyBkZSBwcmF6b3MgY29tIG5vdGlmaWNhw6fDtWVzIGludGVsaWdlbnRlcyIsInN0YXJ0X3VybCI6Ii8iLCJkaXNwbGF5Ijoic3RhbmRhbG9uZSIsImJhY2tncm91bmRfY29sb3IiOiIjZmZmZmZmIiwidGhlbWVfY29sb3IiOiIjNjY3ZWVhIiwiaWNvbnMiOlt7InNyYyI6ImRhdGE6aW1hZ2Uvc3ZnK3htbCwlM0NzdmcgeG1sbnM9J2h0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnJyB2aWV3Qm94PScwIDAgMTAwIDEwMCclM0UlM0NkZWZzJTNFJTNDbGluZWFyR3JhZGllbnQgaWQ9J2dyYWQnIHgxPScwJTI1JyB5MT0nMCUyNScgeDI9JzEwMCUyNScgeTI9JzEwMCUyNSclM0UlM0NzdG9wIG9mZnNldD0nMCUyNScgc3R5bGU9J3N0b3AtY29sb3I6JTIzNjY3ZWVhO3N0b3Atb3BhY2l0eToxJyAvJTNFJTNDc3RvcCBvZmZzZXQ9JzEwMCUyNScgc3R5bGU9J3N0b3AtY29sb3I6JTIzNzY0YmEyO3N0b3Atb3BhY2l0eToxJyAvJTNFJTNDL2xpbmVhckdyYWRpZW50JTNFJTNDL2RlZnMlM0UlM0NyZWN0IHdpZHRoPScxMDAnIGhlaWdodD0nMTAwJyByeD0nMjAnIGZpbGw9J3VybCglMjNncmFkKScvJTNFJTNDdGV4dCB4PSc1MCcgeT0nMzUnIGZvbnQtZmFtaWx5PSdBcmlhbCxzYW5zLXNlcmlmJyBmb250LXNpemU9JzI0JyBmb250LXdlaWdodD0nYm9sZCcgdGV4dC1hbmNob3I9J21pZGRsZScgZmlsbD0nd2hpdGUnJTNFMTI6MzQlM0MvdGV4dCUzRSUzQ3RleHQgeD0nNTAnIHk9JzU1JyBmb250LWZhbWlseT0nQXJpYWwsc2Fucy1zZXJpZicgZm9udC1zaXplPScxMicgdGV4dC1hbmNob3I9J21pZGRsZScgZmlsbD0nd2hpdGUnJTNFREVBRExJTkUlM0MvdGV4dCUzRSUzQ3RleHQgeD0nNTAnIHk9Jzc1JyBmb250LWZhbWlseT0nQXJpYWwsc2Fucy1zZXJpZicgZm9udC1zaXplPSc4JyB0ZXh0LWFuY2hvcj0nbWlkZGxlJyBmaWxsPSd3aGl0ZSclM0VNQU5BR0VSJTNDL3RleHQlM0UlM0Mvc3ZnJTNFIiwic2l6ZXMiOiI1MTJ4NTEyIiwidHlwZSI6ImltYWdlL3N2Zyt4bWwifV19">
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -456,8 +454,8 @@
 
     <script>
         // ===== SISTEMA DE VERSIONAMENTO =====
-        const SYSTEM_VERSION = 'DeadlineX-v3.2-ErrorsFix';
-        console.log(`🚀 ${SYSTEM_VERSION} - Correção de Erros e Otimizações`);
+        const SYSTEM_VERSION = 'DeadlineX-v3.3-CriticalFix';
+        console.log(`🚀 ${SYSTEM_VERSION} - Correção Crítica de Elementos Nulos`);
         
         // ===== CRIAÇÃO DINÂMICA DO MANIFEST PWA =====
         function createManifest() {
@@ -465,7 +463,7 @@
                 "name": "DeadlineX",
                 "short_name": "DeadlineX", 
                 "description": "Sistema profissional de gestão de prazos com notificações inteligentes",
-                "start_url": "./",
+                "start_url": "/",
                 "display": "standalone",
                 "background_color": "#ffffff",
                 "theme_color": "#667eea",
@@ -548,44 +546,51 @@
             googleAccessToken: null
         };
 
-        // ===== ELEMENTOS DOM =====
+        // ===== ELEMENTOS DOM COM VERIFICAÇÃO SEGURA =====
+        function safeGetElement(id) {
+            const element = document.getElementById(id);
+            if (!element) {
+                console.warn(`⚠️ Elemento não encontrado: ${id}`);
+            }
+            return element;
+        }
+
         const elements = {
-            loginScreen: document.getElementById('loginScreen'),
-            mainApp: document.getElementById('mainApp'),
-            loginForm: document.getElementById('loginForm'),
-            registerForm: document.getElementById('registerForm'),
-            loginTab: document.getElementById('loginTab'),
-            registerTab: document.getElementById('registerTab'),
-            userIdentifier: document.getElementById('userIdentifier'),
-            userPassword: document.getElementById('userPassword'),
-            userWelcome: document.getElementById('userWelcome'),
+            loginScreen: safeGetElement('loginScreen'),
+            mainApp: safeGetElement('mainApp'),
+            loginForm: safeGetElement('loginForm'),
+            registerForm: safeGetElement('registerForm'),
+            loginTab: safeGetElement('loginTab'),
+            registerTab: safeGetElement('registerTab'),
+            userIdentifier: safeGetElement('userIdentifier'),
+            userPassword: safeGetElement('userPassword'),
+            userWelcome: safeGetElement('userWelcome'),
             
-            newDeadlineBtn: document.getElementById('newDeadlineBtn'),
-            installAppBtn: document.getElementById('installAppBtn'),
-            notificationBtn: document.getElementById('notificationBtn'),
-            shareMainBtn: document.getElementById('shareMainBtn'),
-            shareBtn: document.getElementById('shareBtn'),
-            googleCalendarBtn: document.getElementById('googleCalendarBtn'),
+            newDeadlineBtn: safeGetElement('newDeadlineBtn'),
+            installAppBtn: safeGetElement('installAppBtn'),
+            notificationBtn: safeGetElement('notificationBtn'),
+            shareBtn: safeGetElement('shareBtn'),
+            googleCalendarBtn: safeGetElement('googleCalendarBtn'),
             
-            deadlineModal: document.getElementById('deadlineModal'),
-            deadlineForm: document.getElementById('deadlineForm'),
-            modalTitle: document.getElementById('modalTitle'),
-            editingId: document.getElementById('editingId'),
+            deadlineModal: safeGetElement('deadlineModal'),
+            deadlineForm: safeGetElement('deadlineForm'),
+            modalTitle: safeGetElement('modalTitle'),
+            editingId: safeGetElement('editingId'),
             
-            deadlinesList: document.getElementById('deadlinesList'),
-            totalCount: document.getElementById('totalCount'),
-            urgentCount: document.getElementById('urgentCount'),
-            weekCount: document.getElementById('weekCount'),
-            completedCount: document.getElementById('completedCount'),
-            connectionStatus: document.getElementById('connectionStatus'),
+            deadlinesList: safeGetElement('deadlinesList'),
+            totalCount: safeGetElement('totalCount'),
+            urgentCount: safeGetElement('urgentCount'),
+            weekCount: safeGetElement('weekCount'),
+            completedCount: safeGetElement('completedCount'),
+            connectionStatus: safeGetElement('connectionStatus'),
             
-            searchInput: document.getElementById('searchInput'),
-            categoryFilter: document.getElementById('categoryFilter'),
-            clearFilters: document.getElementById('clearFilters'),
+            searchInput: safeGetElement('searchInput'),
+            categoryFilter: safeGetElement('categoryFilter'),
+            clearFilters: safeGetElement('clearFilters'),
             
-            installPrompt: document.getElementById('installPrompt'),
-            installBtn: document.getElementById('installBtn'),
-            dismissInstall: document.getElementById('dismissInstall')
+            installPrompt: safeGetElement('installPrompt'),
+            installBtn: safeGetElement('installBtn'),
+            dismissInstall: safeGetElement('dismissInstall')
         };
 
         // ===== PWA E INSTALAÇÃO =====
@@ -596,7 +601,7 @@
             deferredPrompt = e;
             
             // Mostrar prompt automático na primeira visita
-            if (!localStorage.getItem('installPromptShown')) {
+            if (!localStorage.getItem('installPromptShown') && elements.installPrompt) {
                 setTimeout(() => {
                     elements.installPrompt.classList.remove('hidden');
                     localStorage.setItem('installPromptShown', 'true');
@@ -605,30 +610,40 @@
         });
 
         // Botão instalar no prompt
-        elements.installBtn.addEventListener('click', async () => {
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                const { outcome } = await deferredPrompt.userChoice;
-                console.log(`PWA install: ${outcome}`);
-                deferredPrompt = null;
-            }
-            elements.installPrompt.classList.add('hidden');
-        });
+        if (elements.installBtn) {
+            elements.installBtn.addEventListener('click', async () => {
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                    const { outcome } = await deferredPrompt.userChoice;
+                    console.log(`PWA install: ${outcome}`);
+                    deferredPrompt = null;
+                }
+                if (elements.installPrompt) {
+                    elements.installPrompt.classList.add('hidden');
+                }
+            });
+        }
 
         // Dispensar prompt
-        elements.dismissInstall.addEventListener('click', () => {
-            elements.installPrompt.classList.add('hidden');
-        });
+        if (elements.dismissInstall) {
+            elements.dismissInstall.addEventListener('click', () => {
+                if (elements.installPrompt) {
+                    elements.installPrompt.classList.add('hidden');
+                }
+            });
+        }
 
         // Botão instalar no app
-        elements.installAppBtn.addEventListener('click', () => {
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-            } else {
-                // Instruções manuais
-                alert('Para instalar:\n\n📱 Mobile: Toque no menu do navegador > "Adicionar à tela inicial"\n\n💻 Desktop: Clique no ícone de instalação na barra de endereços');
-            }
-        });
+        if (elements.installAppBtn) {
+            elements.installAppBtn.addEventListener('click', () => {
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                } else {
+                    // Instruções manuais
+                    alert('Para instalar:\n\n📱 Mobile: Toque no menu do navegador > "Adicionar à tela inicial"\n\n💻 Desktop: Clique no ícone de instalação na barra de endereços');
+                }
+            });
+        }
 
         // ===== NOTIFICAÇÕES PUSH =====
         
@@ -706,7 +721,9 @@
             }
         }
 
-        elements.notificationBtn.addEventListener('click', requestNotificationPermission);
+        if (elements.notificationBtn) {
+            elements.notificationBtn.addEventListener('click', requestNotificationPermission);
+        }
 
         // ===== SISTEMA GOOGLE CALENDAR =====
         
@@ -870,7 +887,8 @@
         }
 
         function updateGoogleCalendarModal() {
-            const content = document.getElementById('googleCalendarContent');
+            const content = safeGetElement('googleCalendarContent');
+            if (!content) return;
             
             if (userConfig.googleCalendarEnabled) {
                 content.innerHTML = `
@@ -900,12 +918,20 @@
                     </div>
                 `;
                 
-                document.getElementById('syncNowBtn').addEventListener('click', syncAllDeadlinesToGoogleCalendar);
-                document.getElementById('disconnectGoogleBtn').addEventListener('click', () => {
-                    if (confirm('Deseja desconectar do Google Agenda?')) {
-                        disconnectGoogleCalendar();
-                    }
-                });
+                const syncBtn = document.getElementById('syncNowBtn');
+                const disconnectBtn = document.getElementById('disconnectGoogleBtn');
+                
+                if (syncBtn) {
+                    syncBtn.addEventListener('click', syncAllDeadlinesToGoogleCalendar);
+                }
+                
+                if (disconnectBtn) {
+                    disconnectBtn.addEventListener('click', () => {
+                        if (confirm('Deseja desconectar do Google Agenda?')) {
+                            disconnectGoogleCalendar();
+                        }
+                    });
+                }
                 
             } else {
                 content.innerHTML = `
@@ -932,19 +958,34 @@
                     </div>
                 `;
                 
-                document.getElementById('connectGoogleBtn').addEventListener('click', connectGoogleCalendar);
+                const connectBtn = document.getElementById('connectGoogleBtn');
+                if (connectBtn) {
+                    connectBtn.addEventListener('click', connectGoogleCalendar);
+                }
             }
         }
 
         function openGoogleCalendarModal() {
             updateGoogleCalendarModal();
-            document.getElementById('googleCalendarModal').classList.remove('hidden');
+            const modal = safeGetElement('googleCalendarModal');
+            if (modal) {
+                modal.classList.remove('hidden');
+            }
         }
 
-        elements.googleCalendarBtn.addEventListener('click', openGoogleCalendarModal);
-        document.getElementById('cancelGoogleCalendar').addEventListener('click', () => {
-            document.getElementById('googleCalendarModal').classList.add('hidden');
-        });
+        if (elements.googleCalendarBtn) {
+            elements.googleCalendarBtn.addEventListener('click', openGoogleCalendarModal);
+        }
+
+        const cancelGoogleBtn = safeGetElement('cancelGoogleCalendar');
+        if (cancelGoogleBtn) {
+            cancelGoogleBtn.addEventListener('click', () => {
+                const modal = safeGetElement('googleCalendarModal');
+                if (modal) {
+                    modal.classList.add('hidden');
+                }
+            });
+        }
 
         // ===== SISTEMA DE COMPARTILHAMENTO =====
         
@@ -969,195 +1010,239 @@
             }
         }
 
-        elements.shareBtn.addEventListener('click', shareApp);
-        elements.shareMainBtn.addEventListener('click', shareApp);
+        if (elements.shareBtn) {
+            elements.shareBtn.addEventListener('click', shareApp);
+        }
 
         // ===== SISTEMA DE AUTENTICAÇÃO =====
         
         // Alternar entre abas Login/Cadastro
-        elements.loginTab.addEventListener('click', () => {
-            elements.loginTab.className = "flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors bg-white text-purple-600 shadow-sm";
-            elements.registerTab.className = "flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors text-gray-600 hover:text-gray-800";
-            elements.loginForm.classList.remove('hidden');
-            elements.registerForm.classList.add('hidden');
-        });
+        if (elements.loginTab) {
+            elements.loginTab.addEventListener('click', () => {
+                elements.loginTab.className = "flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors bg-white text-purple-600 shadow-sm";
+                elements.registerTab.className = "flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors text-gray-600 hover:text-gray-800";
+                if (elements.loginForm) elements.loginForm.classList.remove('hidden');
+                if (elements.registerForm) elements.registerForm.classList.add('hidden');
+            });
+        }
 
-        elements.registerTab.addEventListener('click', () => {
-            elements.registerTab.className = "flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors bg-white text-purple-600 shadow-sm";
-            elements.loginTab.className = "flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors text-gray-600 hover:text-gray-800";
-            elements.registerForm.classList.remove('hidden');
-            elements.loginForm.classList.add('hidden');
-        });
+        if (elements.registerTab) {
+            elements.registerTab.addEventListener('click', () => {
+                elements.registerTab.className = "flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors bg-white text-purple-600 shadow-sm";
+                elements.loginTab.className = "flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors text-gray-600 hover:text-gray-800";
+                if (elements.registerForm) elements.registerForm.classList.remove('hidden');
+                if (elements.loginForm) elements.loginForm.classList.add('hidden');
+            });
+        }
 
-        // Funcionalidade mostrar/ocultar senha
-        document.getElementById('toggleLoginPassword').addEventListener('click', function() {
-            const passwordField = elements.userPassword;
-            const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
-            passwordField.setAttribute('type', type);
-            this.textContent = type === 'password' ? '👁️' : '🙈';
-        });
+        // Funcionalidade mostrar/ocultar senha - com verificação de elementos
+        const toggleLoginPassword = safeGetElement('toggleLoginPassword');
+        if (toggleLoginPassword) {
+            toggleLoginPassword.addEventListener('click', function() {
+                if (elements.userPassword) {
+                    const type = elements.userPassword.getAttribute('type') === 'password' ? 'text' : 'password';
+                    elements.userPassword.setAttribute('type', type);
+                    this.textContent = type === 'password' ? '👁️' : '🙈';
+                }
+            });
+        }
 
-        document.getElementById('toggleRegisterPassword').addEventListener('click', function() {
-            const passwordField = document.getElementById('registerPassword');
-            const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
-            passwordField.setAttribute('type', type);
-            this.textContent = type === 'password' ? '👁️' : '🙈';
-        });
+        const toggleRegisterPassword = safeGetElement('toggleRegisterPassword');
+        if (toggleRegisterPassword) {
+            toggleRegisterPassword.addEventListener('click', function() {
+                const passwordField = safeGetElement('registerPassword');
+                if (passwordField) {
+                    const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+                    passwordField.setAttribute('type', type);
+                    this.textContent = type === 'password' ? '👁️' : '🙈';
+                }
+            });
+        }
 
-        document.getElementById('toggleConfirmPassword').addEventListener('click', function() {
-            const passwordField = document.getElementById('confirmPassword');
-            const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
-            passwordField.setAttribute('type', type);
-            this.textContent = type === 'password' ? '👁️' : '🙈';
-        });
+        const toggleConfirmPassword = safeGetElement('toggleConfirmPassword');
+        if (toggleConfirmPassword) {
+            toggleConfirmPassword.addEventListener('click', function() {
+                const passwordField = safeGetElement('confirmPassword');
+                if (passwordField) {
+                    const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+                    passwordField.setAttribute('type', type);
+                    this.textContent = type === 'password' ? '👁️' : '🙈';
+                }
+            });
+        }
 
         // Login
-        elements.loginForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = elements.userIdentifier.value.trim();
-            const password = elements.userPassword.value;
-            
-            debugLog('Tentativa de login:', { email });
-            
-            if (!email || !password) {
-                showConnectionStatus('❌ Preencha email e senha', 'error');
-                return;
-            }
-            
-            if (!supabase) {
-                errorLog('Supabase não inicializado');
-                showConnectionStatus('❌ Sistema não inicializado. Recarregue a página.', 'error');
-                return;
-            }
-            
-            try {
-                showConnectionStatus('Fazendo login...', 'info');
+        if (elements.loginForm) {
+            elements.loginForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
                 
-                const { data, error } = await supabase.auth.signInWithPassword({
-                    email: email,
-                    password: password
-                });
-                
-                if (error) {
-                    errorLog('Erro no login:', error);
-                    let errorMessage = 'Erro no login';
-                    
-                    if (error.message.includes('Invalid login credentials')) {
-                        errorMessage = 'Email ou senha incorretos';
-                    } else if (error.message.includes('Email not confirmed')) {
-                        errorMessage = 'Confirme seu email antes de fazer login';
-                    } else {
-                        errorMessage = error.message;
-                    }
-                    
-                    showConnectionStatus('❌ ' + errorMessage, 'error');
+                if (!elements.userIdentifier || !elements.userPassword) {
+                    showConnectionStatus('❌ Elementos de login não encontrados', 'error');
                     return;
                 }
                 
-                currentUser = data.user;
-                debugLog('Login bem-sucedido:', currentUser);
+                const email = elements.userIdentifier.value.trim();
+                const password = elements.userPassword.value;
                 
-                const userName = currentUser.user_metadata?.name || currentUser.email;
-                elements.userWelcome.textContent = `Bem-vindo de volta, ${userName}!`;
+                debugLog('Tentativa de login:', { email });
                 
-                elements.loginScreen.classList.add('hidden');
-                elements.mainApp.classList.remove('hidden');
+                if (!email || !password) {
+                    showConnectionStatus('❌ Preencha email e senha', 'error');
+                    return;
+                }
                 
-                showConnectionStatus('✅ Login realizado com sucesso!', 'success');
-                await initializeApp();
+                if (!supabase) {
+                    errorLog('Supabase não inicializado');
+                    showConnectionStatus('❌ Sistema não inicializado. Recarregue a página.', 'error');
+                    return;
+                }
                 
-            } catch (error) {
-                errorLog('Erro crítico no login:', error);
-                showConnectionStatus('❌ Erro de conexão: ' + error.message, 'error');
-            }
-        });
+                try {
+                    showConnectionStatus('Fazendo login...', 'info');
+                    
+                    const { data, error } = await supabase.auth.signInWithPassword({
+                        email: email,
+                        password: password
+                    });
+                    
+                    if (error) {
+                        errorLog('Erro no login:', error);
+                        let errorMessage = 'Erro no login';
+                        
+                        if (error.message.includes('Invalid login credentials')) {
+                            errorMessage = 'Email ou senha incorretos';
+                        } else if (error.message.includes('Email not confirmed')) {
+                            errorMessage = 'Confirme seu email antes de fazer login';
+                        } else {
+                            errorMessage = error.message;
+                        }
+                        
+                        showConnectionStatus('❌ ' + errorMessage, 'error');
+                        return;
+                    }
+                    
+                    currentUser = data.user;
+                    debugLog('Login bem-sucedido:', currentUser);
+                    
+                    const userName = currentUser.user_metadata?.name || currentUser.email;
+                    if (elements.userWelcome) {
+                        elements.userWelcome.textContent = `Bem-vindo de volta, ${userName}!`;
+                    }
+                    
+                    if (elements.loginScreen) elements.loginScreen.classList.add('hidden');
+                    if (elements.mainApp) elements.mainApp.classList.remove('hidden');
+                    
+                    showConnectionStatus('✅ Login realizado com sucesso!', 'success');
+                    await initializeApp();
+                    
+                } catch (error) {
+                    errorLog('Erro crítico no login:', error);
+                    showConnectionStatus('❌ Erro de conexão: ' + error.message, 'error');
+                }
+            });
+        }
 
         // Cadastro
-        elements.registerForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const name = document.getElementById('registerName').value.trim();
-            const email = document.getElementById('registerEmail').value.trim();
-            const password = document.getElementById('registerPassword').value;
-            const confirmPassword = document.getElementById('confirmPassword').value;
-            const phone = document.getElementById('registerPhone').value.trim();
-            
-            // Validações
-            if (!name || !email || !password) {
-                showConnectionStatus('❌ Preencha todos os campos obrigatórios', 'error');
-                return;
-            }
-            
-            if (password.length < 6) {
-                showConnectionStatus('❌ A senha deve ter pelo menos 6 caracteres', 'error');
-                return;
-            }
-            
-            if (password !== confirmPassword) {
-                showConnectionStatus('❌ As senhas não coincidem', 'error');
-                return;
-            }
-            
-            if (!supabase) {
-                errorLog('Supabase não inicializado');
-                showConnectionStatus('❌ Sistema não inicializado. Recarregue a página.', 'error');
-                return;
-            }
-            
-            try {
-                showConnectionStatus('Criando conta...', 'info');
+        if (elements.registerForm) {
+            elements.registerForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
                 
-                const { data, error } = await supabase.auth.signUp({
-                    email: email,
-                    password: password,
-                    options: {
-                        data: {
-                            name: name,
-                            phone: phone
-                        }
-                    }
-                });
+                const nameField = safeGetElement('registerName');
+                const emailField = safeGetElement('registerEmail');
+                const passwordField = safeGetElement('registerPassword');
+                const confirmPasswordField = safeGetElement('confirmPassword');
+                const phoneField = safeGetElement('registerPhone');
                 
-                if (error) {
-                    errorLog('Erro no cadastro:', error);
-                    let errorMessage = 'Erro no cadastro';
-                    
-                    if (error.message.includes('User already registered')) {
-                        errorMessage = 'Este email já está cadastrado';
-                    } else if (error.message.includes('Password should be at least')) {
-                        errorMessage = 'Senha muito fraca';
-                    } else {
-                        errorMessage = error.message;
-                    }
-                    
-                    showConnectionStatus('❌ ' + errorMessage, 'error');
+                if (!nameField || !emailField || !passwordField || !confirmPasswordField) {
+                    showConnectionStatus('❌ Elementos de cadastro não encontrados', 'error');
                     return;
                 }
                 
-                currentUser = data.user;
-                debugLog('Cadastro bem-sucedido:', currentUser);
+                const name = nameField.value.trim();
+                const email = emailField.value.trim();
+                const password = passwordField.value;
+                const confirmPassword = confirmPasswordField.value;
+                const phone = phoneField ? phoneField.value.trim() : '';
                 
-                elements.userWelcome.textContent = `Bem-vindo, ${name}!`;
+                // Validações
+                if (!name || !email || !password) {
+                    showConnectionStatus('❌ Preencha todos os campos obrigatórios', 'error');
+                    return;
+                }
                 
-                elements.loginScreen.classList.add('hidden');
-                elements.mainApp.classList.remove('hidden');
+                if (password.length < 6) {
+                    showConnectionStatus('❌ A senha deve ter pelo menos 6 caracteres', 'error');
+                    return;
+                }
                 
-                // Mostrar mensagem de boas-vindas
-                showConnectionStatus(`🎉 Conta criada com sucesso! Bem-vindo ao DeadlineX, ${name}!`, 'success');
+                if (password !== confirmPassword) {
+                    showConnectionStatus('❌ As senhas não coincidem', 'error');
+                    return;
+                }
                 
-                await initializeApp();
+                if (!supabase) {
+                    errorLog('Supabase não inicializado');
+                    showConnectionStatus('❌ Sistema não inicializado. Recarregue a página.', 'error');
+                    return;
+                }
                 
-            } catch (error) {
-                errorLog('Erro crítico no cadastro:', error);
-                showConnectionStatus('❌ Erro de conexão: ' + error.message, 'error');
-            }
-        });
-
-        // Função de logout removida - não é mais necessária
+                try {
+                    showConnectionStatus('Criando conta...', 'info');
+                    
+                    const { data, error } = await supabase.auth.signUp({
+                        email: email,
+                        password: password,
+                        options: {
+                            data: {
+                                name: name,
+                                phone: phone
+                            }
+                        }
+                    });
+                    
+                    if (error) {
+                        errorLog('Erro no cadastro:', error);
+                        let errorMessage = 'Erro no cadastro';
+                        
+                        if (error.message.includes('User already registered')) {
+                            errorMessage = 'Este email já está cadastrado';
+                        } else if (error.message.includes('Password should be at least')) {
+                            errorMessage = 'Senha muito fraca';
+                        } else {
+                            errorMessage = error.message;
+                        }
+                        
+                        showConnectionStatus('❌ ' + errorMessage, 'error');
+                        return;
+                    }
+                    
+                    currentUser = data.user;
+                    debugLog('Cadastro bem-sucedido:', currentUser);
+                    
+                    if (elements.userWelcome) {
+                        elements.userWelcome.textContent = `Bem-vindo, ${name}!`;
+                    }
+                    
+                    if (elements.loginScreen) elements.loginScreen.classList.add('hidden');
+                    if (elements.mainApp) elements.mainApp.classList.remove('hidden');
+                    
+                    // Mostrar mensagem de boas-vindas
+                    showConnectionStatus(`🎉 Conta criada com sucesso! Bem-vindo ao DeadlineX, ${name}!`, 'success');
+                    
+                    await initializeApp();
+                    
+                } catch (error) {
+                    errorLog('Erro crítico no cadastro:', error);
+                    showConnectionStatus('❌ Erro de conexão: ' + error.message, 'error');
+                }
+            });
+        }
 
         // ===== SISTEMA DE BUSCA E FILTROS =====
         
         function applyFilters() {
+            if (!elements.searchInput || !elements.categoryFilter) return;
+            
             const searchTerm = elements.searchInput.value.toLowerCase().trim();
             const selectedCategory = elements.categoryFilter.value;
             
@@ -1182,8 +1267,8 @@
         }
 
         function clearFilters() {
-            elements.searchInput.value = '';
-            elements.categoryFilter.value = '';
+            if (elements.searchInput) elements.searchInput.value = '';
+            if (elements.categoryFilter) elements.categoryFilter.value = '';
             filteredDeadlines = [...deadlines];
             renderDeadlines();
             updateStatistics();
@@ -1191,58 +1276,84 @@
         }
 
         // Event listeners para busca
-        elements.searchInput.addEventListener('input', applyFilters);
-        elements.categoryFilter.addEventListener('change', applyFilters);
-        elements.clearFilters.addEventListener('click', clearFilters);
+        if (elements.searchInput) {
+            elements.searchInput.addEventListener('input', applyFilters);
+        }
+        if (elements.categoryFilter) {
+            elements.categoryFilter.addEventListener('change', applyFilters);
+        }
+        if (elements.clearFilters) {
+            elements.clearFilters.addEventListener('click', clearFilters);
+        }
 
         // ===== FUNÇÕES DE UI =====
         
         function openModal(modalId, editData = null) {
-            const modal = document.getElementById(modalId);
+            const modal = safeGetElement(modalId);
+            if (!modal) return;
+            
             modal.classList.remove('hidden');
             
             if (modalId === 'deadlineModal') {
+                const titleField = safeGetElement('deadlineTitle');
+                const categoryField = safeGetElement('deadlineCategory');
+                const dateField = safeGetElement('deadlineDate');
+                const descriptionField = safeGetElement('deadlineDescription');
+                
                 if (editData) {
-                    elements.modalTitle.textContent = 'Editar Prazo';
-                    elements.editingId.value = editData.id;
-                    document.getElementById('deadlineTitle').value = editData.title;
-                    document.getElementById('deadlineCategory').value = editData.category;
-                    document.getElementById('deadlineDate').value = new Date(editData.date).toISOString().slice(0, 16);
-                    document.getElementById('deadlineDescription').value = editData.description || '';
+                    if (elements.modalTitle) elements.modalTitle.textContent = 'Editar Prazo';
+                    if (elements.editingId) elements.editingId.value = editData.id;
+                    if (titleField) titleField.value = editData.title;
+                    if (categoryField) categoryField.value = editData.category;
+                    if (dateField) dateField.value = new Date(editData.date).toISOString().slice(0, 16);
+                    if (descriptionField) descriptionField.value = editData.description || '';
                 } else {
-                    elements.modalTitle.textContent = 'Novo Prazo';
-                    elements.editingId.value = '';
-                    elements.deadlineForm.reset();
+                    if (elements.modalTitle) elements.modalTitle.textContent = 'Novo Prazo';
+                    if (elements.editingId) elements.editingId.value = '';
+                    if (elements.deadlineForm) elements.deadlineForm.reset();
                 }
             }
         }
 
         function closeModal(modalId) {
-            document.getElementById(modalId).classList.add('hidden');
+            const modal = safeGetElement(modalId);
+            if (modal) {
+                modal.classList.add('hidden');
+            }
         }
 
         function showConnectionStatus(message, type) {
-            const statusEl = elements.connectionStatus;
-            statusEl.textContent = message;
-            statusEl.className = `mb-4 p-3 rounded-lg text-sm font-medium ${
+            if (!elements.connectionStatus) return;
+            
+            elements.connectionStatus.textContent = message;
+            elements.connectionStatus.className = `mb-4 p-3 rounded-lg text-sm font-medium ${
                 type === 'success' ? 'bg-green-100 text-green-800' :
                 type === 'error' ? 'bg-red-100 text-red-800' :
                 'bg-blue-100 text-blue-800'
             }`;
-            statusEl.classList.remove('hidden');
+            elements.connectionStatus.classList.remove('hidden');
             
             if (type === 'success' || type === 'info') {
                 setTimeout(() => {
-                    statusEl.classList.add('hidden');
+                    elements.connectionStatus.classList.add('hidden');
                 }, 3000);
             }
         }
 
         // ===== EVENT LISTENERS =====
         
-        elements.newDeadlineBtn.addEventListener('click', () => openModal('deadlineModal'));
-        document.getElementById('cancelDeadline').addEventListener('click', () => closeModal('deadlineModal'));
-        elements.deadlineForm.addEventListener('submit', saveDeadline);
+        if (elements.newDeadlineBtn) {
+            elements.newDeadlineBtn.addEventListener('click', () => openModal('deadlineModal'));
+        }
+
+        const cancelDeadlineBtn = safeGetElement('cancelDeadline');
+        if (cancelDeadlineBtn) {
+            cancelDeadlineBtn.addEventListener('click', () => closeModal('deadlineModal'));
+        }
+
+        if (elements.deadlineForm) {
+            elements.deadlineForm.addEventListener('submit', saveDeadline);
+        }
 
         // ===== FUNÇÕES DO BANCO DE DADOS =====
         
@@ -1273,15 +1384,25 @@
             
             debugLog('=== INICIANDO SALVAMENTO DE PRAZO ===');
             
-            const isEditing = elements.editingId.value !== '';
+            const isEditing = elements.editingId && elements.editingId.value !== '';
             debugLog('Modo de edição:', isEditing);
             debugLog('Usuário atual:', currentUser);
             
             // Validar dados antes de enviar
-            const title = document.getElementById('deadlineTitle').value.trim();
-            const category = document.getElementById('deadlineCategory').value;
-            const date = document.getElementById('deadlineDate').value;
-            const description = document.getElementById('deadlineDescription').value.trim();
+            const titleField = safeGetElement('deadlineTitle');
+            const categoryField = safeGetElement('deadlineCategory');
+            const dateField = safeGetElement('deadlineDate');
+            const descriptionField = safeGetElement('deadlineDescription');
+            
+            if (!titleField || !categoryField || !dateField) {
+                showConnectionStatus('❌ Elementos do formulário não encontrados', 'error');
+                return;
+            }
+            
+            const title = titleField.value.trim();
+            const category = categoryField.value;
+            const date = dateField.value;
+            const description = descriptionField ? descriptionField.value.trim() : '';
             
             if (!title || !category || !date) {
                 showConnectionStatus('❌ Preencha todos os campos obrigatórios', 'error');
@@ -1344,7 +1465,7 @@
                 scheduleNotifications();
                 
                 // Sincronizar com Google Calendar se conectado
-                if (userConfig.googleCalendarEnabled) {
+                if (userConfig.googleCalendarEnabled && result.data && result.data[0]) {
                     await syncDeadlineToGoogleCalendar(result.data[0]);
                 }
                 
@@ -1426,11 +1547,14 @@
         }
 
         function renderDeadlines() {
+            if (!elements.deadlinesList) return;
+            
             const container = elements.deadlinesList;
             const deadlinesToShow = filteredDeadlines.length > 0 ? filteredDeadlines : deadlines;
             
             if (deadlinesToShow.length === 0) {
-                const isFiltered = elements.searchInput.value || elements.categoryFilter.value;
+                const isFiltered = (elements.searchInput && elements.searchInput.value) || 
+                                 (elements.categoryFilter && elements.categoryFilter.value);
                 container.innerHTML = `
                     <div class="text-center text-gray-500 py-8">
                         <svg class="w-12 h-12 md:w-16 md:h-16 mx-auto mb-4 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
@@ -1490,10 +1614,10 @@
             const thisWeek = deadlines.filter(d => !d.completed && new Date(d.date) <= weekFromNow).length;
             const completed = deadlines.filter(d => d.completed).length;
 
-            elements.totalCount.textContent = total;
-            elements.urgentCount.textContent = urgent;
-            elements.weekCount.textContent = thisWeek;
-            elements.completedCount.textContent = completed;
+            if (elements.totalCount) elements.totalCount.textContent = total;
+            if (elements.urgentCount) elements.urgentCount.textContent = urgent;
+            if (elements.weekCount) elements.weekCount.textContent = thisWeek;
+            if (elements.completedCount) elements.completedCount.textContent = completed;
         }
 
         function getCategoryIcon(category) {
@@ -1586,7 +1710,7 @@
         if ('serviceWorker' in navigator) {
             // Criar Service Worker inline como blob
             const swCode = `
-                const CACHE_NAME = 'deadlinex-v3.1';
+                const CACHE_NAME = 'deadlinex-v3.3';
                 const urlsToCache = ['/'];
 
                 self.addEventListener('install', event => {
@@ -1711,9 +1835,11 @@
                     debugLog('Usuário logado encontrado:', currentUser);
                     
                     const userName = currentUser.user_metadata?.name || currentUser.email;
-                    elements.userWelcome.textContent = `Olá, ${userName}!`;
-                    elements.loginScreen.classList.add('hidden');
-                    elements.mainApp.classList.remove('hidden');
+                    if (elements.userWelcome) {
+                        elements.userWelcome.textContent = `Olá, ${userName}!`;
+                    }
+                    if (elements.loginScreen) elements.loginScreen.classList.add('hidden');
+                    if (elements.mainApp) elements.mainApp.classList.remove('hidden');
                     
                     await initializeApp();
                 } else {
@@ -1741,6 +1867,12 @@
             console.log('Notificações:', Notification.permission);
             console.log('Service Worker:', 'serviceWorker' in navigator);
             console.log('PWA instalável:', !!deferredPrompt);
+            
+            // Verificar elementos DOM
+            console.log('=== ELEMENTOS DOM ===');
+            Object.keys(elements).forEach(key => {
+                console.log(`${key}:`, !!elements[key]);
+            });
             
             // Testar conexão com Supabase
             if (supabase) {
@@ -1799,8 +1931,9 @@
             filteredDeadlines: () => filteredDeadlines
         };
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97819665c7fba451',t:'MTc1NjY5NjM2Mi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9781a84227bb1acb',t:'MTc1NjY5NzA5My4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
+
 
 
 
