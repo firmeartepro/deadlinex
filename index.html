@@ -201,13 +201,19 @@
                         </div>
                     </div>
                     <div class="flex items-center space-x-2">
-                        <button id="shareBtn" class="bg-white bg-opacity-20 hover:bg-opacity-30 p-2 md:px-4 md:py-2 rounded-lg transition-colors text-sm md:text-base">
-                            <span class="hidden md:inline">📤 Compartilhar</span>
-                            <span class="md:hidden">📤</span>
+                        <!-- Desktop: Mostrar ambos os botões -->
+                        <button id="shareBtn" class="hidden md:flex bg-white bg-opacity-20 hover:bg-opacity-30 px-4 py-2 rounded-lg transition-colors text-base items-center space-x-2">
+                            <span>📤</span>
+                            <span>Compartilhar</span>
                         </button>
-                        <button id="logoutBtn" class="bg-red-500 hover:bg-red-600 p-2 md:px-4 md:py-2 rounded-lg transition-colors text-sm md:text-base">
-                            <span class="hidden md:inline">Sair</span>
-                            <span class="md:hidden">🚪</span>
+                        <button id="logoutBtn" class="hidden md:flex bg-red-500 hover:bg-red-600 px-4 py-2 rounded-lg transition-colors text-base items-center space-x-2">
+                            <span>🚪</span>
+                            <span>Sair</span>
+                        </button>
+                        
+                        <!-- Mobile: Apenas botão de logout discreto -->
+                        <button id="mobileLogoutBtn" class="md:hidden bg-red-500 hover:bg-red-600 p-2 rounded-lg transition-colors">
+                            <span class="text-lg">🚪</span>
                         </button>
                     </div>
                 </div>
@@ -222,17 +228,17 @@
                     <span class="text-2xl">➕</span>
                     <span class="text-sm md:text-base">Novo Prazo</span>
                 </button>
-                <button id="installAppBtn" class="bg-blue-500 hover:bg-blue-600 text-white btn-large rounded-xl font-semibold transition-all duration-200 transform hover:scale-105 card-shadow flex flex-col items-center space-y-2">
-                    <span class="text-2xl">📱</span>
-                    <span class="text-sm md:text-base">Instalar App</span>
-                </button>
                 <button id="notificationBtn" class="bg-purple-500 hover:bg-purple-600 text-white btn-large rounded-xl font-semibold transition-all duration-200 transform hover:scale-105 card-shadow flex flex-col items-center space-y-2">
                     <span class="text-2xl">🔔</span>
                     <span class="text-sm md:text-base">Notificações</span>
                 </button>
-                <button id="refreshBtn" class="bg-orange-500 hover:bg-orange-600 text-white btn-large rounded-xl font-semibold transition-all duration-200 transform hover:scale-105 card-shadow flex flex-col items-center space-y-2">
-                    <span class="text-2xl">🔄</span>
-                    <span class="text-sm md:text-base">Atualizar</span>
+                <button id="installAppBtn" class="bg-blue-500 hover:bg-blue-600 text-white btn-large rounded-xl font-semibold transition-all duration-200 transform hover:scale-105 card-shadow flex flex-col items-center space-y-2">
+                    <span class="text-2xl">📱</span>
+                    <span class="text-sm md:text-base">Instalar App</span>
+                </button>
+                <button id="shareMainBtn" class="bg-pink-500 hover:bg-pink-600 text-white btn-large rounded-xl font-semibold transition-all duration-200 transform hover:scale-105 card-shadow flex flex-col items-center space-y-2">
+                    <span class="text-2xl">📤</span>
+                    <span class="text-sm md:text-base">Compartilhar</span>
                 </button>
             </div>
 
@@ -302,7 +308,39 @@
             <!-- Deadlines List -->
             <div class="bg-white rounded-xl card-shadow">
                 <div class="p-4 md:p-6 border-b border-gray-200">
-                    <h2 class="text-lg md:text-xl font-semibold text-gray-800">Meus Prazos</h2>
+                    <div class="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
+                        <h2 class="text-lg md:text-xl font-semibold text-gray-800">Meus Prazos</h2>
+                        
+                        <!-- Filtros de Busca -->
+                        <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3">
+                            <div class="relative">
+                                <input type="text" id="searchInput" placeholder="🔍 Buscar por título..." class="pl-4 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm w-full sm:w-48">
+                            </div>
+                            <select id="categoryFilter" class="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm">
+                                <option value="">📋 Todas as categorias</option>
+                                <option value="trabalho">🏢 Trabalho</option>
+                                <option value="pessoal">👤 Pessoal</option>
+                                <option value="juridico">⚖️ Jurídico</option>
+                                <option value="financeiro">💰 Financeiro</option>
+                                <option value="saude">🏥 Saúde</option>
+                                <option value="educacao">📚 Educação</option>
+                                <option value="aniversarios">🎂 Aniversários</option>
+                                <option value="contratos">📄 Contratos</option>
+                                <option value="veiculo">🚗 Veículo</option>
+                                <option value="viagens">✈️ Viagens</option>
+                                <option value="impostos">🧾 Impostos</option>
+                                <option value="seguros">🛡️ Seguros</option>
+                                <option value="documentos">📋 Documentos</option>
+                                <option value="eventos">🎉 Eventos</option>
+                                <option value="manutencao">🔧 Manutenção</option>
+                                <option value="reunioes">👥 Reuniões</option>
+                                <option value="outros">📋 Outros</option>
+                            </select>
+                            <button id="clearFilters" class="px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm transition-colors">
+                                ✖️ Limpar
+                            </button>
+                        </div>
+                    </div>
                 </div>
                 <div id="deadlinesList" class="p-4 md:p-6">
                     <div class="text-center text-gray-500 py-8">
@@ -404,8 +442,8 @@
 
     <script>
         // ===== SISTEMA DE VERSIONAMENTO =====
-        const SYSTEM_VERSION = 'DeadlineX-v3.0-SupabaseOnly';
-        console.log(`🚀 ${SYSTEM_VERSION} - Sistema 100% Supabase`);
+        const SYSTEM_VERSION = 'DeadlineX-v3.1-SupabaseOnly-WithSearch';
+        console.log(`🚀 ${SYSTEM_VERSION} - Sistema 100% Supabase com Busca`);
         
         // ===== SISTEMA DE DEBUG AVANÇADO =====
         window.debugMode = true;
@@ -441,6 +479,7 @@
 
         // ===== ESTADO DA APLICAÇÃO =====
         let deadlines = [];
+        let filteredDeadlines = [];
         let userConfig = {
             whatsappNumber: '',
             enableNotifications: false
@@ -461,9 +500,10 @@
             newDeadlineBtn: document.getElementById('newDeadlineBtn'),
             installAppBtn: document.getElementById('installAppBtn'),
             notificationBtn: document.getElementById('notificationBtn'),
-            refreshBtn: document.getElementById('refreshBtn'),
+            shareMainBtn: document.getElementById('shareMainBtn'),
             shareBtn: document.getElementById('shareBtn'),
             logoutBtn: document.getElementById('logoutBtn'),
+            mobileLogoutBtn: document.getElementById('mobileLogoutBtn'),
             
             deadlineModal: document.getElementById('deadlineModal'),
             deadlineForm: document.getElementById('deadlineForm'),
@@ -476,6 +516,10 @@
             weekCount: document.getElementById('weekCount'),
             completedCount: document.getElementById('completedCount'),
             connectionStatus: document.getElementById('connectionStatus'),
+            
+            searchInput: document.getElementById('searchInput'),
+            categoryFilter: document.getElementById('categoryFilter'),
+            clearFilters: document.getElementById('clearFilters'),
             
             installPrompt: document.getElementById('installPrompt'),
             installBtn: document.getElementById('installBtn'),
@@ -604,7 +648,7 @@
 
         // ===== SISTEMA DE COMPARTILHAMENTO =====
         
-        elements.shareBtn.addEventListener('click', async () => {
+        async function shareApp() {
             const shareData = {
                 title: 'DeadlineX - Sistema de Gestão de Prazos',
                 text: 'Organize seus prazos de forma profissional com notificações inteligentes!',
@@ -623,7 +667,10 @@
             } catch (error) {
                 console.log('Erro ao compartilhar:', error);
             }
-        });
+        }
+
+        elements.shareBtn.addEventListener('click', shareApp);
+        elements.shareMainBtn.addEventListener('click', shareApp);
 
         // ===== SISTEMA DE AUTENTICAÇÃO =====
         
@@ -663,8 +710,6 @@
             passwordField.setAttribute('type', type);
             this.textContent = type === 'password' ? '👁️' : '🙈';
         });
-
-
 
         // Login
         elements.loginForm.addEventListener('submit', async (e) => {
@@ -773,7 +818,8 @@
             }
         });
 
-        elements.logoutBtn.addEventListener('click', async () => {
+        // Logout (desktop e mobile)
+        async function logout() {
             if (confirm('Tem certeza que deseja sair do sistema?')) {
                 try {
                     await supabase.auth.signOut();
@@ -795,7 +841,50 @@
                     console.error('Erro no logout:', error);
                 }
             }
-        });
+        }
+
+        elements.logoutBtn.addEventListener('click', logout);
+        elements.mobileLogoutBtn.addEventListener('click', logout);
+
+        // ===== SISTEMA DE BUSCA E FILTROS =====
+        
+        function applyFilters() {
+            const searchTerm = elements.searchInput.value.toLowerCase().trim();
+            const selectedCategory = elements.categoryFilter.value;
+            
+            filteredDeadlines = deadlines.filter(deadline => {
+                const matchesSearch = !searchTerm || 
+                    deadline.title.toLowerCase().includes(searchTerm) ||
+                    (deadline.description && deadline.description.toLowerCase().includes(searchTerm));
+                
+                const matchesCategory = !selectedCategory || deadline.category === selectedCategory;
+                
+                return matchesSearch && matchesCategory;
+            });
+            
+            renderDeadlines();
+            updateStatistics();
+            
+            // Mostrar feedback da busca
+            if (searchTerm || selectedCategory) {
+                const resultCount = filteredDeadlines.length;
+                showConnectionStatus(`🔍 ${resultCount} prazo(s) encontrado(s)`, 'info');
+            }
+        }
+
+        function clearFilters() {
+            elements.searchInput.value = '';
+            elements.categoryFilter.value = '';
+            filteredDeadlines = [...deadlines];
+            renderDeadlines();
+            updateStatistics();
+            showConnectionStatus('Filtros limpos', 'success');
+        }
+
+        // Event listeners para busca
+        elements.searchInput.addEventListener('input', applyFilters);
+        elements.categoryFilter.addEventListener('change', applyFilters);
+        elements.clearFilters.addEventListener('click', clearFilters);
 
         // ===== FUNÇÕES DE UI =====
         
@@ -833,7 +922,7 @@
             }`;
             statusEl.classList.remove('hidden');
             
-            if (type === 'success') {
+            if (type === 'success' || type === 'info') {
                 setTimeout(() => {
                     statusEl.classList.add('hidden');
                 }, 3000);
@@ -843,7 +932,6 @@
         // ===== EVENT LISTENERS =====
         
         elements.newDeadlineBtn.addEventListener('click', () => openModal('deadlineModal'));
-        elements.refreshBtn.addEventListener('click', loadDeadlines);
         document.getElementById('cancelDeadline').addEventListener('click', () => closeModal('deadlineModal'));
         elements.deadlineForm.addEventListener('submit', saveDeadline);
 
@@ -987,8 +1075,9 @@
                     }
                 }
                 
-                renderDeadlines();
-                updateStatistics();
+                // Aplicar filtros atuais
+                filteredDeadlines = [...deadlines];
+                applyFilters();
                 scheduleNotifications();
                 
             } catch (error) {
@@ -996,6 +1085,7 @@
                 showConnectionStatus('❌ Erro de conexão: ' + error.message, 'error');
                 
                 deadlines = [];
+                filteredDeadlines = [];
                 renderDeadlines();
                 updateStatistics();
             }
@@ -1003,21 +1093,23 @@
 
         function renderDeadlines() {
             const container = elements.deadlinesList;
+            const deadlinesToShow = filteredDeadlines.length > 0 ? filteredDeadlines : deadlines;
             
-            if (deadlines.length === 0) {
+            if (deadlinesToShow.length === 0) {
+                const isFiltered = elements.searchInput.value || elements.categoryFilter.value;
                 container.innerHTML = `
                     <div class="text-center text-gray-500 py-8">
                         <svg class="w-12 h-12 md:w-16 md:h-16 mx-auto mb-4 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
                             <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                         </svg>
-                        <p class="text-base md:text-lg">Nenhum prazo cadastrado ainda.</p>
-                        <p class="text-sm text-gray-400">Clique em "Novo Prazo" para começar!</p>
+                        <p class="text-base md:text-lg">${isFiltered ? 'Nenhum prazo encontrado com esses filtros.' : 'Nenhum prazo cadastrado ainda.'}</p>
+                        <p class="text-sm text-gray-400">${isFiltered ? 'Tente ajustar os filtros de busca.' : 'Clique em "Novo Prazo" para começar!'}</p>
                     </div>
                 `;
                 return;
             }
 
-            container.innerHTML = deadlines.map(deadline => {
+            container.innerHTML = deadlinesToShow.map(deadline => {
                 const date = new Date(deadline.date);
                 const now = new Date();
                 const isUrgent = date <= now && !deadline.completed;
@@ -1058,6 +1150,7 @@
             const now = new Date();
             const weekFromNow = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
 
+            // Usar deadlines originais para estatísticas, não filtrados
             const total = deadlines.length;
             const urgent = deadlines.filter(d => !d.completed && new Date(d.date) <= now).length;
             const thisWeek = deadlines.filter(d => !d.completed && new Date(d.date) <= weekFromNow).length;
@@ -1159,7 +1252,7 @@
         if ('serviceWorker' in navigator) {
             // Criar Service Worker inline como blob
             const swCode = `
-                const CACHE_NAME = 'deadlinex-v2.1';
+                const CACHE_NAME = 'deadlinex-v3.1';
                 const urlsToCache = ['/'];
 
                 self.addEventListener('install', event => {
@@ -1288,6 +1381,7 @@
             console.log('Versão:', SYSTEM_VERSION);
             console.log('Usuário atual:', currentUser);
             console.log('Prazos carregados:', deadlines.length);
+            console.log('Prazos filtrados:', filteredDeadlines.length);
             console.log('Supabase conectado:', !!supabase);
             console.log('Notificações:', Notification.permission);
             console.log('Service Worker:', 'serviceWorker' in navigator);
@@ -1311,11 +1405,13 @@
             version: SYSTEM_VERSION,
             diagnose: window.diagnoseSystem,
             currentUser: () => currentUser,
-            deadlines: () => deadlines
+            deadlines: () => deadlines,
+            filteredDeadlines: () => filteredDeadlines
         };
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9780ec1b66f6a178',t:'MTc1NjY4OTM4Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97817dc4e535d986',t:'MTc1NjY5NTM1My4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
+
 
 
 
