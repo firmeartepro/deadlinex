@@ -404,8 +404,24 @@
 
     <script>
         // ===== SISTEMA DE VERSIONAMENTO =====
-        const SYSTEM_VERSION = 'DeadlineX-v2.0-Complete';
-        console.log(`🚀 ${SYSTEM_VERSION} - Sistema Completo Carregado`);
+        const SYSTEM_VERSION = 'DeadlineX-v2.1-Debug';
+        console.log(`🚀 ${SYSTEM_VERSION} - Sistema com Diagnósticos Avançados`);
+        
+        // ===== SISTEMA DE DEBUG AVANÇADO =====
+        window.debugMode = true;
+        
+        function debugLog(message, data = null) {
+            if (window.debugMode) {
+                console.log(`🔍 [DEBUG] ${message}`, data || '');
+            }
+        }
+        
+        function errorLog(message, error = null) {
+            console.error(`❌ [ERRO] ${message}`, error || '');
+            if (error) {
+                console.error('Stack trace:', error.stack);
+            }
+        }
         
         // Salvar versão no localStorage para referência
         localStorage.setItem('deadlineXVersion', SYSTEM_VERSION);
@@ -658,10 +674,30 @@
 
         // Função para gerar UUID válido
         function generateUUID() {
-            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+            const uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
                 var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
                 return v.toString(16);
             });
+            debugLog('UUID gerado:', uuid);
+            return uuid;
+        }
+        
+        // Função para validar UUID
+        function isValidUUID(uuid) {
+            const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+            const isValid = uuidRegex.test(uuid);
+            debugLog('Validando UUID:', { uuid, isValid });
+            return isValid;
+        }
+        
+        // Função para corrigir UUID inválido
+        function fixUserUUID(user) {
+            if (!user.id || !isValidUUID(user.id)) {
+                const oldId = user.id;
+                user.id = generateUUID();
+                debugLog('UUID corrigido:', { oldId, newId: user.id });
+            }
+            return user;
         }
 
         // Login
@@ -670,24 +706,33 @@
             const email = elements.userIdentifier.value.trim();
             const password = elements.userPassword.value;
             
+            debugLog('Tentativa de login:', { email });
+            
             if (email && password) {
                 // Verificar se usuário existe e senha está correta
                 const existingUsers = JSON.parse(localStorage.getItem('deadlineXUsers') || '{}');
-                const userId = generateUUID(); // Usar UUID válido
                 const userKey = btoa(email).replace(/[^a-zA-Z0-9]/g, '').substring(0, 20);
                 
+                debugLog('Chave do usuário gerada:', userKey);
+                debugLog('Usuários existentes:', Object.keys(existingUsers));
+                
                 if (existingUsers[userKey]) {
+                    debugLog('Usuário encontrado:', existingUsers[userKey]);
+                    
                     // Verificar senha
                     if (existingUsers[userKey].password === btoa(password)) {
                         // Login bem-sucedido
                         currentUser = existingUsers[userKey];
+                        debugLog('Login bem-sucedido, usuário antes da correção:', currentUser);
+                        
                         // Garantir que o usuário tenha um UUID válido
-                        if (!currentUser.id || currentUser.id.length < 36) {
-                            currentUser.id = generateUUID();
-                            existingUsers[userKey] = currentUser;
-                            localStorage.setItem('deadlineXUsers', JSON.stringify(existingUsers));
-                        }
+                        currentUser = fixUserUUID(currentUser);
+                        existingUsers[userKey] = currentUser;
+                        localStorage.setItem('deadlineXUsers', JSON.stringify(existingUsers));
                         localStorage.setItem('deadlineXUser', JSON.stringify(currentUser));
+                        
+                        debugLog('Usuário após correção UUID:', currentUser);
+                        
                         elements.userWelcome.textContent = `Bem-vindo de volta, ${currentUser.name}!`;
                         
                         elements.loginScreen.classList.add('hidden');
@@ -695,10 +740,11 @@
                         
                         await initializeApp();
                     } else {
+                        errorLog('Senha incorreta para o usuário:', email);
                         alert('Senha incorreta! Verifique sua senha e tente novamente.');
                     }
                 } else {
-                    // Usuário não existe
+                    errorLog('Usuário não encontrado:', email);
                     alert('Email não encontrado! Por favor, cadastre-se primeiro ou verifique o email digitado.');
                 }
             }
@@ -750,6 +796,9 @@
                 createdAt: new Date().toISOString()
             };
             
+            debugLog('Novo usuário criado:', newUser);
+            debugLog('UUID do novo usuário é válido:', isValidUUID(newUser.id));
+            
             // Salvar na lista de usuários
             existingUsers[userKey] = newUser;
             localStorage.setItem('deadlineXUsers', JSON.stringify(existingUsers));
@@ -757,6 +806,8 @@
             // Fazer login automático
             currentUser = newUser;
             localStorage.setItem('deadlineXUser', JSON.stringify(currentUser));
+            
+            debugLog('Usuário salvo no localStorage:', currentUser);
             elements.userWelcome.textContent = `Bem-vindo, ${currentUser.name}!`;
             
             elements.loginScreen.classList.add('hidden');
@@ -867,7 +918,13 @@
         async function saveDeadline(e) {
             e.preventDefault();
             
+            debugLog('=== INICIANDO SALVAMENTO DE PRAZO ===');
+            
             const isEditing = elements.editingId.value !== '';
+            debugLog('Modo de edição:', isEditing);
+            debugLog('Usuário atual:', currentUser);
+            debugLog('UUID do usuário é válido:', isValidUUID(currentUser?.id));
+            
             const deadline = {
                 title: document.getElementById('deadlineTitle').value,
                 category: document.getElementById('deadlineCategory').value,
@@ -880,12 +937,15 @@
             if (!isEditing) {
                 deadline.created_at = new Date().toISOString();
             }
+            
+            debugLog('Dados do prazo a ser salvo:', deadline);
 
             try {
                 showConnectionStatus('Salvando prazo...', 'info');
                 
                 let result;
                 if (isEditing) {
+                    debugLog('Executando UPDATE no Supabase...');
                     result = await supabase
                         .from('deadlines')
                         .update(deadline)
@@ -893,39 +953,73 @@
                         .eq('user_id', currentUser.id)
                         .select();
                 } else {
+                    debugLog('Executando INSERT no Supabase...');
                     result = await supabase
                         .from('deadlines')
                         .insert([deadline])
                         .select();
                 }
 
-                if (result.error) throw result.error;
+                debugLog('Resultado do Supabase:', result);
+
+                if (result.error) {
+                    errorLog('Erro retornado pelo Supabase:', result.error);
+                    throw result.error;
+                }
                 
+                debugLog('Prazo salvo com sucesso!');
                 showConnectionStatus(`Prazo ${isEditing ? 'atualizado' : 'salvo'} com sucesso!`, 'success');
                 closeModal('deadlineModal');
                 await loadDeadlines();
                 scheduleNotifications(); // Reagendar notificações
             } catch (error) {
-                console.error('Erro ao salvar prazo:', error);
+                errorLog('Erro ao salvar prazo:', error);
+                debugLog('Detalhes completos do erro:', {
+                    message: error.message,
+                    code: error.code,
+                    details: error.details,
+                    hint: error.hint
+                });
                 showConnectionStatus('Erro ao salvar prazo: ' + error.message, 'error');
             }
         }
 
         async function loadDeadlines() {
-            if (!currentUser) return;
+            if (!currentUser) {
+                errorLog('Tentativa de carregar prazos sem usuário logado');
+                return;
+            }
+
+            debugLog('=== INICIANDO CARREGAMENTO DE PRAZOS ===');
+            debugLog('Usuário atual:', currentUser);
+            debugLog('UUID do usuário é válido:', isValidUUID(currentUser?.id));
 
             try {
                 showConnectionStatus('Carregando prazos...', 'info');
                 
+                debugLog('Executando SELECT no Supabase...');
                 const { data, error } = await supabase
                     .from('deadlines')
                     .select('*')
                     .eq('user_id', currentUser.id)
                     .order('date', { ascending: true });
 
-                if (error) throw error;
+                debugLog('Resultado do SELECT:', { data, error });
+
+                if (error) {
+                    errorLog('Erro retornado pelo Supabase no SELECT:', error);
+                    debugLog('Detalhes completos do erro SELECT:', {
+                        message: error.message,
+                        code: error.code,
+                        details: error.details,
+                        hint: error.hint
+                    });
+                    throw error;
+                }
 
                 deadlines = data || [];
+                debugLog(`${deadlines.length} prazos carregados do banco:`, deadlines);
+                
                 renderDeadlines();
                 updateStatistics();
                 scheduleNotifications(); // Agendar notificações
@@ -936,7 +1030,7 @@
                     showConnectionStatus('Nenhum prazo encontrado. Crie seu primeiro!', 'info');
                 }
             } catch (error) {
-                console.error('Erro ao carregar prazos:', error);
+                errorLog('Erro ao carregar prazos:', error);
                 showConnectionStatus('Erro ao carregar prazos: ' + error.message, 'error');
                 
                 deadlines = [];
@@ -1145,28 +1239,93 @@
 
         // Verificar se usuário já está logado
         document.addEventListener('DOMContentLoaded', () => {
+            debugLog('=== INICIALIZANDO APLICAÇÃO ===');
+            
             const savedUser = localStorage.getItem('deadlineXUser');
+            debugLog('Usuário salvo no localStorage:', savedUser);
+            
             if (savedUser) {
-                currentUser = JSON.parse(savedUser);
-                elements.userWelcome.textContent = `Olá, ${currentUser.name}!`;
-                elements.loginScreen.classList.add('hidden');
-                elements.mainApp.classList.remove('hidden');
-                initializeApp();
+                try {
+                    currentUser = JSON.parse(savedUser);
+                    debugLog('Usuário parseado:', currentUser);
+                    debugLog('UUID do usuário salvo é válido:', isValidUUID(currentUser?.id));
+                    
+                    // Corrigir UUID se necessário
+                    if (currentUser && (!currentUser.id || !isValidUUID(currentUser.id))) {
+                        debugLog('Corrigindo UUID do usuário salvo...');
+                        currentUser = fixUserUUID(currentUser);
+                        localStorage.setItem('deadlineXUser', JSON.stringify(currentUser));
+                        
+                        // Atualizar também na lista de usuários
+                        const existingUsers = JSON.parse(localStorage.getItem('deadlineXUsers') || '{}');
+                        const userKey = btoa(currentUser.email).replace(/[^a-zA-Z0-9]/g, '').substring(0, 20);
+                        existingUsers[userKey] = currentUser;
+                        localStorage.setItem('deadlineXUsers', JSON.stringify(existingUsers));
+                    }
+                    
+                    elements.userWelcome.textContent = `Olá, ${currentUser.name}!`;
+                    elements.loginScreen.classList.add('hidden');
+                    elements.mainApp.classList.remove('hidden');
+                    initializeApp();
+                } catch (error) {
+                    errorLog('Erro ao parsear usuário salvo:', error);
+                    localStorage.removeItem('deadlineXUser');
+                }
+            } else {
+                debugLog('Nenhum usuário salvo encontrado');
             }
         });
 
         // ===== FUNÇÕES DE DIAGNÓSTICO (PARA DESENVOLVIMENTO) =====
         
         window.diagnoseSystem = function() {
-            console.log('🔍 DIAGNÓSTICO DO SISTEMA');
-            console.log('========================');
+            console.log('🔍 DIAGNÓSTICO COMPLETO DO SISTEMA');
+            console.log('==================================');
             console.log('Versão:', SYSTEM_VERSION);
             console.log('Usuário atual:', currentUser);
+            console.log('UUID do usuário é válido:', currentUser ? isValidUUID(currentUser.id) : 'N/A');
             console.log('Prazos carregados:', deadlines.length);
             console.log('Supabase conectado:', !!supabase);
             console.log('Notificações:', Notification.permission);
             console.log('Service Worker:', 'serviceWorker' in navigator);
             console.log('PWA instalável:', !!deferredPrompt);
+            console.log('LocalStorage usuários:', localStorage.getItem('deadlineXUsers'));
+            console.log('LocalStorage usuário atual:', localStorage.getItem('deadlineXUser'));
+            
+            // Testar conexão com Supabase
+            if (supabase && currentUser) {
+                console.log('🧪 TESTANDO CONEXÃO COM SUPABASE...');
+                supabase.from('deadlines').select('count', { count: 'exact', head: true })
+                    .then(result => {
+                        console.log('✅ Teste de conexão Supabase:', result);
+                    })
+                    .catch(error => {
+                        console.log('❌ Erro no teste de conexão Supabase:', error);
+                    });
+            }
+        };
+        
+        window.fixAllUUIDs = function() {
+            console.log('🔧 CORRIGINDO TODOS OS UUIDs...');
+            
+            // Corrigir usuário atual
+            if (currentUser) {
+                const oldId = currentUser.id;
+                currentUser = fixUserUUID(currentUser);
+                localStorage.setItem('deadlineXUser', JSON.stringify(currentUser));
+                console.log('Usuário atual corrigido:', { oldId, newId: currentUser.id });
+            }
+            
+            // Corrigir todos os usuários salvos
+            const existingUsers = JSON.parse(localStorage.getItem('deadlineXUsers') || '{}');
+            Object.keys(existingUsers).forEach(key => {
+                const oldId = existingUsers[key].id;
+                existingUsers[key] = fixUserUUID(existingUsers[key]);
+                console.log(`Usuário ${key} corrigido:`, { oldId, newId: existingUsers[key].id });
+            });
+            localStorage.setItem('deadlineXUsers', JSON.stringify(existingUsers));
+            
+            console.log('✅ Todos os UUIDs foram corrigidos!');
         };
 
         // Disponibilizar globalmente
@@ -1177,8 +1336,9 @@
             deadlines: () => deadlines
         };
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9780c209e7b2a109',t:'MTc1NjY4NzY2My4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9780cba2c22d0b84',t:'MTc1NjY4ODA1Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
+
 
 
 
