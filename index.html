@@ -925,16 +925,22 @@
             debugLog('Usuário atual:', currentUser);
             debugLog('UUID do usuário é válido:', isValidUUID(currentUser?.id));
             
+            // Gerar ID único para novos prazos
+            const deadlineId = isEditing ? elements.editingId.value : generateUUID();
+            debugLog('ID do prazo:', deadlineId);
+            
             const deadline = {
-                title: document.getElementById('deadlineTitle').value,
+                title: document.getElementById('deadlineTitle').value.trim(),
                 category: document.getElementById('deadlineCategory').value,
                 date: document.getElementById('deadlineDate').value,
-                description: document.getElementById('deadlineDescription').value,
+                description: document.getElementById('deadlineDescription').value.trim(),
                 user_id: currentUser.id,
                 completed: false
             };
 
+            // Para novos prazos, incluir ID e created_at
             if (!isEditing) {
+                deadline.id = deadlineId;
                 deadline.created_at = new Date().toISOString();
             }
             
@@ -946,14 +952,36 @@
                 let result;
                 if (isEditing) {
                     debugLog('Executando UPDATE no Supabase...');
+                    // Para UPDATE, remover campos que não devem ser atualizados
+                    const updateData = { ...deadline };
+                    delete updateData.id;
+                    delete updateData.created_at;
+                    delete updateData.user_id; // Não atualizar user_id por segurança
+                    
+                    debugLog('Dados para UPDATE:', updateData);
+                    
                     result = await supabase
                         .from('deadlines')
-                        .update(deadline)
+                        .update(updateData)
                         .eq('id', elements.editingId.value)
                         .eq('user_id', currentUser.id)
                         .select();
                 } else {
                     debugLog('Executando INSERT no Supabase...');
+                    
+                    // Verificar se já existe um prazo com esse ID (prevenção extra)
+                    const { data: existingDeadline } = await supabase
+                        .from('deadlines')
+                        .select('id')
+                        .eq('id', deadlineId)
+                        .single();
+                    
+                    if (existingDeadline) {
+                        debugLog('ID já existe, gerando novo...');
+                        deadline.id = generateUUID();
+                        debugLog('Novo ID gerado:', deadline.id);
+                    }
+                    
                     result = await supabase
                         .from('deadlines')
                         .insert([deadline])
@@ -964,6 +992,35 @@
 
                 if (result.error) {
                     errorLog('Erro retornado pelo Supabase:', result.error);
+                    
+                    // Tratamento específico para erro 409 (conflito)
+                    if (result.error.code === '23505' || result.error.message.includes('duplicate key')) {
+                        errorLog('Erro de chave duplicada detectado');
+                        
+                        if (!isEditing) {
+                            // Tentar novamente com novo ID
+                            debugLog('Tentando novamente com novo UUID...');
+                            deadline.id = generateUUID();
+                            debugLog('Novo UUID gerado:', deadline.id);
+                            
+                            const retryResult = await supabase
+                                .from('deadlines')
+                                .insert([deadline])
+                                .select();
+                            
+                            if (retryResult.error) {
+                                throw retryResult.error;
+                            }
+                            
+                            debugLog('Prazo salvo com sucesso na segunda tentativa!');
+                            showConnectionStatus('Prazo salvo com sucesso!', 'success');
+                            closeModal('deadlineModal');
+                            await loadDeadlines();
+                            scheduleNotifications();
+                            return;
+                        }
+                    }
+                    
                     throw result.error;
                 }
                 
@@ -978,9 +1035,21 @@
                     message: error.message,
                     code: error.code,
                     details: error.details,
-                    hint: error.hint
+                    hint: error.hint,
+                    stack: error.stack
                 });
-                showConnectionStatus('Erro ao salvar prazo: ' + error.message, 'error');
+                
+                // Mensagem de erro mais amigável
+                let errorMessage = 'Erro desconhecido';
+                if (error.message.includes('duplicate key') || error.code === '23505') {
+                    errorMessage = 'Conflito de dados. Tentando novamente...';
+                } else if (error.message.includes('violates')) {
+                    errorMessage = 'Dados inválidos. Verifique os campos.';
+                } else {
+                    errorMessage = error.message;
+                }
+                
+                showConnectionStatus('Erro ao salvar prazo: ' + errorMessage, 'error');
             }
         }
 
@@ -1336,8 +1405,9 @@
             deadlines: () => deadlines
         };
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9780cba2c22d0b84',t:'MTc1NjY4ODA1Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9780d4322090068a',t:'MTc1NjY4ODQwNy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
+
 
 
 
