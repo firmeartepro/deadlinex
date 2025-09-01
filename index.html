@@ -41,7 +41,7 @@
     <!-- Main Container -->
     <div class="container mx-auto px-6 py-8">
         <!-- Action Buttons -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-8">
             <button id="newDeadlineBtn" class="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors card-shadow">
                 ➕ Novo Prazo
             </button>
@@ -53,6 +53,9 @@
             </button>
             <button id="refreshBtn" class="bg-purple-500 hover:bg-purple-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors card-shadow">
                 🔄 Atualizar
+            </button>
+            <button id="diagnoseBtn" class="bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors card-shadow">
+                🔍 Diagnóstico
             </button>
         </div>
 
@@ -246,6 +249,10 @@
         elements.testWhatsappBtn.addEventListener('click', testWhatsApp);
         elements.refreshBtn.addEventListener('click', loadDeadlines);
         elements.logoutBtn.addEventListener('click', logout);
+        document.getElementById('diagnoseBtn').addEventListener('click', () => {
+            console.log('🔍 Executando diagnóstico...');
+            diagnoseSupabase();
+        });
 
         document.getElementById('cancelNewDeadline').addEventListener('click', () => closeModal('newDeadlineModal'));
         document.getElementById('cancelConfig').addEventListener('click', () => closeModal('configModal'));
@@ -279,6 +286,111 @@
             }
         }
 
+        // Função de diagnóstico do Supabase
+        async function diagnoseSupabase() {
+            console.log('🔍 DIAGNÓSTICO SUPABASE - DeadlineX v27');
+            console.log('=====================================');
+            
+            try {
+                // Testar conexão básica
+                console.log('1. Testando conexão básica...');
+                const { data: connectionTest, error: connectionError } = await supabase
+                    .from('deadlines')
+                    .select('count', { count: 'exact', head: true });
+                
+                if (connectionError) {
+                    console.error('❌ Erro de conexão:', connectionError);
+                    console.log('📋 SOLUÇÃO: Execute este SQL no Supabase:');
+                    console.log(`
+CREATE TABLE IF NOT EXISTS public.deadlines (
+    id BIGSERIAL PRIMARY KEY,
+    title TEXT NOT NULL,
+    category TEXT NOT NULL,
+    date TIMESTAMPTZ NOT NULL,
+    description TEXT,
+                    completed BOOLEAN DEFAULT false,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Políticas RLS
+ALTER TABLE public.deadlines ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Enable all operations for authenticated users" ON public.deadlines
+    FOR ALL USING (true);
+
+CREATE POLICY "Enable all operations for anonymous users" ON public.deadlines
+    FOR ALL USING (true);
+                    `);
+                } else {
+                    console.log('✅ Tabela deadlines OK');
+                }
+
+                // Testar tabela user_config
+                console.log('2. Testando tabela user_config...');
+                const { data: configTest, error: configError } = await supabase
+                    .from('user_config')
+                    .select('count', { count: 'exact', head: true });
+                
+                if (configError) {
+                    console.error('❌ Erro na tabela user_config:', configError);
+                    console.log('📋 SOLUÇÃO: Execute este SQL no Supabase:');
+                    console.log(`
+CREATE TABLE IF NOT EXISTS public.user_config (
+    id BIGSERIAL PRIMARY KEY,
+    whatsapp_number TEXT,
+    enable_notifications BOOLEAN DEFAULT false,
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Políticas RLS
+ALTER TABLE public.user_config ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Enable all operations for authenticated users" ON public.user_config
+    FOR ALL USING (true);
+
+CREATE POLICY "Enable all operations for anonymous users" ON public.user_config
+    FOR ALL USING (true);
+                    `);
+                } else {
+                    console.log('✅ Tabela user_config OK');
+                }
+
+                // Testar inserção
+                console.log('3. Testando inserção de dados...');
+                const testDeadline = {
+                    title: 'TESTE - Diagnóstico',
+                    category: 'outros',
+                    date: new Date().toISOString(),
+                    description: 'Teste de inserção',
+                    completed: false
+                };
+
+                const { data: insertTest, error: insertError } = await supabase
+                    .from('deadlines')
+                    .insert([testDeadline])
+                    .select();
+
+                if (insertError) {
+                    console.error('❌ Erro ao inserir:', insertError);
+                    console.log('📋 Possível problema de política RLS');
+                } else {
+                    console.log('✅ Inserção OK');
+                    
+                    // Limpar teste
+                    await supabase
+                        .from('deadlines')
+                        .delete()
+                        .eq('title', 'TESTE - Diagnóstico');
+                }
+
+                console.log('=====================================');
+                console.log('🎯 Diagnóstico concluído! Verifique os erros acima.');
+                
+            } catch (error) {
+                console.error('❌ Erro geral no diagnóstico:', error);
+            }
+        }
+
         // Funções do banco de dados
         async function saveDeadline(e) {
             e.preventDefault();
@@ -301,10 +413,11 @@
                     .select();
 
                 if (error) {
-                    console.error('Erro Supabase:', error);
+                    console.error('❌ Erro Supabase ao salvar prazo:', error);
+                    console.log('📋 Execute o diagnóstico: diagnoseSupabase()');
                     throw error;
                 }
-
+                
                 showConnectionStatus('Prazo salvo com sucesso!', 'success');
                 closeModal('newDeadlineModal');
                 document.getElementById('newDeadlineForm').reset();
@@ -319,6 +432,7 @@
             e.preventDefault();
             
             const config = {
+                id: 1, // ID fixo para configuração única
                 whatsapp_number: document.getElementById('whatsappNumber').value,
                 enable_notifications: document.getElementById('enableNotifications').checked,
                 updated_at: new Date().toISOString()
@@ -333,10 +447,11 @@
                     .select();
 
                 if (error) {
-                    console.error('Erro Supabase:', error);
+                    console.error('❌ Erro Supabase ao salvar config:', error);
+                    console.log('📋 Execute o diagnóstico: diagnoseSupabase()');
                     throw error;
                 }
-
+                
                 userConfig.whatsappNumber = config.whatsapp_number;
                 userConfig.enableNotifications = config.enable_notifications;
                 
@@ -358,7 +473,8 @@
                     .order('date', { ascending: true });
 
                 if (error) {
-                    console.error('Erro Supabase:', error);
+                    console.error('❌ Erro Supabase ao carregar prazos:', error);
+                    console.log('📋 Execute o diagnóstico: diagnoseSupabase()');
                     throw error;
                 }
 
@@ -368,12 +484,15 @@
                 
                 if (deadlines.length > 0) {
                     showConnectionStatus(`${deadlines.length} prazos carregados com sucesso!`, 'success');
+                } else {
+                    showConnectionStatus('Nenhum prazo encontrado. Crie seu primeiro prazo!', 'info');
                 }
             } catch (error) {
                 console.error('Erro ao carregar prazos:', error);
                 showConnectionStatus('Erro ao carregar prazos: ' + error.message, 'error');
                 
                 // Mostrar interface mesmo com erro
+                deadlines = [];
                 renderDeadlines();
                 updateStatistics();
             }
@@ -387,13 +506,21 @@
                     .limit(1)
                     .single();
 
+                if (error && error.code !== 'PGRST116') {
+                    console.error('❌ Erro ao carregar config:', error);
+                    console.log('📋 Execute o diagnóstico: diagnoseSupabase()');
+                }
+
                 if (data) {
                     userConfig.whatsappNumber = data.whatsapp_number || '';
                     userConfig.enableNotifications = data.enable_notifications || false;
-                    
-                    document.getElementById('whatsappNumber').value = userConfig.whatsappNumber;
-                    document.getElementById('enableNotifications').checked = userConfig.enableNotifications;
+                } else {
+                    console.log('ℹ️ Nenhuma configuração encontrada, usando padrão');
                 }
+
+                // Atualizar campos do formulário
+                document.getElementById('whatsappNumber').value = userConfig.whatsappNumber;
+                document.getElementById('enableNotifications').checked = userConfig.enableNotifications;
             } catch (error) {
                 console.log('Configuração não encontrada, usando padrão');
             }
@@ -541,25 +668,18 @@
 
         // Inicialização
         document.addEventListener('DOMContentLoaded', async () => {
-            console.log('Iniciando DeadlineX v27...');
+            console.log('🚀 Iniciando DeadlineX v27...');
+            console.log('📋 Para diagnóstico completo, clique no botão "Diagnóstico" ou execute: diagnoseSupabase()');
             
-            // Testar conexão com Supabase
-            try {
-                const { data, error } = await supabase.from('deadlines').select('count', { count: 'exact', head: true });
-                if (error && error.code !== 'PGRST116') { // PGRST116 = tabela não existe
-                    throw error;
-                }
-                console.log('Conexão com Supabase OK');
-            } catch (error) {
-                console.error('Erro de conexão:', error);
-                showConnectionStatus('Erro de conexão com o banco. Verifique as tabelas.', 'error');
-            }
+            // Disponibilizar função globalmente para console
+            window.diagnoseSupabase = diagnoseSupabase;
             
             await loadUserConfig();
             await loadDeadlines();
         });
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97806ce7f337f1ee',t:'MTc1NjY4NDE3Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97807d910217dd84',t:'MTc1NjY4NDg1OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
+
 
 
