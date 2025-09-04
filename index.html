@@ -501,8 +501,8 @@
 
     <script>
         // ===== SISTEMA DE VERSIONAMENTO =====
-        const SYSTEM_VERSION = 'DeadlineX-v62-ServiceWorker';
-        console.log(`🚀 ${SYSTEM_VERSION} - Versão com Service Worker para Notificações`);
+        const SYSTEM_VERSION = 'DeadlineX-v63-FixedDatabase';
+        console.log(`🚀 ${SYSTEM_VERSION} - Versão com correção do banco de dados`);
         
         // ===== CRIAÇÃO DINÂMICA DO MANIFEST PWA =====
         function createManifest() {
@@ -1511,7 +1511,7 @@
                     if (categoryField) categoryField.value = editData.category;
                     if (dateField) dateField.value = new Date(editData.date).toISOString().slice(0, 16);
                     if (descriptionField) descriptionField.value = editData.description || '';
-                    if (elements.syncToCalendar) elements.syncToCalendar.checked = !!editData.google_event_id;
+                    if (elements.syncToCalendar) elements.syncToCalendar.checked = false; // Removido referência ao google_event_id
                 } else {
                     if (elements.modalTitle) elements.modalTitle.textContent = 'Novo Prazo';
                     if (elements.editingId) elements.editingId.value = '';
@@ -1641,18 +1641,7 @@
                 // Sincronizar com Google Calendar se solicitado
                 if (shouldSyncToCalendar && isCalendarAuthorized) {
                     const deadlineData = { title, category, date, description };
-                    
-                    if (isEditing) {
-                        const existingDeadline = deadlines.find(d => d.id == elements.editingId.value);
-                        if (existingDeadline && existingDeadline.google_event_id) {
-                            await updateGoogleCalendarEvent(deadlineData, existingDeadline.google_event_id);
-                            googleEventId = existingDeadline.google_event_id;
-                        } else {
-                            googleEventId = await syncToGoogleCalendar(deadlineData);
-                        }
-                    } else {
-                        googleEventId = await syncToGoogleCalendar(deadlineData);
-                    }
+                    googleEventId = await syncToGoogleCalendar(deadlineData);
                 }
                 
                 if (isEditing) {
@@ -1662,8 +1651,7 @@
                         title: title,
                         category: category,
                         date: date,
-                        description: description,
-                        google_event_id: googleEventId
+                        description: description
                     };
                     
                     result = await supabase
@@ -1682,8 +1670,7 @@
                         date: date,
                         description: description,
                         user_id: currentUser.id,
-                        completed: false,
-                        google_event_id: googleEventId
+                        completed: false
                     };
                     
                     result = await supabase
@@ -1808,7 +1795,6 @@
                             <div class="flex-1">
                                 <div class="flex items-center space-x-2 mb-1">
                                     <h4 class="font-semibold text-gray-800 text-base md:text-lg ${deadline.completed ? 'line-through' : ''}">${deadline.title}</h4>
-                                    ${deadline.google_event_id ? '<span class="text-blue-500 text-sm">📅</span>' : ''}
                                 </div>
                                 <p class="text-sm text-gray-600">${getCategoryIcon(deadline.category)} ${deadline.category}</p>
                                 <p class="text-sm text-gray-500">${formatDate(date)}</p>
@@ -1911,14 +1897,7 @@
         window.deleteDeadline = async function(id) {
             if (!confirm('Tem certeza que deseja excluir este prazo?')) return;
 
-            const deadline = deadlines.find(d => d.id === id);
-
             try {
-                // Remover do Google Calendar se existir
-                if (deadline && deadline.google_event_id) {
-                    await deleteGoogleCalendarEvent(deadline.google_event_id);
-                }
-
                 const { error } = await supabase
                     .from('deadlines')
                     .delete()
@@ -2007,8 +1986,9 @@
             main();
         }
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9798a597939da438',t:'MTc1NjkzODE1Ny4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'979daa78d0856eae',t:'MTc1Njk5MDc4NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
+
 
 
 
