@@ -253,6 +253,36 @@
                                             <div class="text-sm text-gray-500">Indique para amigos</div>
                                         </div>
                                     </button>
+                                    <div class="border-t border-gray-100 my-1"></div>
+                                    <div class="relative group">
+                                        <button id="menuPoliciesBtn" class="flex items-center w-full px-4 py-3 text-gray-700 hover:bg-gray-100 transition-colors">
+                                            <span class="text-xl mr-3">📋</span>
+                                            <div class="text-left">
+                                                <div class="font-medium">Políticas & Termos</div>
+                                                <div class="text-sm text-gray-500">Privacidade e termos de uso</div>
+                                            </div>
+                                        </button>
+                                        <!-- Tooltip com lista de políticas -->
+                                        <div class="absolute left-full top-0 ml-2 w-64 bg-gray-800 text-white text-xs rounded-lg p-3 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                                            <div class="font-semibold mb-2">📋 Políticas Disponíveis:</div>
+                                            <ul class="space-y-1">
+                                                <li>• Política de Privacidade</li>
+                                                <li>• Termos de Uso</li>
+                                                <li>• Política de Cookies</li>
+                                                <li>• Política de Dados</li>
+                                                <li>• Termos de Serviço</li>
+                                                <li>• LGPD - Lei Geral de Proteção de Dados</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <div class="border-t border-gray-100 my-1"></div>
+                                    <button id="logoutBtn" class="flex items-center w-full px-4 py-3 text-red-600 hover:bg-red-50 transition-colors">
+                                        <span class="text-xl mr-3">🚪</span>
+                                        <div class="text-left">
+                                            <div class="font-medium">Sair</div>
+                                            <div class="text-sm text-red-500">Fazer logout</div>
+                                        </div>
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -452,6 +482,2171 @@
                         <button type="submit" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg">Salvar</button>
                     </div>
                 </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Política de Privacidade -->
+    <div id="privacyModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-xl max-w-2xl w-full p-6 max-h-screen overflow-y-auto">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-semibold text-gray-800">🔒 Política de Privacidade</h3>
+                    <button id="closePrivacyModal" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+                </div>
+                <div class="space-y-4 text-sm text-gray-700">
+                    <div>
+                        <h4 class="font-semibold text-purple-600 mb-2">1. Coleta de Informações</h4>
+                        <p>O DeadlineX coleta apenas as informações necessárias para o funcionamento do sistema: email, nome e dados dos prazos que você criar. Não coletamos informações pessoais desnecessárias.</p>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-purple-600 mb-2">2. Uso das Informações</h4>
+                        <p>Suas informações são utilizadas exclusivamente para: autenticação no sistema, armazenamento dos seus prazos, envio de notificações e sincronização com Google Calendar (quando autorizado).</p>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-purple-600 mb-2">3. Compartilhamento</h4>
+                        <p>Não compartilhamos, vendemos ou alugamos suas informações pessoais para terceiros. Seus dados ficam privados e seguros em nossos servidores.</p>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-purple-600 mb-2">4. Segurança</h4>
+                        <p>Utilizamos criptografia e medidas de segurança avançadas para proteger seus dados. O acesso é restrito e monitorado.</p>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-purple-600 mb-2">5. LGPD</h4>
+                        <p>Estamos em conformidade com a Lei Geral de Proteção de Dados (LGPD). Você tem direito de acessar, corrigir ou excluir seus dados a qualquer momento.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Termos de Uso -->
+    <div id="termsModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-xl max-w-2xl w-full p-6 max-h-screen overflow-y-auto">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-semibold text-gray-800">📋 Termos de Uso</h3>
+                    <button id="closeTermsModal" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+                </div>
+                <div class="space-y-4 text-sm text-gray-700">
+                    <div>
+                        <h4 class="font-semibold text-blue-600 mb-2">1. Aceitação dos Termos</h4>
+                        <p>Ao usar o DeadlineX, você concorda com estes termos de uso. Se não concordar, não utilize o sistema.</p>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-blue-600 mb-2">2. Uso Adequado</h4>
+                        <p>O sistema deve ser usado apenas para gestão de prazos pessoais e profissionais. É proibido usar para atividades ilegais ou prejudiciais.</p>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-blue-600 mb-2">3. Responsabilidades</h4>
+                        <p>Você é responsável por manter suas credenciais seguras e pelos dados que inserir no sistema. Não nos responsabilizamos por perdas decorrentes de uso inadequado.</p>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-blue-600 mb-2">4. Disponibilidade</h4>
+                        <p>Nos esforçamos para manter o sistema disponível 24/7, mas podem ocorrer manutenções programadas ou interrupções técnicas.</p>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-blue-600 mb-2">5. Modificações</h4>
+                        <p>Podemos atualizar estes termos periodicamente. Continuando a usar o sistema, você aceita as modificações.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Google Calendar Setup -->
+    <div id="calendarModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-xl max-w-md w-full p-6">
+                <h3 class="text-lg font-semibold mb-4">Configurar Google Calendar</h3>
+                <div class="space-y-4">
+                    <div class="bg-blue-50 p-4 rounded-lg">
+                        <h4 class="font-medium text-blue-800 mb-2">📅 Integração com Google Calendar</h4>
+                        <p class="text-sm text-blue-700 mb-3">
+                            Conecte sua conta Google para sincronizar automaticamente seus prazos com o Google Calendar.
+                        </p>
+                        <div class="space-y-2">
+                            <p class="text-xs text-blue-600">✅ Sincronização automática</p>
+                            <p class="text-xs text-blue-600">✅ Lembretes no celular</p>
+                            <p class="text-xs text-blue-600">✅ Acesso em qualquer dispositivo</p>
+                        </div>
+                    </div>
+                    
+                    <div id="calendarAuthSection">
+                        <button id="authorizeBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-lg font-medium transition-colors">
+                            🔐 Conectar com Google
+                        </button>
+                    </div>
+                    
+                    <div id="calendarConnectedSection" class="hidden">
+                        <div class="bg-green-50 p-4 rounded-lg text-center">
+                            <div class="text-green-600 text-2xl mb-2">✅</div>
+                            <p class="text-green-800 font-medium">Conectado com sucesso!</p>
+                            <p class="text-sm text-green-700 mt-1">Seus prazos serão sincronizados automaticamente.</p>
+                        </div>
+                        <button id="disconnectBtn" class="w-full bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-lg font-medium transition-colors mt-3">
+                            🔌 Desconectar
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="flex justify-end mt-6">
+                    <button id="closeCalendarModal" class="px-4 py-2 text-gray-600 hover:text-gray-800">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ===== SISTEMA DE VERSIONAMENTO =====
+        const SYSTEM_VERSION = 'DeadlineX-v64-CompleteRestore';
+        console.log(`🚀 ${SYSTEM_VERSION} - Versão completa restaurada`);
+        
+        // ===== CRIAÇÃO DINÂMICA DO MANIFEST PWA =====
+        function createManifest() {
+            const manifest = {
+                "name": "DeadlineX",
+                "short_name": "DeadlineX", 
+                "description": "Sistema profissional de gestão de prazos com notificações inteligentes",
+                "start_url": "/",
+                "display": "standalone",
+                "background_color": "#ffffff",
+                "theme_color": "#667eea",
+                "icons": [{
+                    "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='grad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%23667eea;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%23764ba2;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='20' fill='url(%23grad)'/%3E%3Ctext x='50' y='35' font-family='Arial,sans-serif' font-size='24' font-weight='bold' text-anchor='middle' fill='white'%3E12:34%3C/text%3E%3Ctext x='50' y='55' font-family='Arial,sans-serif' font-size='12' text-anchor='middle' fill='white'%3EDEADLINE%3C/text%3E%3Ctext x='50' y='75' font-family='Arial,sans-serif' font-size='8' text-anchor='middle' fill='white'%3EMANAGER%3C/text%3E%3C/svg%3E",
+                    "sizes": "512x512",
+                    "type": "image/svg+xml"
+                }]
+            };
+            
+            const manifestBlob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
+            const manifestURL = URL.createObjectURL(manifestBlob);
+            
+            const link = document.createElement('link');
+            link.rel = 'manifest';
+            link.href = manifestURL;
+            document.head.appendChild(link);
+            
+            console.log('✅ Manifest PWA criado dinamicamente');
+        }
+        
+        // Criar manifest imediatamente
+        createManifest();
+        
+        // ===== SERVICE WORKER PARA NOTIFICAÇÕES =====
+        
+        // Registrar Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', async () => {
+                try {
+                    const swCode = `
+                        self.addEventListener('notificationclick', function(event) {
+                            console.log('Notificação clicada:', event.notification.tag);
+                            event.notification.close();
+                            
+                            if (event.action === 'view') {
+                                event.waitUntil(
+                                    clients.openWindow('/')
+                                );
+                            }
+                        });
+                        
+                        self.addEventListener('notificationclose', function(event) {
+                            console.log('Notificação fechada:', event.notification.tag);
+                        });
+                    `;
+                    
+                    const blob = new Blob([swCode], { type: 'application/javascript' });
+                    const swUrl = URL.createObjectURL(blob);
+                    
+                    await navigator.serviceWorker.register(swUrl);
+                    console.log('✅ Service Worker registrado para notificações');
+                    
+                } catch (error) {
+                    console.log('⚠️ Service Worker não pôde ser registrado:', error);
+                }
+            });
+        }
+        
+        // ===== SISTEMA DE DEBUG AVANÇADO =====
+        window.debugMode = true;
+        
+        function debugLog(message, data = null) {
+            if (window.debugMode) {
+                console.log(`🔍 [DEBUG] ${message}`, data || '');
+            }
+        }
+        
+        function errorLog(message, error = null) {
+            console.error(`❌ [ERRO] ${message}`, error || '');
+            if (error) {
+                console.error('Stack trace:', error.stack);
+            }
+        }
+
+        // ===== CONFIGURAÇÃO SUPABASE =====
+        const SUPABASE_URL = 'https://vastjlzaxafpoagptklu.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZhc3RqbHpheGFmcG9hZ3B0a2x1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTYyNjUzMDEsImV4cCI6MjA3MTg0MTMwMX0.4EnnkdyVDEo1qSp1C2-QgVlklUkL2W3ulqOmXX_DiVY';
+        
+        let supabase;
+        let currentUser = null;
+        let deferredPrompt = null;
+
+        // ===== CONFIGURAÇÃO GOOGLE CALENDAR =====
+        const GOOGLE_CLIENT_ID = 'YOUR_GOOGLE_CLIENT_ID'; // Substitua pelo seu Client ID
+        const GOOGLE_API_KEY = 'YOUR_GOOGLE_API_KEY'; // Substitua pela sua API Key
+        const DISCOVERY_DOC = 'https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest';
+        const SCOPES = 'https://www.googleapis.com/auth/calendar';
+
+        let gapi;
+        let tokenClient;
+        let isGoogleApiLoaded = false;
+        let isCalendarAuthorized = false;
+        
+        // Aguardar carregamento completo do Supabase
+        function initializeSupabase() {
+            return new Promise((resolve) => {
+                const checkSupabase = () => {
+                    if (window.supabase && window.supabase.createClient) {
+                        try {
+                            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                            console.log('✅ Supabase inicializado com sucesso');
+                            console.log('🔗 URL:', SUPABASE_URL);
+                            console.log('🔑 Key configurada:', SUPABASE_ANON_KEY ? 'Sim' : 'Não');
+                            resolve(true);
+                        } catch (error) {
+                            console.error('❌ Erro ao inicializar Supabase:', error);
+                            resolve(false);
+                        }
+                    } else {
+                        console.log('⏳ Aguardando carregamento do Supabase...');
+                        setTimeout(checkSupabase, 100);
+                    }
+                };
+                checkSupabase();
+            });
+        }
+
+        // ===== INICIALIZAÇÃO GOOGLE CALENDAR API =====
+        async function initializeGoogleApi() {
+            try {
+                console.log('🔄 Inicializando Google Calendar API...');
+                
+                // Aguardar carregamento do gapi
+                await new Promise((resolve) => {
+                    if (window.gapi) {
+                        resolve();
+                    } else {
+                        const checkGapi = () => {
+                            if (window.gapi) {
+                                resolve();
+                            } else {
+                                setTimeout(checkGapi, 100);
+                            }
+                        };
+                        checkGapi();
+                    }
+                });
+
+                gapi = window.gapi;
+                
+                // Inicializar gapi
+                await gapi.load('client', async () => {
+                    await gapi.client.init({
+                        apiKey: GOOGLE_API_KEY,
+                        discoveryDocs: [DISCOVERY_DOC],
+                    });
+                    
+                    console.log('✅ Google API Client inicializado');
+                });
+
+                // Inicializar Google Identity Services
+                if (window.google && window.google.accounts) {
+                    tokenClient = google.accounts.oauth2.initTokenClient({
+                        client_id: GOOGLE_CLIENT_ID,
+                        scope: SCOPES,
+                        callback: handleAuthCallback,
+                    });
+                    console.log('✅ Google Identity Services inicializado');
+                }
+
+                isGoogleApiLoaded = true;
+                updateCalendarStatus();
+                
+            } catch (error) {
+                console.error('❌ Erro ao inicializar Google Calendar API:', error);
+                showConnectionStatus('⚠️ Google Calendar não disponível (configuração necessária)', 'error');
+            }
+        }
+
+        function handleAuthCallback(response) {
+            if (response.error) {
+                console.error('❌ Erro na autorização:', response.error);
+                showConnectionStatus('❌ Erro ao conectar com Google Calendar', 'error');
+                return;
+            }
+            
+            console.log('✅ Autorização Google Calendar bem-sucedida');
+            isCalendarAuthorized = true;
+            updateCalendarStatus();
+            updateCalendarModal();
+            showConnectionStatus('✅ Google Calendar conectado com sucesso!', 'success');
+        }
+
+        function updateCalendarStatus() {
+            const statusElement = document.getElementById('calendarStatus');
+            const iconElement = document.getElementById('calendarIcon');
+            const textElement = document.getElementById('calendarText');
+            
+            if (!statusElement || !iconElement || !textElement) return;
+            
+            if (isCalendarAuthorized) {
+                statusElement.className = 'calendar-status calendar-connected px-3 py-2 rounded-lg text-white text-sm font-medium flex items-center space-x-2';
+                iconElement.textContent = '✅';
+                textElement.textContent = 'Conectado';
+            } else {
+                statusElement.className = 'calendar-status calendar-disconnected px-3 py-2 rounded-lg text-white text-sm font-medium flex items-center space-x-2';
+                iconElement.textContent = '📅';
+                textElement.textContent = 'Desconectado';
+            }
+        }
+
+        function updateCalendarModal() {
+            const authSection = document.getElementById('calendarAuthSection');
+            const connectedSection = document.getElementById('calendarConnectedSection');
+            
+            if (!authSection || !connectedSection) return;
+            
+            if (isCalendarAuthorized) {
+                authSection.classList.add('hidden');
+                connectedSection.classList.remove('hidden');
+            } else {
+                authSection.classList.remove('hidden');
+                connectedSection.classList.add('hidden');
+            }
+        }
+
+        async function authorizeGoogleCalendar() {
+            if (!isGoogleApiLoaded) {
+                showConnectionStatus('⚠️ Google Calendar API não carregada', 'error');
+                return;
+            }
+            
+            try {
+                showConnectionStatus('🔄 Conectando com Google Calendar...', 'info');
+                tokenClient.requestAccessToken({ prompt: 'consent' });
+            } catch (error) {
+                console.error('❌ Erro ao autorizar Google Calendar:', error);
+                showConnectionStatus('❌ Erro ao conectar: ' + error.message, 'error');
+            }
+        }
+
+        function disconnectGoogleCalendar() {
+            if (gapi && gapi.client && gapi.client.getToken()) {
+                google.accounts.oauth2.revoke(gapi.client.getToken().access_token);
+                gapi.client.setToken('');
+            }
+            
+            isCalendarAuthorized = false;
+            updateCalendarStatus();
+            updateCalendarModal();
+            showConnectionStatus('🔌 Google Calendar desconectado', 'info');
+        }
+
+        async function syncToGoogleCalendar(deadline) {
+            if (!isCalendarAuthorized || !gapi) {
+                console.log('⚠️ Google Calendar não autorizado, pulando sincronização');
+                return null;
+            }
+
+            try {
+                const startDate = new Date(deadline.date);
+                const endDate = new Date(startDate.getTime() + 60 * 60 * 1000); // 1 hora de duração
+
+                const event = {
+                    'summary': deadline.title,
+                    'description': deadline.description || `Prazo criado no DeadlineX\nCategoria: ${deadline.category}`,
+                    'start': {
+                        'dateTime': startDate.toISOString(),
+                        'timeZone': Intl.DateTimeFormat().resolvedOptions().timeZone
+                    },
+                    'end': {
+                        'dateTime': endDate.toISOString(),
+                        'timeZone': Intl.DateTimeFormat().resolvedOptions().timeZone
+                    },
+                    'reminders': {
+                        'useDefault': false,
+                        'overrides': [
+                            {'method': 'popup', 'minutes': 24 * 60}, // 1 dia antes
+                            {'method': 'popup', 'minutes': 60}, // 1 hora antes
+                        ]
+                    }
+                };
+
+                const response = await gapi.client.calendar.events.insert({
+                    'calendarId': 'primary',
+                    'resource': event
+                });
+
+                console.log('✅ Evento criado no Google Calendar:', response.result.id);
+                return response.result.id;
+                
+            } catch (error) {
+                console.error('❌ Erro ao sincronizar com Google Calendar:', error);
+                showConnectionStatus('⚠️ Erro na sincronização com Google Calendar', 'error');
+                return null;
+            }
+        }
+
+        async function updateGoogleCalendarEvent(deadline, googleEventId) {
+            if (!isCalendarAuthorized || !gapi || !googleEventId) {
+                return;
+            }
+
+            try {
+                const startDate = new Date(deadline.date);
+                const endDate = new Date(startDate.getTime() + 60 * 60 * 1000);
+
+                const event = {
+                    'summary': deadline.title,
+                    'description': deadline.description || `Prazo criado no DeadlineX\nCategoria: ${deadline.category}`,
+                    'start': {
+                        'dateTime': startDate.toISOString(),
+                        'timeZone': Intl.DateTimeFormat().resolvedOptions().timeZone
+                    },
+                    'end': {
+                        'dateTime': endDate.toISOString(),
+                        'timeZone': Intl.DateTimeFormat().resolvedOptions().timeZone
+                    }
+                };
+
+                await gapi.client.calendar.events.update({
+                    'calendarId': 'primary',
+                    'eventId': googleEventId,
+                    'resource': event
+                });
+
+                console.log('✅ Evento atualizado no Google Calendar');
+                
+            } catch (error) {
+                console.error('❌ Erro ao atualizar evento no Google Calendar:', error);
+            }
+        }
+
+        async function deleteGoogleCalendarEvent(googleEventId) {
+            if (!isCalendarAuthorized || !gapi || !googleEventId) {
+                return;
+            }
+
+            try {
+                await gapi.client.calendar.events.delete({
+                    'calendarId': 'primary',
+                    'eventId': googleEventId
+                });
+
+                console.log('✅ Evento removido do Google Calendar');
+                
+            } catch (error) {
+                console.error('❌ Erro ao remover evento do Google Calendar:', error);
+            }
+        }
+
+        // ===== ESTADO DA APLICAÇÃO =====
+        let deadlines = [];
+        let filteredDeadlines = [];
+
+        // ===== ELEMENTOS DOM COM VERIFICAÇÃO SEGURA =====
+        function safeGetElement(id) {
+            const element = document.getElementById(id);
+            if (!element) {
+                console.warn(`⚠️ Elemento não encontrado: ${id}`);
+            }
+            return element;
+        }
+
+        const elements = {
+            loginScreen: safeGetElement('loginScreen'),
+            mainApp: safeGetElement('mainApp'),
+            loginForm: safeGetElement('loginForm'),
+            registerForm: safeGetElement('registerForm'),
+            loginTab: safeGetElement('loginTab'),
+            registerTab: safeGetElement('registerTab'),
+            userIdentifier: safeGetElement('userIdentifier'),
+            userPassword: safeGetElement('userPassword'),
+            userWelcome: safeGetElement('userWelcome'),
+            
+            newDeadlineBtn: safeGetElement('newDeadlineBtn'),
+            installAppBtn: safeGetElement('installAppBtn'),
+            notificationBtn: safeGetElement('notificationBtn'),
+            calendarBtn: safeGetElement('calendarBtn'),
+            
+            // Menu elements
+            menuBtn: safeGetElement('menuBtn'),
+            menuDropdown: safeGetElement('menuDropdown'),
+            menuShareBtn: safeGetElement('menuShareBtn'),
+            logoutBtn: safeGetElement('logoutBtn'),
+            
+            deadlineModal: safeGetElement('deadlineModal'),
+            deadlineForm: safeGetElement('deadlineForm'),
+            modalTitle: safeGetElement('modalTitle'),
+            editingId: safeGetElement('editingId'),
+            syncToCalendar: safeGetElement('syncToCalendar'),
+            
+            calendarModal: safeGetElement('calendarModal'),
+            authorizeBtn: safeGetElement('authorizeBtn'),
+            disconnectBtn: safeGetElement('disconnectBtn'),
+            closeCalendarModal: safeGetElement('closeCalendarModal'),
+            
+            deadlinesList: safeGetElement('deadlinesList'),
+            totalCount: safeGetElement('totalCount'),
+            urgentCount: safeGetElement('urgentCount'),
+            weekCount: safeGetElement('weekCount'),
+            completedCount: safeGetElement('completedCount'),
+            connectionStatus: safeGetElement('connectionStatus'),
+            
+            searchInput: safeGetElement('searchInput'),
+            categoryFilter: safeGetElement('categoryFilter'),
+            clearFilters: safeGetElement('clearFilters'),
+            
+            installPrompt: safeGetElement('installPrompt'),
+            installBtn: safeGetElement('installBtn'),
+            dismissInstall: safeGetElement('dismissInstall')
+        };
+
+        // ===== MENU DE NAVEGAÇÃO =====
+        
+        // Toggle menu dropdown
+        if (elements.menuBtn) {
+            elements.menuBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (elements.menuDropdown) {
+                    elements.menuDropdown.classList.toggle('hidden');
+                }
+            });
+        }
+
+        // Fechar menu ao clicar fora
+        document.addEventListener('click', (e) => {
+            if (elements.menuDropdown && !elements.menuDropdown.contains(e.target) && !elements.menuBtn.contains(e.target)) {
+                elements.menuDropdown.classList.add('hidden');
+            }
+        });
+
+        // Compartilhar via menu
+        if (elements.menuShareBtn) {
+            elements.menuShareBtn.addEventListener('click', () => {
+                if (elements.menuDropdown) {
+                    elements.menuDropdown.classList.add('hidden');
+                }
+                shareApp();
+            });
+        }
+
+        // Logout
+        if (elements.logoutBtn) {
+            elements.logoutBtn.addEventListener('click', async () => {
+                if (elements.menuDropdown) {
+                    elements.menuDropdown.classList.add('hidden');
+                }
+                
+                if (confirm('Tem certeza que deseja sair?')) {
+                    try {
+                        await supabase.auth.signOut();
+                        currentUser = null;
+                        deadlines = [];
+                        filteredDeadlines = [];
+                        
+                        if (elements.loginScreen) elements.loginScreen.classList.remove('hidden');
+                        if (elements.mainApp) elements.mainApp.classList.add('hidden');
+                        
+                        showConnectionStatus('✅ Logout realizado com sucesso!', 'success');
+                    } catch (error) {
+                        console.error('Erro no logout:', error);
+                        showConnectionStatus('❌ Erro ao fazer logout', 'error');
+                    }
+                }
+            });
+        }
+
+        // Políticas via menu
+        const menuPoliciesBtn = safeGetElement('menuPoliciesBtn');
+        if (menuPoliciesBtn) {
+            menuPoliciesBtn.addEventListener('click', () => {
+                if (elements.menuDropdown) {
+                    elements.menuDropdown.classList.add('hidden');
+                }
+                openModal('privacyModal');
+            });
+        }
+
+        // Fechar modais de políticas
+        const closePrivacyModal = safeGetElement('closePrivacyModal');
+        if (closePrivacyModal) {
+            closePrivacyModal.addEventListener('click', () => closeModal('privacyModal'));
+        }
+
+        const closeTermsModal = safeGetElement('closeTermsModal');
+        if (closeTermsModal) {
+            closeTermsModal.addEventListener('click', () => closeModal('termsModal'));
+        }
+
+        // Botões de política na tela de login
+        const loginPrivacyBtn = safeGetElement('loginPrivacyBtn');
+        if (loginPrivacyBtn) {
+            loginPrivacyBtn.addEventListener('click', () => openModal('privacyModal'));
+        }
+
+        const loginTermsBtn = safeGetElement('loginTermsBtn');
+        if (loginTermsBtn) {
+            loginTermsBtn.addEventListener('click', () => openModal('termsModal'));
+        }
+
+        // ===== PWA E INSTALAÇÃO =====
+        
+        // Detectar se pode ser instalado
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            
+            // Mostrar prompt automático na primeira visita
+            if (!localStorage.getItem('installPromptShown') && elements.installPrompt) {
+                setTimeout(() => {
+                    elements.installPrompt.classList.remove('hidden');
+                    localStorage.setItem('installPromptShown', 'true');
+                }, 3000);
+            }
+        });
+
+        // Botão instalar no prompt
+        if (elements.installBtn) {
+            elements.installBtn.addEventListener('click', async () => {
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                    const { outcome } = await deferredPrompt.userChoice;
+                    console.log(`PWA install: ${outcome}`);
+                    deferredPrompt = null;
+                }
+                if (elements.installPrompt) {
+                    elements.installPrompt.classList.add('hidden');
+                }
+            });
+        }
+
+        // Dispensar prompt
+        if (elements.dismissInstall) {
+            elements.dismissInstall.addEventListener('click', () => {
+                if (elements.installPrompt) {
+                    elements.installPrompt.classList.add('hidden');
+                }
+            });
+        }
+
+        // Botão instalar no app
+        if (elements.installAppBtn) {
+            elements.installAppBtn.addEventListener('click', () => {
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                } else {
+                    // Instruções manuais
+                    alert('Para instalar:\n\n📱 Mobile: Toque no menu do navegador > "Adicionar à tela inicial"\n\n💻 Desktop: Clique no ícone de instalação na barra de endereços');
+                }
+            });
+        }
+
+        // ===== NOTIFICAÇÕES PUSH MELHORADAS =====
+        
+        async function requestNotificationPermission() {
+            if ('Notification' in window) {
+                const permission = await Notification.requestPermission();
+                if (permission === 'granted') {
+                    showConnectionStatus('Notificações ativadas com sucesso! 🔔', 'success');
+                    scheduleNotifications();
+                } else {
+                    showConnectionStatus('Permissão de notificação negada', 'error');
+                }
+            } else {
+                showConnectionStatus('Notificações não suportadas neste navegador', 'error');
+            }
+        }
+
+        function scheduleNotifications() {
+            // Limpar notificações anteriores
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.ready.then(registration => {
+                    registration.getNotifications().then(notifications => {
+                        notifications.forEach(notification => notification.close());
+                    });
+                });
+            }
+
+            // Limpar notificações pendentes antigas
+            localStorage.removeItem('pendingNotifications');
+
+            deadlines.forEach(deadline => {
+                if (deadline.completed) return;
+
+                const deadlineDate = new Date(deadline.date);
+                const now = new Date();
+
+                // Notificação 3 dias antes
+                const threeDaysBefore = new Date(deadlineDate.getTime() - 3 * 24 * 60 * 60 * 1000);
+                if (threeDaysBefore > now) {
+                    scheduleNotification(deadline, threeDaysBefore, '3 dias');
+                }
+
+                // Notificação 1 dia antes
+                const oneDayBefore = new Date(deadlineDate.getTime() - 24 * 60 * 60 * 1000);
+                if (oneDayBefore > now) {
+                    scheduleNotification(deadline, oneDayBefore, '1 dia');
+                }
+
+                // Notificação 2 horas antes
+                const twoHoursBefore = new Date(deadlineDate.getTime() - 2 * 60 * 60 * 1000);
+                if (twoHoursBefore > now) {
+                    scheduleNotification(deadline, twoHoursBefore, '2 horas');
+                }
+            });
+        }
+
+        function scheduleNotification(deadline, notifyTime, timeText) {
+            const delay = notifyTime.getTime() - new Date().getTime();
+            
+            if (delay > 0) {
+                // Usar setTimeout para notificações imediatas (app aberto)
+                setTimeout(() => {
+                    showNotificationNow(deadline, timeText);
+                }, delay);
+                
+                // Salvar no localStorage para verificação periódica (app fechado)
+                const notifications = JSON.parse(localStorage.getItem('pendingNotifications') || '[]');
+                notifications.push({
+                    deadlineId: deadline.id,
+                    title: deadline.title,
+                    date: deadline.date,
+                    notifyTime: notifyTime.toISOString(),
+                    timeText: timeText
+                });
+                localStorage.setItem('pendingNotifications', JSON.stringify(notifications));
+            }
+        }
+        
+        function showNotificationNow(deadline, timeText) {
+            if ('serviceWorker' in navigator && 'Notification' in window && Notification.permission === 'granted') {
+                navigator.serviceWorker.ready.then(registration => {
+                    registration.showNotification(`⏰ Prazo em ${timeText}!`, {
+                        body: `${deadline.title}\nVence: ${formatDate(new Date(deadline.date))}`,
+                        icon: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"%3E%3Cdefs%3E%3ClinearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%"%3E%3Cstop offset="0%" style="stop-color:%23667eea;stop-opacity:1" /%3E%3Cstop offset="100%" style="stop-color:%23764ba2;stop-opacity:1" /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width="100" height="100" rx="20" fill="url(%23grad)"/%3E%3Ctext x="50" y="35" font-family="Arial,sans-serif" font-size="24" font-weight="bold" text-anchor="middle" fill="white"%3E12:34%3C/text%3E%3Ctext x="50" y="55" font-family="Arial,sans-serif" font-size="12" text-anchor="middle" fill="white"%3EDEADLINE%3C/text%3E%3Ctext x="50" y="75" font-family="Arial,sans-serif" font-size="8" text-anchor="middle" fill="white"%3EMANAGER%3C/text%3E%3C/svg%3E',
+                        badge: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"%3E%3Ccircle cx="50" cy="50" r="50" fill="%23667eea"/%3E%3Ctext x="50" y="60" font-family="Arial,sans-serif" font-size="40" font-weight="bold" text-anchor="middle" fill="white"%3E!%3C/text%3E%3C/svg%3E',
+                        tag: `deadline-${deadline.id}`,
+                        requireInteraction: true,
+                        actions: [
+                            { action: 'view', title: 'Ver Prazo' },
+                            { action: 'dismiss', title: 'Dispensar' }
+                        ]
+                    });
+                });
+            }
+        }
+        
+        // Verificar notificações pendentes quando o app abre
+        function checkPendingNotifications() {
+            const notifications = JSON.parse(localStorage.getItem('pendingNotifications') || '[]');
+            const now = new Date();
+            const toRemove = [];
+            
+            notifications.forEach((notif, index) => {
+                const notifyTime = new Date(notif.notifyTime);
+                if (notifyTime <= now) {
+                    // Mostrar notificação atrasada
+                    const deadline = { id: notif.deadlineId, title: notif.title, date: notif.date };
+                    showNotificationNow(deadline, notif.timeText);
+                    toRemove.push(index);
+                }
+            });
+            
+            // Remover notificações já mostradas
+            if (toRemove.length > 0) {
+                const updatedNotifications = notifications.filter((_, index) => !toRemove.includes(index));
+                localStorage.setItem('pendingNotifications', JSON.stringify(updatedNotifications));
+            }
+        }
+
+        if (elements.notificationBtn) {
+            elements.notificationBtn.addEventListener('click', requestNotificationPermission);
+        }
+
+        // ===== SISTEMA DE COMPARTILHAMENTO =====
+        
+        async function shareApp() {
+            const shareData = {
+                title: 'DeadlineX - Sistema de Gestão de Prazos',
+                text: 'Organize seus prazos de forma profissional com notificações inteligentes!',
+                url: window.location.href
+            };
+
+            try {
+                if (navigator.share) {
+                    await navigator.share(shareData);
+                } else {
+                    // Fallback para navegadores sem Web Share API
+                    const text = `${shareData.title}\n${shareData.text}\n${shareData.url}`;
+                    await navigator.clipboard.writeText(text);
+                    showConnectionStatus('Link copiado para a área de transferência! 📋', 'success');
+                }
+            } catch (error) {
+                console.log('Erro ao compartilhar:', error);
+            }
+        }
+
+        function showSharePrompt() {
+            // Verificar se já mostrou o prompt recentemente
+            const lastShown = localStorage.getItem('sharePromptLastShown');
+            const now = Date.now();
+            const oneDay = 24 * 60 * 60 * 1000; // 24 horas em ms
+            
+            if (lastShown && (now - parseInt(lastShown)) < oneDay) {
+                return; // Não mostrar se já mostrou nas últimas 24h
+            }
+            
+            // Mostrar prompt após 10 segundos de uso
+            setTimeout(() => {
+                const shouldShow = confirm(
+                    '🚀 Gostando do DeadlineX?\n\n' +
+                    'Que tal compartilhar com seus amigos e colegas?\n' +
+                    'Ajude outros a organizarem melhor seus prazos!\n\n' +
+                    'Clique OK para compartilhar agora 📤'
+                );
+                
+                if (shouldShow) {
+                    shareApp();
+                }
+                
+                // Marcar como mostrado
+                localStorage.setItem('sharePromptLastShown', now.toString());
+            }, 10000); // 10 segundos após login
+        }
+
+        // ===== SISTEMA DE AUTENTICAÇÃO =====
+        
+        // Alternar entre abas Login/Cadastro
+        if (elements.loginTab) {
+            elements.loginTab.addEventListener('click', () => {
+                elements.loginTab.className = "flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors bg-white text-purple-600 shadow-sm";
+                elements.registerTab.className = "flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors text-gray-600 hover:text-gray-800";
+                if (elements.loginForm) elements.loginForm.classList.remove('hidden');
+                if (elements.registerForm) elements.registerForm.classList.add('hidden');
+            });
+        }
+
+        if (elements.registerTab) {
+            elements.registerTab.addEventListener('click', () => {
+                elements.registerTab.className = "flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors bg-white text-purple-600 shadow-sm";
+                elements.loginTab.className = "flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors text-gray-600 hover:text-gray-800";
+                if (elements.registerForm) elements.registerForm.classList.remove('hidden');
+                if (elements.loginForm) elements.loginForm.classList.add('hidden');
+            });
+        }
+
+        // Funcionalidade mostrar/ocultar senha - com verificação de elementos
+        const toggleLoginPassword = safeGetElement('toggleLoginPassword');
+        if (toggleLoginPassword) {
+            toggleLoginPassword.addEventListener('click', function() {
+                if (elements.userPassword) {
+                    const type = elements.userPassword.getAttribute('type') === 'password' ? 'text' : 'password';
+                    elements.userPassword.setAttribute('type', type);
+                    this.textContent = type === 'password' ? '👁️' : '🙈';
+                }
+            });
+        }
+
+        const toggleRegisterPassword = safeGetElement('toggleRegisterPassword');
+        if (toggleRegisterPassword) {
+            toggleRegisterPassword.addEventListener('click', function() {
+                const passwordField = safeGetElement('registerPassword');
+                if (passwordField) {
+                    const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+                    passwordField.setAttribute('type', type);
+                    this.textContent = type === 'password' ? '👁️' : '🙈';
+                }
+            });
+        }
+
+        const toggleConfirmPassword = safeGetElement('toggleConfirmPassword');
+        if (toggleConfirmPassword) {
+            toggleConfirmPassword.addEventListener('click', function() {
+                const passwordField = safeGetElement('confirmPassword');
+                if (passwordField) {
+                    const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+                    passwordField.setAttribute('type', type);
+                    this.textContent = type === 'password' ? '👁️' : '🙈';
+                }
+            });
+        }
+
+        // Login
+        if (elements.loginForm) {
+            elements.loginForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                if (!elements.userIdentifier || !elements.userPassword) {
+                    showConnectionStatus('❌ Elementos de login não encontrados', 'error');
+                    return;
+                }
+                
+                const email = elements.userIdentifier.value.trim();
+                const password = elements.userPassword.value;
+                
+                debugLog('Tentativa de login:', { email });
+                
+                if (!email || !password) {
+                    showConnectionStatus('❌ Preencha email e senha', 'error');
+                    return;
+                }
+                
+                if (!supabase) {
+                    errorLog('Supabase não inicializado');
+                    showConnectionStatus('❌ Sistema não inicializado. Recarregue a página.', 'error');
+                    return;
+                }
+                
+                try {
+                    showConnectionStatus('Fazendo login...', 'info');
+                    
+                    const { data, error } = await supabase.auth.signInWithPassword({
+                        email: email,
+                        password: password
+                    });
+                    
+                    if (error) {
+                        errorLog('Erro no login:', error);
+                        let errorMessage = 'Erro no login';
+                        
+                        if (error.message.includes('Invalid login credentials')) {
+                            errorMessage = 'Email ou senha incorretos';
+                        } else if (error.message.includes('Email not confirmed')) {
+                            errorMessage = 'Confirme seu email antes de fazer login';
+                        } else {
+                            errorMessage = error.message;
+                        }
+                        
+                        showConnectionStatus('❌ ' + errorMessage, 'error');
+                        return;
+                    }
+                    
+                    currentUser = data.user;
+                    debugLog('Login bem-sucedido:', currentUser);
+                    
+                    const userName = currentUser.user_metadata?.name || currentUser.email;
+                    if (elements.userWelcome) {
+                        elements.userWelcome.textContent = `Bem-vindo de volta, ${userName}!`;
+                    }
+                    
+                    if (elements.loginScreen) elements.loginScreen.classList.add('hidden');
+                    if (elements.mainApp) elements.mainApp.classList.remove('hidden');
+                    
+                    showConnectionStatus('✅ Login realizado com sucesso!', 'success');
+                    await initializeApp();
+                    
+                    // Verificar notificações pendentes
+                    checkPendingNotifications();
+                    
+                    // Mostrar prompt de compartilhamento após login
+                    showSharePrompt();
+                    
+                } catch (error) {
+                    errorLog('Erro crítico no login:', error);
+                    showConnectionStatus('❌ Erro de conexão: ' + error.message, 'error');
+                }
+            });
+        }
+
+        // Cadastro
+        if (elements.registerForm) {
+            elements.registerForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                const nameField = safeGetElement('registerName');
+                const emailField = safeGetElement('registerEmail');
+                const passwordField = safeGetElement('registerPassword');
+                const confirmPasswordField = safeGetElement('confirmPassword');
+                
+                if (!nameField || !emailField || !passwordField || !confirmPasswordField) {
+                    showConnectionStatus('❌ Elementos de cadastro não encontrados', 'error');
+                    return;
+                }
+                
+                const name = nameField.value.trim();
+                const email = emailField.value.trim();
+                const password = passwordField.value;
+                const confirmPassword = confirmPasswordField.value;
+                
+                // Validações
+                if (!name || !email || !password) {
+                    showConnectionStatus('❌ Preencha todos os campos obrigatórios', 'error');
+                    return;
+                }
+                
+                if (password.length < 6) {
+                    showConnectionStatus('❌ A senha deve ter pelo menos 6 caracteres', 'error');
+                    return;
+                }
+                
+                if (password !== confirmPassword) {
+                    showConnectionStatus('❌ As senhas não coincidem', 'error');
+                    return;
+                }
+                
+                if (!supabase) {
+                    errorLog('Supabase não inicializado');
+                    showConnectionStatus('❌ Sistema não inicializado. Recarregue a página.', 'error');
+                    return;
+                }
+                
+                try {
+                    showConnectionStatus('Criando conta...', 'info');
+                    
+                    const { data, error } = await supabase.auth.signUp({
+                        email: email,
+                        password: password,
+                        options: {
+                            data: {
+                                name: name
+                            }
+                        }
+                    });
+                    
+                    if (error) {
+                        errorLog('Erro no cadastro:', error);
+                        let errorMessage = 'Erro no cadastro';
+                        
+                        if (error.message.includes('User already registered')) {
+                            errorMessage = 'Este email já está cadastrado';
+                        } else if (error.message.includes('Password should be at least')) {
+                            errorMessage = 'Senha muito fraca';
+                        } else {
+                            errorMessage = error.message;
+                        }
+                        
+                        showConnectionStatus('❌ ' + errorMessage, 'error');
+                        return;
+                    }
+                    
+                    currentUser = data.user;
+                    debugLog('Cadastro bem-sucedido:', currentUser);
+                    
+                    if (elements.userWelcome) {
+                        elements.userWelcome.textContent = `Bem-vindo, ${name}!`;
+                    }
+                    
+                    if (elements.loginScreen) elements.loginScreen.classList.add('hidden');
+                    if (elements.mainApp) elements.mainApp.classList.remove('hidden');
+                    
+                    // Mostrar mensagem de boas-vindas
+                    showConnectionStatus(`🎉 Conta criada com sucesso! Bem-vindo ao DeadlineX, ${name}!`, 'success');
+                    
+                    await initializeApp();
+                    
+                    // Mostrar prompt de compartilhamento para novos usuários
+                    showSharePrompt();
+                    
+                } catch (error) {
+                    errorLog('Erro crítico no cadastro:', error);
+                    showConnectionStatus('❌ Erro de conexão: ' + error.message, 'error');
+                }
+            });
+        }
+
+        // ===== SISTEMA DE BUSCA E FILTROS =====
+        
+        function applyFilters() {
+            if (!elements.searchInput || !elements.categoryFilter) return;
+            
+            const searchTerm = elements.searchInput.value.toLowerCase().trim();
+            const selectedCategory = elements.categoryFilter.value;
+            
+            filteredDeadlines = deadlines.filter(deadline => {
+                const matchesSearch = !searchTerm || 
+                    deadline.title.toLowerCase().includes(searchTerm) ||
+                    (deadline.description && deadline.description.toLowerCase().includes(searchTerm));
+                
+                const matchesCategory = !selectedCategory || deadline.category === selectedCategory;
+                
+                return matchesSearch && matchesCategory;
+            });
+            
+            renderDeadlines();
+            updateStatistics();
+            
+            // Mostrar feedback da busca
+            if (searchTerm || selectedCategory) {
+                const resultCount = filteredDeadlines.length;
+                showConnectionStatus(`🔍 ${resultCount} prazo(s) encontrado(s)`, 'info');
+            }
+        }
+
+        function clearFilters() {
+            if (elements.searchInput) elements.searchInput.value = '';
+            if (elements.categoryFilter) elements.categoryFilter.value = '';
+            filteredDeadlines = [...deadlines];
+            renderDeadlines();
+            updateStatistics();
+            showConnectionStatus('Filtros limpos', 'success');
+        }
+
+        // Event listeners para busca
+        if (elements.searchInput) {
+            elements.searchInput.addEventListener('input', applyFilters);
+        }
+        if (elements.categoryFilter) {
+            elements.categoryFilter.addEventListener('change', applyFilters);
+        }
+        if (elements.clearFilters) {
+            elements.clearFilters.addEventListener('click', clearFilters);
+        }
+
+        // ===== FUNÇÕES DE UI =====
+        
+        function openModal(modalId, editData = null) {
+            const modal = safeGetElement(modalId);
+            if (!modal) return;
+            
+            modal.classList.remove('hidden');
+            
+            if (modalId === 'deadlineModal') {
+                const titleField = safeGetElement('deadlineTitle');
+                const categoryField = safeGetElement('deadlineCategory');
+                const dateField = safeGetElement('deadlineDate');
+                const descriptionField = safeGetElement('deadlineDescription');
+                
+                if (editData) {
+                    if (elements.modalTitle) elements.modalTitle.textContent = 'Editar Prazo';
+                    if (elements.editingId) elements.editingId.value = editData.id;
+                    if (titleField) titleField.value = editData.title;
+                    if (categoryField) categoryField.value = editData.category;
+                    if (dateField) dateField.value = new Date(editData.date).toISOString().slice(0, 16);
+                    if (descriptionField) descriptionField.value = editData.description || '';
+                    if (elements.syncToCalendar) elements.syncToCalendar.checked = false;
+                } else {
+                    if (elements.modalTitle) elements.modalTitle.textContent = 'Novo Prazo';
+                    if (elements.editingId) elements.editingId.value = '';
+                    if (elements.deadlineForm) elements.deadlineForm.reset();
+                    if (elements.syncToCalendar) elements.syncToCalendar.checked = isCalendarAuthorized;
+                }
+            }
+        }
+
+        function closeModal(modalId) {
+            const modal = safeGetElement(modalId);
+            if (modal) {
+                modal.classList.add('hidden');
+            }
+        }
+
+        function showConnectionStatus(message, type) {
+            if (!elements.connectionStatus) return;
+            
+            elements.connectionStatus.textContent = message;
+            elements.connectionStatus.className = `mb-4 p-3 rounded-lg text-sm font-medium ${
+                type === 'success' ? 'bg-green-100 text-green-800' :
+                type === 'error' ? 'bg-red-100 text-red-800' :
+                'bg-blue-100 text-blue-800'
+            }`;
+            elements.connectionStatus.classList.remove('hidden');
+            
+            if (type === 'success' || type === 'info') {
+                setTimeout(() => {
+                    elements.connectionStatus.classList.add('hidden');
+                }, 3000);
+            }
+        }
+
+        // ===== EVENT LISTENERS =====
+        
+        if (elements.newDeadlineBtn) {
+            elements.newDeadlineBtn.addEventListener('click', () => openModal('deadlineModal'));
+        }
+
+        if (elements.calendarBtn) {
+            elements.calendarBtn.addEventListener('click', () => openModal('calendarModal'));
+        }
+
+        if (elements.authorizeBtn) {
+            elements.authorizeBtn.addEventListener('click', authorizeGoogleCalendar);
+        }
+
+        if (elements.disconnectBtn) {
+            elements.disconnectBtn.addEventListener('click', disconnectGoogleCalendar);
+        }
+
+        if (elements.closeCalendarModal) {
+            elements.closeCalendarModal.addEventListener('click', () => closeModal('calendarModal'));
+        }
+
+        const cancelDeadlineBtn = safeGetElement('cancelDeadline');
+        if (cancelDeadlineBtn) {
+            cancelDeadlineBtn.addEventListener('click', () => closeModal('deadlineModal'));
+        }
+
+        if (elements.deadlineForm) {
+            elements.deadlineForm.addEventListener('submit', saveDeadline);
+        }
+
+        // ===== FUNÇÕES DO BANCO DE DADOS =====
+        
+        async function initializeDatabase() {
+            try {
+                // Verificar se as tabelas existem e criar se necessário
+                const { error: deadlinesError } = await supabase
+                    .from('deadlines')
+                    .select('count', { count: 'exact', head: true });
+
+                if (deadlinesError && deadlinesError.code === '42P01') {
+                    console.log('Criando tabela deadlines...');
+                    // Tabela não existe, mas não podemos criar via JavaScript
+                    // Mostrar instruções
+                    showConnectionStatus('Configure o banco de dados primeiro', 'error');
+                    return false;
+                }
+
+                return true;
+            } catch (error) {
+                console.error('Erro ao inicializar banco:', error);
+                return false;
+            }
+        }
+
+        async function saveDeadline(e) {
+            e.preventDefault();
+            
+            debugLog('=== INICIANDO SALVAMENTO DE PRAZO ===');
+            
+            const isEditing = elements.editingId && elements.editingId.value !== '';
+            debugLog('Modo de edição:', isEditing);
+            debugLog('Usuário atual:', currentUser);
+            
+            // Validar dados antes de enviar
+            const titleField = safeGetElement('deadlineTitle');
+            const categoryField = safeGetElement('deadlineCategory');
+            const dateField = safeGetElement('deadlineDate');
+            const descriptionField = safeGetElement('deadlineDescription');
+            
+            if (!titleField || !categoryField || !dateField) {
+                showConnectionStatus('❌ Elementos do formulário não encontrados', 'error');
+                return;
+            }
+            
+            const title = titleField.value.trim();
+            const category = categoryField.value;
+            const date = dateField.value;
+            const description = descriptionField ? descriptionField.value.trim() : '';
+            const shouldSyncToCalendar = elements.syncToCalendar ? elements.syncToCalendar.checked : false;
+            
+            if (!title || !category || !date) {
+                showConnectionStatus('❌ Preencha todos os campos obrigatórios', 'error');
+                return;
+            }
+            
+            try {
+                showConnectionStatus('Salvando prazo...', 'info');
+                
+                let result;
+                let googleEventId = null;
+                
+                // Sincronizar com Google Calendar se solicitado
+                if (shouldSyncToCalendar && isCalendarAuthorized) {
+                    const deadlineData = { title, category, date, description };
+                    googleEventId = await syncToGoogleCalendar(deadlineData);
+                }
+                
+                if (isEditing) {
+                    debugLog('=== ATUALIZANDO PRAZO NO SUPABASE ===');
+                    
+                    const updateData = {
+                        title: title,
+                        category: category,
+                        date: date,
+                        description: description
+                    };
+                    
+                    result = await supabase
+                        .from('deadlines')
+                        .update(updateData)
+                        .eq('id', elements.editingId.value)
+                        .eq('user_id', currentUser.id)
+                        .select();
+                        
+                } else {
+                    debugLog('=== CRIANDO NOVO PRAZO NO SUPABASE ===');
+                    
+                    const insertData = {
+                        title: title,
+                        category: category,
+                        date: date,
+                        description: description,
+                        user_id: currentUser.id,
+                        completed: false
+                    };
+                    
+                    result = await supabase
+                        .from('deadlines')
+                        .insert([insertData])
+                        .select();
+                }
+                
+                debugLog('Resultado Supabase:', result);
+                
+                if (result.error) {
+                    errorLog('❌ Erro no Supabase:', result.error);
+                    showConnectionStatus('❌ Erro ao salvar: ' + result.error.message, 'error');
+                    return;
+                }
+                
+                debugLog('✅ Prazo salvo com sucesso no Supabase');
+                
+                let successMessage = `✅ Prazo ${isEditing ? 'atualizado' : 'salvo'} com sucesso!`;
+                if (shouldSyncToCalendar && googleEventId) {
+                    successMessage += ' 📅 Sincronizado com Google Calendar!';
+                }
+                
+                showConnectionStatus(successMessage, 'success');
+                
+                closeModal('deadlineModal');
+                await loadDeadlines();
+                scheduleNotifications();
+                
+            } catch (error) {
+                errorLog('❌ ERRO CRÍTICO ao salvar prazo:', error);
+                showConnectionStatus('❌ Erro de conexão: ' + error.message, 'error');
+            }
+        }
+
+        async function loadDeadlines() {
+            if (!currentUser) {
+                errorLog('Tentativa de carregar prazos sem usuário logado');
+                return;
+            }
+
+            debugLog('=== CARREGANDO PRAZOS DO SUPABASE ===');
+            debugLog('Usuário atual:', currentUser);
+
+            try {
+                showConnectionStatus('Carregando prazos...', 'info');
+                
+                const { data, error } = await supabase
+                    .from('deadlines')
+                    .select('*')
+                    .eq('user_id', currentUser.id)
+                    .order('date', { ascending: true });
+
+                debugLog('Resultado do Supabase:', { data, error });
+
+                if (error) {
+                    errorLog('❌ Erro ao carregar prazos:', error);
+                    showConnectionStatus('❌ Erro ao carregar: ' + error.message, 'error');
+                    deadlines = [];
+                } else {
+                    deadlines = data || [];
+                    debugLog(`✅ ${deadlines.length} prazos carregados do Supabase`);
+                    
+                    if (deadlines.length > 0) {
+                        showConnectionStatus(`✅ ${deadlines.length} prazos carregados!`, 'success');
+                    } else {
+                        showConnectionStatus('Nenhum prazo encontrado. Crie seu primeiro prazo!', 'info');
+                    }
+                }
+                
+                // Aplicar filtros atuais
+                filteredDeadlines = [...deadlines];
+                applyFilters();
+                scheduleNotifications();
+                
+            } catch (error) {
+                errorLog('❌ ERRO CRÍTICO ao carregar prazos:', error);
+                showConnectionStatus('❌ Erro de conexão: ' + error.message, 'error');
+                
+                deadlines = [];
+                filteredDeadlines = [];
+                renderDeadlines();
+                updateStatistics();
+            }
+        }
+
+        function renderDeadlines() {
+            if (!elements.deadlinesList) return;
+            
+            const container = elements.deadlinesList;
+            const deadlinesToShow = filteredDeadlines.length > 0 ? filteredDeadlines : deadlines;
+            
+            if (deadlinesToShow.length === 0) {
+                const isFiltered = (elements.searchInput && elements.searchInput.value) || 
+                                 (elements.categoryFilter && elements.categoryFilter.value);
+                container.innerHTML = `
+                    <div class="text-center text-gray-500 py-8">
+                        <svg class="w-12 h-12 md:w-16 md:h-16 mx-auto mb-4 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        <p class="text-base md:text-lg">${isFiltered ? 'Nenhum prazo encontrado com esses filtros.' : 'Nenhum prazo cadastrado ainda.'}</p>
+                        <p class="text-sm text-gray-400">${isFiltered ? 'Tente ajustar os filtros de busca.' : 'Clique em "Novo Prazo" para começar!'}</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = deadlinesToShow.map(deadline => {
+                const date = new Date(deadline.date);
+                const now = new Date();
+                const isUrgent = date <= now && !deadline.completed;
+                const isThisWeek = date <= new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000) && !deadline.completed;
+
+                return `
+                    <div class="border-l-4 ${
+                        deadline.completed ? 'border-green-500 bg-green-50' :
+                        isUrgent ? 'border-red-500 bg-red-50' : 
+                        isThisWeek ? 'border-orange-500 bg-orange-50' : 
+                        'border-gray-300 bg-gray-50'
+                    } p-4 mb-4 rounded-r-xl">
+                        <div class="flex justify-between items-start">
+                            <div class="flex-1">
+                                <div class="flex items-center space-x-2 mb-1">
+                                    <h4 class="font-semibold text-gray-800 text-base md:text-lg ${deadline.completed ? 'line-through' : ''}">${deadline.title}</h4>
+                                </div>
+                                <p class="text-sm text-gray-600">${getCategoryIcon(deadline.category)} ${deadline.category}</p>
+                                <p class="text-sm text-gray-500">${formatDate(date)}</p>
+                                ${deadline.description ? `<p class="text-sm text-gray-600 mt-2">${deadline.description}</p>` : ''}
+                            </div>
+                            <div class="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2 ml-4">
+                                <button onclick="editDeadline(${deadline.id})" class="text-blue-600 hover:text-blue-800 p-2 rounded-lg hover:bg-blue-100 transition-colors" title="Editar prazo">
+                                    <span class="text-lg">✏️</span>
+                                </button>
+                                <button onclick="toggleComplete(${deadline.id})" class="text-green-600 hover:text-green-800 p-2 rounded-lg hover:bg-green-100 transition-colors" title="${deadline.completed ? 'Marcar como pendente' : 'Marcar como concluído'}">
+                                    <span class="text-lg">${deadline.completed ? '✅' : '⭕'}</span>
+                                </button>
+                                <button onclick="deleteDeadline(${deadline.id})" class="text-red-600 hover:text-red-800 p-2 rounded-lg hover:bg-red-100 transition-colors" title="Excluir prazo">
+                                    <span class="text-lg">🗑️</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function updateStatistics() {
+            const now = new Date();
+            const weekFromNow = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+
+            // Usar deadlines originais para estatísticas, não filtrados
+            const total = deadlines.length;
+            const urgent = deadlines.filter(d => !d.completed && new Date(d.date) <= now).length;
+            const thisWeek = deadlines.filter(d => !d.completed && new Date(d.date) <= weekFromNow).length;
+            const completed = deadlines.filter(d => d.completed).length;
+
+            if (elements.totalCount) elements.totalCount.textContent = total;
+            if (elements.urgentCount) elements.urgentCount.textContent = urgent;
+            if (elements.weekCount) elements.weekCount.textContent = thisWeek;
+            if (elements.completedCount) elements.completedCount.textContent = completed;
+        }
+
+        function getCategoryIcon(category) {
+            const icons = {
+                trabalho: '🏢',
+                pessoal: '👤',
+                juridico: '⚖️',
+                financeiro: '💰',
+                saude: '🏥',
+                educacao: '📚',
+                aniversarios: '🎂',
+                contratos: '📄',
+                veiculo: '🚗',
+                viagens: '✈️',
+                impostos: '🧾',
+                seguros: '🛡️',
+                documentos: '📋',
+                eventos: '🎉',
+                manutencao: '🔧',
+                reunioes: '👥',
+                outros: '📋'
+            };
+            return icons[category] || '📋';
+        }
+
+        function formatDate(date) {
+            return date.toLocaleDateString('pt-BR') + ' às ' + date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+        }
+
+        // ===== FUNÇÕES GLOBAIS PARA BOTÕES =====
+        
+        window.editDeadline = function(id) {
+            const deadline = deadlines.find(d => d.id === id);
+            if (deadline) {
+                openModal('deadlineModal', deadline);
+            }
+        };
+
+        window.toggleComplete = async function(id) {
+            const deadline = deadlines.find(d => d.id === id);
+            if (!deadline) return;
+
+            try {
+                const { error } = await supabase
+                    .from('deadlines')
+                    .update({ completed: !deadline.completed })
+                    .eq('id', id)
+                    .eq('user_id', currentUser.id);
+
+                if (error) {
+                    errorLog('Erro ao atualizar prazo:', error);
+                    showConnectionStatus('❌ Erro ao atualizar: ' + error.message, 'error');
+                    return;
+                }
+
+                await loadDeadlines();
+                showConnectionStatus('✅ Prazo atualizado!', 'success');
+            } catch (error) {
+                errorLog('Erro ao atualizar prazo:', error);
+                showConnectionStatus('❌ Erro de conexão: ' + error.message, 'error');
+            }
+        };
+
+        window.deleteDeadline = async function(id) {
+            if (!confirm('Tem certeza que deseja excluir este prazo?')) return;
+
+            try {
+                const { error } = await supabase
+                    .from('deadlines')
+                    .delete()
+                    .eq('id', id)
+                    .eq('user_id', currentUser.id);
+
+                if (error) {
+                    errorLog('Erro ao excluir prazo:', error);
+                    showConnectionStatus('❌ Erro ao excluir: ' + error.message, 'error');
+                    return;
+                }
+
+                await loadDeadlines();
+                showConnectionStatus('✅ Prazo excluído com sucesso!', 'success');
+            } catch (error) {
+                errorLog('Erro ao excluir prazo:', error);
+                showConnectionStatus('❌ Erro de conexão: ' + error.message, 'error');
+            }
+        };
+
+        // ===== INICIALIZAÇÃO DA APLICAÇÃO =====
+        
+        async function initializeApp() {
+            debugLog('=== INICIALIZANDO APLICAÇÃO ===');
+            
+            // Inicializar Google Calendar API
+            await initializeGoogleApi();
+            
+            // Inicializar banco de dados
+            const dbInitialized = await initializeDatabase();
+            if (!dbInitialized) {
+                errorLog('Falha ao inicializar banco de dados');
+                return;
+            }
+            
+            // Carregar prazos
+            await loadDeadlines();
+            
+            debugLog('✅ Aplicação inicializada com sucesso');
+        }
+
+        // ===== INICIALIZAÇÃO PRINCIPAL =====
+        
+        async function main() {
+            console.log('🚀 Iniciando DeadlineX...');
+            
+            // Aguardar inicialização do Supabase
+            const supabaseReady = await initializeSupabase();
+            if (!supabaseReady) {
+                console.error('❌ Falha crítica: Supabase não inicializou');
+                showConnectionStatus('❌ Erro de conexão com o servidor. Recarregue a página.', 'error');
+                return;
+            }
+            
+            // Verificar se há usuário logado
+            const { data: { session } } = await supabase.auth.getSession();
+            if (session && session.user) {
+                currentUser = session.user;
+                console.log('✅ Usuário já logado:', currentUser.email);
+                
+                const userName = currentUser.user_metadata?.name || currentUser.email;
+                if (elements.userWelcome) {
+                    elements.userWelcome.textContent = `Bem-vindo de volta, ${userName}!`;
+                }
+                
+                if (elements.loginScreen) elements.loginScreen.classList.add('hidden');
+                if (elements.mainApp) elements.mainApp.classList.remove('hidden');
+                
+                await initializeApp();
+                
+                // Verificar notificações pendentes ao inicializar
+                checkPendingNotifications();
+            } else {
+                console.log('👤 Nenhum usuário logado, mostrando tela de login');
+                if (elements.loginScreen) elements.loginScreen.classList.remove('hidden');
+                if (elements.mainApp) elements.mainApp.classList.add('hidden');
+            }
+            
+            console.log('✅ DeadlineX inicializado com sucesso!');
+        }
+
+        // Aguardar carregamento completo da página
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', main);
+        } else {
+            main();
+        }
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97c2733106831cf5',t:'MTc1NzM3NjQ5NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DeadlineX - Sistema de Gestão de Prazos</title>
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#667eea">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="DeadlineX">
+    <meta name="description" content="Sistema profissional de gestão de prazos com notificações inteligentes">
+    
+    <!-- Favicon e Icons -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='grad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%23667eea;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%23764ba2;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='20' fill='url(%23grad)'/%3E%3Ctext x='50' y='35' font-family='Arial,sans-serif' font-size='24' font-weight='bold' text-anchor='middle' fill='white'%3E12:34%3C/text%3E%3Ctext x='50' y='55' font-family='Arial,sans-serif' font-size='12' text-anchor='middle' fill='white'%3EDEADLINE%3C/text%3E%3Ctext x='50' y='75' font-family='Arial,sans-serif' font-size='8' text-anchor='middle' fill='white'%3EMANAGER%3C/text%3E%3C/svg%3E">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='grad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%23667eea;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%23764ba2;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='20' fill='url(%23grad)'/%3E%3Ctext x='50' y='35' font-family='Arial,sans-serif' font-size='24' font-weight='bold' text-anchor='middle' fill='white'%3E12:34%3C/text%3E%3Ctext x='50' y='55' font-family='Arial,sans-serif' font-size='12' text-anchor='middle' fill='white'%3EDEADLINE%3C/text%3E%3Ctext x='50' y='75' font-family='Arial,sans-serif' font-size='8' text-anchor='middle' fill='white'%3EMANAGER%3C/text%3E%3C/svg%3E">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Google Calendar API -->
+    <script src="https://apis.google.com/js/api.js"></script>
+    <script src="https://accounts.google.com/gsi/client"></script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .card-shadow { box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        .pulse-animation { animation: pulse 2s infinite; }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        .btn-large { padding: 1rem 1.5rem; font-size: 1.1rem; min-height: 3.5rem; }
+        .mobile-optimized { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+        
+        /* PWA Install Button Animation */
+        .install-prompt {
+            animation: slideInUp 0.5s ease-out;
+        }
+        @keyframes slideInUp {
+            from { transform: translateY(100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        /* Logo Animation */
+        .logo-pulse {
+            animation: logoPulse 3s ease-in-out infinite;
+        }
+        @keyframes logoPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        /* Google Calendar Integration Styles */
+        .calendar-status {
+            transition: all 0.3s ease;
+        }
+        .calendar-connected {
+            background: linear-gradient(135deg, #4285f4 0%, #34a853 100%);
+        }
+        .calendar-disconnected {
+            background: linear-gradient(135deg, #ea4335 0%, #fbbc04 100%);
+        }
+
+        /* Menu Dropdown Animation */
+        .menu-dropdown {
+            animation: slideDown 0.2s ease-out;
+        }
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen mobile-optimized">
+    <!-- PWA Install Prompt -->
+    <div id="installPrompt" class="fixed bottom-0 left-0 right-0 bg-gradient-to-r from-purple-600 to-blue-600 text-white p-4 z-50 hidden install-prompt">
+        <div class="flex items-center justify-between max-w-md mx-auto">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/>
+                    </svg>
+                </div>
+                <div>
+                    <p class="font-semibold text-sm">Instalar DeadlineX</p>
+                    <p class="text-xs opacity-90">Adicione à tela inicial</p>
+                </div>
+            </div>
+            <div class="flex space-x-2">
+                <button id="installBtn" class="bg-white text-purple-600 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-gray-100 transition-colors">
+                    Instalar
+                </button>
+                <button id="dismissInstall" class="text-white opacity-75 hover:opacity-100 p-2">
+                    ✕
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Screen -->
+    <div id="loginScreen" class="min-h-screen gradient-bg flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl p-8 max-w-md w-full card-shadow">
+            <!-- Logo -->
+            <div class="text-center mb-8">
+                <div class="inline-block logo-pulse">
+                    <svg width="80" height="80" viewBox="0 0 100 100" class="mx-auto mb-4">
+                        <defs>
+                            <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+                            </linearGradient>
+                        </defs>
+                        <rect width="100" height="100" rx="20" fill="url(#logoGrad)"/>
+                        <text x="50" y="35" font-family="Inter,sans-serif" font-size="24" font-weight="bold" text-anchor="middle" fill="white">12:34</text>
+                        <text x="50" y="55" font-family="Inter,sans-serif" font-size="12" text-anchor="middle" fill="white">DEADLINE</text>
+                        <text x="50" y="75" font-family="Inter,sans-serif" font-size="8" text-anchor="middle" fill="white">MANAGER</text>
+                    </svg>
+                </div>
+                <h1 class="text-3xl font-bold text-gray-800 mb-2">DeadlineX</h1>
+                <p class="text-gray-600">Sistema Profissional de Gestão de Prazos</p>
+            </div>
+            
+            <!-- Abas Login/Cadastro -->
+            <div class="flex mb-6 bg-gray-100 rounded-lg p-1">
+                <button id="loginTab" class="flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors bg-white text-purple-600 shadow-sm">
+                    Entrar
+                </button>
+                <button id="registerTab" class="flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors text-gray-600 hover:text-gray-800">
+                    Cadastrar
+                </button>
+            </div>
+
+            <!-- Formulário de Login -->
+            <form id="loginForm" class="space-y-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                    <input type="email" id="userIdentifier" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-lg" placeholder="Digite seu email" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Senha</label>
+                    <div class="relative">
+                        <input type="password" id="userPassword" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-lg pr-12" placeholder="Digite sua senha" required>
+                        <button type="button" id="toggleLoginPassword" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700">
+                            👁️
+                        </button>
+                    </div>
+                </div>
+                <button type="submit" class="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white py-3 rounded-lg font-semibold text-lg hover:from-purple-700 hover:to-blue-700 transition-all duration-200 transform hover:scale-105">
+                    Entrar no Sistema
+                </button>
+            </form>
+
+            <!-- Formulário de Cadastro -->
+            <form id="registerForm" class="space-y-6 hidden">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Nome Completo</label>
+                    <input type="text" id="registerName" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-lg" placeholder="Digite seu nome completo" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                    <input type="email" id="registerEmail" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-lg" placeholder="Digite seu email" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Senha</label>
+                    <div class="relative">
+                        <input type="password" id="registerPassword" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-lg pr-12" placeholder="Crie uma senha segura" required>
+                        <button type="button" id="toggleRegisterPassword" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700">
+                            👁️
+                        </button>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-1">Mínimo 6 caracteres</p>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Confirmar Senha</label>
+                    <div class="relative">
+                        <input type="password" id="confirmPassword" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-lg pr-12" placeholder="Digite a senha novamente" required>
+                        <button type="button" id="toggleConfirmPassword" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700">
+                            👁️
+                        </button>
+                    </div>
+                </div>
+                <button type="submit" class="w-full bg-gradient-to-r from-green-600 to-blue-600 text-white py-3 rounded-lg font-semibold text-lg hover:from-green-700 hover:to-blue-700 transition-all duration-200 transform hover:scale-105">
+                    Criar Conta
+                </button>
+            </form>
+            
+            <div class="mt-6 text-center space-y-2">
+                <p class="text-xs text-gray-500">Seus dados ficam seguros e privados</p>
+                <div class="flex justify-center space-x-4 text-xs">
+                    <button id="loginPrivacyBtn" class="text-blue-600 hover:text-blue-800 underline">
+                        Política de Privacidade
+                    </button>
+                    <button id="loginTermsBtn" class="text-blue-600 hover:text-blue-800 underline">
+                        Termos de Uso
+                    </button>
+                </div>
+                <p class="text-xs text-gray-400">
+                    Ao criar uma conta, você concorda com nossos termos e políticas
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div id="mainApp" class="hidden">
+        <!-- Header -->
+        <header class="gradient-bg text-white shadow-lg sticky top-0 z-40">
+            <div class="container mx-auto px-4 py-4">
+                <div class="flex justify-between items-center">
+                    <div class="flex items-center space-x-3">
+                        <svg width="40" height="40" viewBox="0 0 100 100" class="flex-shrink-0">
+                            <defs>
+                                <linearGradient id="headerGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#ffffff;stop-opacity:0.9" />
+                                    <stop offset="100%" style="stop-color:#ffffff;stop-opacity:0.7" />
+                                </linearGradient>
+                            </defs>
+                            <rect width="100" height="100" rx="20" fill="url(#headerGrad)"/>
+                            <text x="50" y="35" font-family="Inter,sans-serif" font-size="24" font-weight="bold" text-anchor="middle" fill="#667eea">12:34</text>
+                            <text x="50" y="55" font-family="Inter,sans-serif" font-size="12" text-anchor="middle" fill="#667eea">DEADLINE</text>
+                            <text x="50" y="75" font-family="Inter,sans-serif" font-size="8" text-anchor="middle" fill="#667eea">MANAGER</text>
+                        </svg>
+                        <div>
+                            <h1 class="text-xl md:text-2xl font-bold">DeadlineX</h1>
+                            <p class="text-xs opacity-75" id="userWelcome">Bem-vindo!</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <!-- Navigation Menu -->
+                        <div class="relative">
+                            <button id="menuBtn" class="bg-white bg-opacity-20 hover:bg-opacity-30 px-3 py-2 rounded-lg transition-colors text-white flex items-center space-x-2">
+                                <span>☰</span>
+                                <span class="hidden md:inline">Menu</span>
+                            </button>
+                            <div id="menuDropdown" class="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-lg border hidden z-50 menu-dropdown">
+                                <div class="py-2">
+                                    <a href="https://pagina-de-vendas-concursos.vercel.app/" target="_blank" class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 transition-colors">
+                                        <span class="text-xl mr-3">🚀</span>
+                                        <div>
+                                            <div class="font-medium">Concurso Turbo IA</div>
+                                            <div class="text-sm text-gray-500">Prepare-se para concursos</div>
+                                        </div>
+                                    </a>
+                                    <div class="border-t border-gray-100 my-1"></div>
+                                    <button id="menuShareBtn" class="flex items-center w-full px-4 py-3 text-gray-700 hover:bg-gray-100 transition-colors">
+                                        <span class="text-xl mr-3">📤</span>
+                                        <div class="text-left">
+                                            <div class="font-medium">Compartilhar App</div>
+                                            <div class="text-sm text-gray-500">Indique para amigos</div>
+                                        </div>
+                                    </button>
+                                    <div class="border-t border-gray-100 my-1"></div>
+                                    <div class="relative group">
+                                        <button id="menuPoliciesBtn" class="flex items-center w-full px-4 py-3 text-gray-700 hover:bg-gray-100 transition-colors">
+                                            <span class="text-xl mr-3">📋</span>
+                                            <div class="text-left">
+                                                <div class="font-medium">Políticas & Termos</div>
+                                                <div class="text-sm text-gray-500">Privacidade e termos de uso</div>
+                                            </div>
+                                        </button>
+                                        <!-- Tooltip com lista de políticas -->
+                                        <div class="absolute left-full top-0 ml-2 w-64 bg-gray-800 text-white text-xs rounded-lg p-3 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                                            <div class="font-semibold mb-2">📋 Políticas Disponíveis:</div>
+                                            <ul class="space-y-1">
+                                                <li>• Política de Privacidade</li>
+                                                <li>• Termos de Uso</li>
+                                                <li>• Política de Cookies</li>
+                                                <li>• Política de Dados</li>
+                                                <li>• Termos de Serviço</li>
+                                                <li>• LGPD - Lei Geral de Proteção de Dados</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Google Calendar Status -->
+                        <div id="calendarStatus" class="calendar-status calendar-disconnected px-3 py-2 rounded-lg text-white text-sm font-medium flex items-center space-x-2">
+                            <span id="calendarIcon">📅</span>
+                            <span id="calendarText" class="hidden md:inline">Desconectado</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Container -->
+        <div class="container mx-auto px-4 py-6">
+            <!-- Action Buttons -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                <button id="newDeadlineBtn" class="bg-green-500 hover:bg-green-600 text-white btn-large rounded-xl font-semibold transition-all duration-200 transform hover:scale-105 card-shadow flex flex-col items-center space-y-2">
+                    <span class="text-2xl">➕</span>
+                    <span class="text-sm md:text-base">Novo Prazo</span>
+                </button>
+                <button id="notificationBtn" class="bg-purple-500 hover:bg-purple-600 text-white btn-large rounded-xl font-semibold transition-all duration-200 transform hover:scale-105 card-shadow flex flex-col items-center space-y-2">
+                    <span class="text-2xl">🔔</span>
+                    <span class="text-sm md:text-base">Notificações</span>
+                </button>
+                <button id="installAppBtn" class="bg-blue-500 hover:bg-blue-600 text-white btn-large rounded-xl font-semibold transition-all duration-200 transform hover:scale-105 card-shadow flex flex-col items-center space-y-2">
+                    <span class="text-2xl">📱</span>
+                    <span class="text-sm md:text-base">Instalar App</span>
+                </button>
+                <button id="calendarBtn" class="bg-red-500 hover:bg-red-600 text-white btn-large rounded-xl font-semibold transition-all duration-200 transform hover:scale-105 card-shadow flex flex-col items-center space-y-2">
+                    <span class="text-2xl">📅</span>
+                    <span class="text-sm md:text-base">Google Calendar</span>
+                </button>
+            </div>
+
+            <!-- Statistics Cards -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-8">
+                <div class="bg-white p-4 md:p-6 rounded-xl card-shadow">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-600 text-xs md:text-sm">Total</p>
+                            <p id="totalCount" class="text-xl md:text-2xl font-bold text-gray-800">0</p>
+                        </div>
+                        <div class="bg-blue-100 p-2 md:p-3 rounded-full">
+                            <svg class="w-4 h-4 md:w-6 md:h-6 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-4 md:p-6 rounded-xl card-shadow">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-600 text-xs md:text-sm">Urgentes</p>
+                            <p id="urgentCount" class="text-xl md:text-2xl font-bold text-red-600 pulse-animation">0</p>
+                        </div>
+                        <div class="bg-red-100 p-2 md:p-3 rounded-full">
+                            <svg class="w-4 h-4 md:w-6 md:h-6 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-4 md:p-6 rounded-xl card-shadow">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-600 text-xs md:text-sm">Esta Semana</p>
+                            <p id="weekCount" class="text-xl md:text-2xl font-bold text-orange-600">0</p>
+                        </div>
+                        <div class="bg-orange-100 p-2 md:p-3 rounded-full">
+                            <svg class="w-4 h-4 md:w-6 md:h-6 text-orange-600" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5a2.25 2.25 0 002.25-2.25m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5a2.25 2.25 0 012.25 2.25v7.5"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-4 md:p-6 rounded-xl card-shadow">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-600 text-xs md:text-sm">Concluídos</p>
+                            <p id="completedCount" class="text-xl md:text-2xl font-bold text-green-600">0</p>
+                        </div>
+                        <div class="bg-green-100 p-2 md:p-3 rounded-full">
+                            <svg class="w-4 h-4 md:w-6 md:h-6 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Connection Status -->
+            <div id="connectionStatus" class="mb-4 p-3 rounded-lg text-sm font-medium hidden">
+            </div>
+
+            <!-- Deadlines List -->
+            <div class="bg-white rounded-xl card-shadow">
+                <div class="p-4 md:p-6 border-b border-gray-200">
+                    <div class="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
+                        <h2 class="text-lg md:text-xl font-semibold text-gray-800">Meus Prazos</h2>
+                        
+                        <!-- Filtros de Busca -->
+                        <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3">
+                            <div class="relative">
+                                <input type="text" id="searchInput" placeholder="🔍 Buscar por título..." class="pl-4 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm w-full sm:w-48">
+                            </div>
+                            <select id="categoryFilter" class="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm">
+                                <option value="">📋 Todas as categorias</option>
+                                <option value="trabalho">🏢 Trabalho</option>
+                                <option value="pessoal">👤 Pessoal</option>
+                                <option value="juridico">⚖️ Jurídico</option>
+                                <option value="financeiro">💰 Financeiro</option>
+                                <option value="saude">🏥 Saúde</option>
+                                <option value="educacao">📚 Educação</option>
+                                <option value="aniversarios">🎂 Aniversários</option>
+                                <option value="contratos">📄 Contratos</option>
+                                <option value="veiculo">🚗 Veículo</option>
+                                <option value="viagens">✈️ Viagens</option>
+                                <option value="impostos">🧾 Impostos</option>
+                                <option value="seguros">🛡️ Seguros</option>
+                                <option value="documentos">📋 Documentos</option>
+                                <option value="eventos">🎉 Eventos</option>
+                                <option value="manutencao">🔧 Manutenção</option>
+                                <option value="reunioes">👥 Reuniões</option>
+                                <option value="outros">📋 Outros</option>
+                            </select>
+                            <button id="clearFilters" class="px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm transition-colors">
+                                ✖️ Limpar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div id="deadlinesList" class="p-4 md:p-6">
+                    <div class="text-center text-gray-500 py-8">
+                        <svg class="w-12 h-12 md:w-16 md:h-16 mx-auto mb-4 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        <p>Carregando prazos...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Novo/Editar Prazo -->
+    <div id="deadlineModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-xl max-w-md w-full p-6 max-h-screen overflow-y-auto">
+                <h3 id="modalTitle" class="text-lg font-semibold mb-4">Novo Prazo</h3>
+                <form id="deadlineForm">
+                    <input type="hidden" id="editingId" value="">
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Título</label>
+                        <input type="text" id="deadlineTitle" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" required>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Categoria</label>
+                        <select id="deadlineCategory" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                            <option value="trabalho">🏢 Trabalho</option>
+                            <option value="pessoal">👤 Pessoal</option>
+                            <option value="juridico">⚖️ Jurídico</option>
+                            <option value="financeiro">💰 Financeiro</option>
+                            <option value="saude">🏥 Saúde</option>
+                            <option value="educacao">📚 Educação</option>
+                            <option value="aniversarios">🎂 Aniversários</option>
+                            <option value="contratos">📄 Contratos</option>
+                            <option value="veiculo">🚗 Veículo</option>
+                            <option value="viagens">✈️ Viagens</option>
+                            <option value="impostos">🧾 Impostos</option>
+                            <option value="seguros">🛡️ Seguros</option>
+                            <option value="documentos">📋 Documentos</option>
+                            <option value="eventos">🎉 Eventos</option>
+                            <option value="manutencao">🔧 Manutenção</option>
+                            <option value="reunioes">👥 Reuniões</option>
+                            <option value="outros">📋 Outros</option>
+                        </select>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Data e Hora</label>
+                        <input type="datetime-local" id="deadlineDate" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" required>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Descrição</label>
+                        <textarea id="deadlineDescription" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" rows="3"></textarea>
+                    </div>
+                    <div class="mb-4">
+                        <label class="flex items-center">
+                            <input type="checkbox" id="syncToCalendar" class="mr-2">
+                            <span class="text-sm text-gray-700">Sincronizar com Google Calendar</span>
+                        </label>
+                    </div>
+                    <div class="flex justify-end space-x-3">
+                        <button type="button" id="cancelDeadline" class="px-4 py-2 text-gray-600 hover:text-gray-800">Cancelar</button>
+                        <button type="submit" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg">Salvar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Política de Privacidade -->
+    <div id="privacyModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-xl max-w-2xl w-full p-6 max-h-screen overflow-y-auto">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-semibold text-gray-800">🔒 Política de Privacidade</h3>
+                    <button id="closePrivacyModal" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+                </div>
+                <div class="space-y-4 text-sm text-gray-700">
+                    <div>
+                        <h4 class="font-semibold text-purple-600 mb-2">1. Coleta de Informações</h4>
+                        <p>O DeadlineX coleta apenas as informações necessárias para o funcionamento do sistema: email, nome e dados dos prazos que você criar. Não coletamos informações pessoais desnecessárias.</p>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-purple-600 mb-2">2. Uso das Informações</h4>
+                        <p>Suas informações são utilizadas exclusivamente para: autenticação no sistema, armazenamento dos seus prazos, envio de notificações e sincronização com Google Calendar (quando autorizado).</p>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-purple-600 mb-2">3. Compartilhamento</h4>
+                        <p>Não compartilhamos, vendemos ou alugamos suas informações pessoais para terceiros. Seus dados ficam privados e seguros em nossos servidores.</p>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-purple-600 mb-2">4. Segurança</h4>
+                        <p>Utilizamos criptografia e medidas de segurança avançadas para proteger seus dados. O acesso é restrito e monitorado.</p>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-purple-600 mb-2">5. LGPD</h4>
+                        <p>Estamos em conformidade com a Lei Geral de Proteção de Dados (LGPD). Você tem direito de acessar, corrigir ou excluir seus dados a qualquer momento.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Termos de Uso -->
+    <div id="termsModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-xl max-w-2xl w-full p-6 max-h-screen overflow-y-auto">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-semibold text-gray-800">📋 Termos de Uso</h3>
+                    <button id="closeTermsModal" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+                </div>
+                <div class="space-y-4 text-sm text-gray-700">
+                    <div>
+                        <h4 class="font-semibold text-blue-600 mb-2">1. Aceitação dos Termos</h4>
+                        <p>Ao usar o DeadlineX, você concorda com estes termos de uso. Se não concordar, não utilize o sistema.</p>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-blue-600 mb-2">2. Uso Adequado</h4>
+                        <p>O sistema deve ser usado apenas para gestão de prazos pessoais e profissionais. É proibido usar para atividades ilegais ou prejudiciais.</p>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-blue-600 mb-2">3. Responsabilidades</h4>
+                        <p>Você é responsável por manter suas credenciais seguras e pelos dados que inserir no sistema. Não nos responsabilizamos por perdas decorrentes de uso inadequado.</p>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-blue-600 mb-2">4. Disponibilidade</h4>
+                        <p>Nos esforçamos para manter o sistema disponível 24/7, mas podem ocorrer manutenções programadas ou interrupções técnicas.</p>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-blue-600 mb-2">5. Modificações</h4>
+                        <p>Podemos atualizar estes termos periodicamente. Continuando a usar o sistema, você aceita as modificações.</p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -940,6 +3135,17 @@
                     elements.menuDropdown.classList.add('hidden');
                 }
                 shareApp();
+            });
+        }
+
+        // Políticas via menu
+        const menuPoliciesBtn = safeGetElement('menuPoliciesBtn');
+        if (menuPoliciesBtn) {
+            menuPoliciesBtn.addEventListener('click', () => {
+                if (elements.menuDropdown) {
+                    elements.menuDropdown.classList.add('hidden');
+                }
+                openModal('privacyModal');
             });
         }
 
@@ -1986,8 +4192,9 @@
             main();
         }
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'979daa78d0856eae',t:'MTc1Njk5MDc4NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</body>
 </html>
+
 
 
 
