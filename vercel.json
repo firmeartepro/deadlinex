@@ -1,8 +1,36 @@
 {
+  "version": 2,
   "builds": [
     {
       "src": "index.html",
       "use": "@vercel/static"
+    },
+    {
+      "src": "api/*.js",
+      "use": "@vercel/node"
     }
-  ]
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
+    }
+  ],
+  "functions": {
+    "api/*.js": {
+      "maxDuration": 30
+    }
+  },
+  "env": {
+    "SUPABASE_URL": "@supabase-url",
+    "SUPABASE_SERVICE_KEY": "@supabase-service-key",
+    "MP_ACCESS_TOKEN": "@mp-access-token",
+    "MP_PUBLIC_KEY": "@mp-public-key",
+    "WHATSAPP_API_KEY": "@whatsapp-api-key",
+    "FRONTEND_URL": "@frontend-url"
+  }
 }
