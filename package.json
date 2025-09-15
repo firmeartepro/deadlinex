@@ -1,7 +1,7 @@
 {
-  "name": "deadlinex",
+  "name": "deadlinex-app",
   "version": "1.0.0",
-  "description": "Sistema de gerenciamento de prazos",
+  "description": "Gerenciador de Prazos Inteligente",
   "main": "index.html",
   "scripts": {
     "dev": "vercel dev",
@@ -9,12 +9,11 @@
     "start": "vercel dev"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.38.0"
+    "mercadopago": "^1.5.17",
+    "@supabase/supabase-js": "^2.26.0",
+    "axios": "^1.4.0"
   },
-  "devDependencies": {
-    "vercel": "^32.0.0"
-  },
-  "keywords": ["deadline", "prazo", "gerenciamento"],
-  "author": "Seu Nome",
-  "license": "MIT"
+  "engines": {
+    "node": "18.x"
+  }
 }
