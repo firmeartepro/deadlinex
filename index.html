@@ -875,6 +875,18 @@
 
         // Initialize app
         document.addEventListener('DOMContentLoaded', async () => {
+            console.log('App initializing...');
+            console.log('Supabase URL:', SUPABASE_URL);
+            console.log('Supabase client:', supabase);
+            
+            // Test connection
+            try {
+                const { data, error } = await supabase.from('profiles').select('count').limit(1);
+                console.log('Supabase connection test:', { data, error });
+            } catch (err) {
+                console.error('Supabase connection error:', err);
+            }
+            
             await checkAuth();
             setupEventListeners();
         });
@@ -884,6 +896,7 @@
             const { data: { session } } = await supabase.auth.getSession();
             if (session) {
                 currentUser = session.user;
+                console.log('User authenticated:', currentUser.id);
                 await loadUserProfile();
                 showDashboard();
                 await loadCategories();
@@ -896,34 +909,59 @@
         async function loadUserProfile() {
             try {
                 const { data, error } = await supabase
-                    .from('user_profiles')
+                    .from('profiles')
                     .select('*')
-                    .eq('user_id', currentUser.id)
+                    .eq('id', currentUser.id)
                     .single();
+
+                if (error && error.code !== 'PGRST116') {
+                    console.error('Error loading profile:', error);
+                    throw error;
+                }
 
                 if (data) {
                     userPlan = data.plan || 'free';
                     updateUserPlanDisplay();
+                    console.log('Profile loaded:', data);
+                } else {
+                    console.log('Profile not found, creating default...');
+                    await createUserProfile();
                 }
             } catch (error) {
-                console.log('Profile not found, creating default...');
-                await createUserProfile();
+                console.error('Error in loadUserProfile:', error);
+                // Continue anyway with default values
+                userPlan = 'free';
+                updateUserPlanDisplay();
             }
         }
 
         async function createUserProfile() {
             try {
-                const { error } = await supabase
-                    .from('user_profiles')
+                const { data, error } = await supabase
+                    .from('profiles')
                     .insert([{
-                        user_id: currentUser.id,
+                        id: currentUser.id,
+                        email: currentUser.email,
+                        full_name: currentUser.user_metadata?.full_name || '',
                         plan: 'free',
-                        settings: {}
-                    }]);
+                        created_at: new Date().toISOString()
+                    }])
+                    .select()
+                    .single();
 
-                if (error) throw error;
+                if (error) {
+                    console.error('Error creating profile:', error);
+                    throw error;
+                }
+
+                console.log('Profile created:', data);
+                userPlan = 'free';
+                updateUserPlanDisplay();
             } catch (error) {
                 console.error('Error creating profile:', error);
+                // Continue anyway
+                userPlan = 'free';
+                updateUserPlanDisplay();
             }
         }
 
@@ -1008,19 +1046,35 @@
         // Task functions
         async function loadTasks() {
             try {
+                console.log('Loading tasks for user:', currentUser.id);
                 const { data, error } = await supabase
                     .from('tasks')
-                    .select('*')
+                    .select(`
+                        *,
+                        categories (
+                            id,
+                            name,
+                            color
+                        )
+                    `)
                     .eq('user_id', currentUser.id)
                     .order('created_at', { ascending: false });
 
-                if (error) throw error;
+                if (error) {
+                    console.error('Error loading tasks:', error);
+                    throw error;
+                }
 
+                console.log('Tasks loaded:', data);
                 tasks = data || [];
                 updateTasksDisplay();
                 updateStats();
             } catch (error) {
+                console.error('Error in loadTasks:', error);
                 showNotification('Erro ao carregar tarefas: ' + error.message, 'error');
+                tasks = [];
+                updateTasksDisplay();
+                updateStats();
             }
         }
 
@@ -1032,26 +1086,41 @@
                     return;
                 }
 
+                const taskPayload = {
+                    ...taskData,
+                    user_id: currentUser.id,
+                    created_at: editingTaskId ? undefined : new Date().toISOString(),
+                    updated_at: new Date().toISOString()
+                };
+
                 if (editingTaskId) {
-                    const { error } = await supabase
+                    const { data, error } = await supabase
                         .from('tasks')
-                        .update(taskData)
-                        .eq('id', editingTaskId);
+                        .update(taskPayload)
+                        .eq('id', editingTaskId)
+                        .eq('user_id', currentUser.id)
+                        .select()
+                        .single();
 
                     if (error) throw error;
+                    console.log('Task updated:', data);
                     showNotification('Tarefa atualizada com sucesso!', 'success');
                 } else {
-                    const { error } = await supabase
+                    const { data, error } = await supabase
                         .from('tasks')
-                        .insert([{ ...taskData, user_id: currentUser.id }]);
+                        .insert([taskPayload])
+                        .select()
+                        .single();
 
                     if (error) throw error;
+                    console.log('Task created:', data);
                     showNotification('Tarefa criada com sucesso!', 'success');
                 }
 
                 await loadTasks();
                 closeTaskModal();
             } catch (error) {
+                console.error('Error saving task:', error);
                 showNotification('Erro ao salvar tarefa: ' + error.message, 'error');
             }
         }
@@ -1077,19 +1146,28 @@
         // Category functions
         async function loadCategories() {
             try {
+                console.log('Loading categories for user:', currentUser.id);
                 const { data, error } = await supabase
                     .from('categories')
                     .select('*')
                     .eq('user_id', currentUser.id)
                     .order('name');
 
-                if (error) throw error;
+                if (error) {
+                    console.error('Error loading categories:', error);
+                    throw error;
+                }
 
+                console.log('Categories loaded:', data);
                 categories = data || [];
                 updateCategoriesDisplay();
                 updateCategorySelects();
             } catch (error) {
+                console.error('Error in loadCategories:', error);
                 showNotification('Erro ao carregar categorias: ' + error.message, 'error');
+                categories = [];
+                updateCategoriesDisplay();
+                updateCategorySelects();
             }
         }
 
@@ -1101,26 +1179,41 @@
                     return;
                 }
 
+                const categoryPayload = {
+                    ...categoryData,
+                    user_id: currentUser.id,
+                    created_at: editingCategoryId ? undefined : new Date().toISOString(),
+                    updated_at: new Date().toISOString()
+                };
+
                 if (editingCategoryId) {
-                    const { error } = await supabase
+                    const { data, error } = await supabase
                         .from('categories')
-                        .update(categoryData)
-                        .eq('id', editingCategoryId);
+                        .update(categoryPayload)
+                        .eq('id', editingCategoryId)
+                        .eq('user_id', currentUser.id)
+                        .select()
+                        .single();
 
                     if (error) throw error;
+                    console.log('Category updated:', data);
                     showNotification('Categoria atualizada com sucesso!', 'success');
                 } else {
-                    const { error } = await supabase
+                    const { data, error } = await supabase
                         .from('categories')
-                        .insert([{ ...categoryData, user_id: currentUser.id }]);
+                        .insert([categoryPayload])
+                        .select()
+                        .single();
 
                     if (error) throw error;
+                    console.log('Category created:', data);
                     showNotification('Categoria criada com sucesso!', 'success');
                 }
 
                 await loadCategories();
                 closeCategoryModal();
             } catch (error) {
+                console.error('Error saving category:', error);
                 showNotification('Erro ao salvar categoria: ' + error.message, 'error');
             }
         }
@@ -1153,7 +1246,7 @@
                 // Delete user data
                 await supabase.from('tasks').delete().eq('user_id', currentUser.id);
                 await supabase.from('categories').delete().eq('user_id', currentUser.id);
-                await supabase.from('user_profiles').delete().eq('user_id', currentUser.id);
+                await supabase.from('profiles').delete().eq('id', currentUser.id);
 
                 // Delete auth user (this might not work from client-side)
                 showNotification('Conta excluída com sucesso!', 'success');
@@ -1387,7 +1480,14 @@
             else if (task.priority === 'urgent' || task.priority === 'high') cardClass = 'task-card warning';
 
             const dueDate = new Date(task.due_date).toLocaleString('pt-BR');
-            const category = categories.find(c => c.id === task.category_id);
+            
+            // Handle category - can be from join or from categories array
+            let category = null;
+            if (task.categories) {
+                category = task.categories; // From join
+            } else if (task.category_id) {
+                category = categories.find(c => c.id === task.category_id); // From array
+            }
 
             return `
                 <div class="${cardClass} bg-white p-4 rounded-lg border hover:shadow-md transition-all">
@@ -1408,7 +1508,7 @@
                         
                         ${!isRecent ? `
                             <div class="flex items-center space-x-2 ml-4">
-                                <button onclick="showTaskModal(${JSON.stringify(task).replace(/"/g, '&quot;')})" 
+                                <button onclick="editTask('${task.id}')" 
                                         class="text-blue-600 hover:text-blue-800">
                                     <i class="fas fa-edit"></i>
                                 </button>
@@ -1423,6 +1523,14 @@
             `;
         }
 
+        // Helper function for editing tasks
+        function editTask(taskId) {
+            const task = tasks.find(t => t.id === taskId);
+            if (task) {
+                showTaskModal(task);
+            }
+        }
+
         function createCategoryCard(category) {
             const taskCount = tasks.filter(t => t.category_id === category.id).length;
 
@@ -1434,7 +1542,7 @@
                             <h3 class="font-semibold text-gray-800">${category.name}</h3>
                         </div>
                         <div class="flex items-center space-x-2">
-                            <button onclick="showCategoryModal(${JSON.stringify(category).replace(/"/g, '&quot;')})" 
+                            <button onclick="editCategory('${category.id}')" 
                                     class="text-blue-600 hover:text-blue-800">
                                 <i class="fas fa-edit"></i>
                             </button>
@@ -1453,6 +1561,14 @@
                     </div>
                 </div>
             `;
+        }
+
+        // Helper function for editing categories
+        function editCategory(categoryId) {
+            const category = categories.find(c => c.id === categoryId);
+            if (category) {
+                showCategoryModal(category);
+            }
         }
 
         function getPriorityLabel(priority) {
@@ -1681,7 +1797,7 @@
             });
         }
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97fa0680e1bc011b',t:'MTc1Nzk1OTI0NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97fa2bb65605f3f1',t:'MTc1Nzk2MDc2OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
 
 
