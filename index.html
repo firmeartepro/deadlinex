@@ -3,344 +3,844 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DeadlineX - Gerenciador de Prazos</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⏰</text></svg>">
+    <title>DeadlineX - Sistema de Gestão de Prazos</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        .gradient-bg { background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #ec4899 100%); }
-        .gradient-premium { background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 50%, #d97706 100%); }
-        .gradient-success { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }
-        .gradient-danger { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); }
-        .card-hover { transition: all 0.3s ease; }
-        .card-hover:hover { transform: translateY(-2px); box-shadow: 0 12px 35px rgba(79, 70, 229, 0.15); }
-        .priority-high { border-left: 4px solid #ef4444; background: linear-gradient(90deg, #fef2f2 0%, #ffffff 100%); }
-        .priority-normal { border-left: 4px solid #f59e0b; background: linear-gradient(90deg, #fffbeb 0%, #ffffff 100%); }
-        .priority-low { border-left: 4px solid #10b981; background: linear-gradient(90deg, #f0fdf4 0%, #ffffff 100%); }
-        .premium-banner { background: linear-gradient(45deg, #fbbf24, #f59e0b, #d97706); }
-        .modal-backdrop { backdrop-filter: blur(8px); }
-        .btn-primary { background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%); }
-        .btn-success { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }
-        .btn-warning { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
-        .btn-danger { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); }
-        .glass-effect { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2); }
-        .text-gradient { background: linear-gradient(135deg, #4f46e5, #7c3aed, #ec4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        * { font-family: 'Inter', sans-serif; }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .task-card {
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+        }
+        
+        .task-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+        
+        .task-card.urgent { border-left-color: #ef4444; }
+        .task-card.warning { border-left-color: #f59e0b; }
+        .task-card.normal { border-left-color: #10b981; }
+        
+        .priority-badge {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 9999px;
+            font-weight: 500;
+        }
+        
+        .priority-urgent { background: #fef2f2; color: #dc2626; }
+        .priority-high { background: #fef3c7; color: #d97706; }
+        .priority-medium { background: #ecfdf5; color: #059669; }
+        .priority-low { background: #f0f9ff; color: #0284c7; }
+        
+        .status-badge {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 9999px;
+            font-weight: 500;
+        }
+        
+        .status-pending { background: #fef3c7; color: #d97706; }
+        .status-progress { background: #dbeafe; color: #2563eb; }
+        .status-completed { background: #ecfdf5; color: #059669; }
+        .status-overdue { background: #fef2f2; color: #dc2626; }
+        
+        .category-badge {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 9999px;
+            font-weight: 500;
+            background: #f3f4f6;
+            color: #374151;
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            padding: 1rem 1.5rem;
+            border-radius: 0.5rem;
+            color: white;
+            font-weight: 500;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        .notification.success { background: #10b981; }
+        .notification.error { background: #ef4444; }
+        .notification.warning { background: #f59e0b; }
+        
+        .modal-overlay {
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+        }
+        
+        .sidebar-transition {
+            transition: transform 0.3s ease;
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar-hidden {
+                transform: translateX(-100%);
+            }
+        }
+
+        .premium-badge {
+            background: linear-gradient(45deg, #ffd700, #ffed4e);
+            color: #92400e;
+            font-weight: 600;
+            padding: 0.25rem 0.5rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+        }
+
+        .premium-feature {
+            position: relative;
+        }
+
+        .premium-feature::after {
+            content: '👑';
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            font-size: 12px;
+        }
     </style>
 </head>
-<body class="bg-gray-50 min-h-screen">
+<body class="bg-gray-50">
+    <!-- Notification Container -->
+    <div id="notification" class="notification"></div>
+
     <!-- Login Screen -->
     <div id="loginScreen" class="min-h-screen gradient-bg flex items-center justify-center p-4">
-        <div class="glass-effect rounded-3xl shadow-2xl p-8 w-full max-w-lg mx-4">
+        <div class="glass-effect rounded-2xl p-8 w-full max-w-md">
             <div class="text-center mb-8">
-                <div class="text-7xl mb-4 animate-pulse">⏰</div>
-                <h1 class="text-4xl font-bold text-gradient mb-3">DeadlineX</h1>
-                <p class="text-gray-700 text-lg">Gerencie seus prazos com inteligência</p>
+                <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-clock text-2xl text-indigo-600"></i>
+                </div>
+                <h1 class="text-2xl font-bold text-white mb-2">DeadlineX</h1>
+                <p class="text-indigo-100">Sistema de Gestão de Prazos</p>
             </div>
             
-            <!-- Login/Register Toggle -->
-            <div class="flex bg-gray-100 rounded-xl p-1 mb-6">
-                <button id="loginTab" onclick="showLoginForm()" class="flex-1 py-2 px-4 rounded-lg btn-primary text-white font-medium transition-all">
+            <form id="loginForm" class="space-y-6">
+                <div>
+                    <label class="block text-sm font-medium text-white mb-2">Email</label>
+                    <input type="email" id="loginEmail" required 
+                           class="w-full px-4 py-3 rounded-lg bg-white/20 border border-white/30 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white/50"
+                           placeholder="seu@email.com">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-white mb-2">Senha</label>
+                    <input type="password" id="loginPassword" required 
+                           class="w-full px-4 py-3 rounded-lg bg-white/20 border border-white/30 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white/50"
+                           placeholder="••••••••">
+                </div>
+                
+                <button type="submit" 
+                        class="w-full bg-white text-indigo-600 py-3 rounded-lg font-semibold hover:bg-gray-100 transition duration-200">
                     Entrar
                 </button>
-                <button id="registerTab" onclick="showRegisterForm()" class="flex-1 py-2 px-4 rounded-lg text-gray-600 font-medium transition-all">
-                    Cadastrar
+            </form>
+            
+            <div class="mt-6 text-center space-y-2">
+                <button id="showRegister" class="text-white/80 hover:text-white text-sm block w-full">
+                    Não tem conta? Cadastre-se
+                </button>
+                <button id="showForgotPassword" class="text-white/80 hover:text-white text-sm">
+                    Esqueceu a senha?
                 </button>
             </div>
-            
-            <!-- Login Form -->
-            <div id="loginForm">
-                <button onclick="loginWithGoogle()" class="w-full btn-danger text-white font-semibold py-4 px-6 rounded-xl flex items-center justify-center gap-3 transition-all hover:shadow-lg mb-4">
-                    <i class="fab fa-google text-xl"></i>
-                    Entrar com Google
-                </button>
-                <p class="text-center text-sm text-gray-600">Acesso rápido e seguro</p>
+        </div>
+    </div>
+
+    <!-- Register Screen -->
+    <div id="registerScreen" class="min-h-screen gradient-bg flex items-center justify-center p-4 hidden">
+        <div class="glass-effect rounded-2xl p-8 w-full max-w-md">
+            <div class="text-center mb-8">
+                <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-user-plus text-2xl text-indigo-600"></i>
+                </div>
+                <h1 class="text-2xl font-bold text-white mb-2">Criar Conta</h1>
+                <p class="text-indigo-100">Cadastre-se no DeadlineX</p>
             </div>
             
-            <!-- Register Form -->
-            <div id="registerForm" class="hidden">
-                <div class="space-y-4 mb-6">
-                    <h3 class="text-xl font-bold text-center text-gray-800">Escolha seu plano</h3>
-                    
-                    <!-- Free Plan -->
-                    <div id="freePlan" onclick="selectPlan('free')" class="border-2 border-gray-200 rounded-xl p-4 cursor-pointer transition-all hover:border-indigo-500 hover:shadow-md">
-                        <div class="flex items-center justify-between mb-2">
-                            <h4 class="font-bold text-lg">Plano Grátis</h4>
-                            <div class="text-2xl font-bold text-green-600">R$ 0</div>
-                        </div>
-                        <ul class="text-sm text-gray-600 space-y-1">
-                            <li><i class="fas fa-check text-green-500 mr-2"></i>4 Categorias básicas</li>
-                            <li><i class="fas fa-check text-green-500 mr-2"></i>Notificações locais</li>
-                            <li><i class="fas fa-check text-green-500 mr-2"></i>Funcionalidades essenciais</li>
-                        </ul>
-                    </div>
-                    
-                    <!-- Premium Plan -->
-                    <div id="premiumPlan" onclick="selectPlan('premium')" class="border-2 border-amber-400 rounded-xl p-4 cursor-pointer transition-all hover:border-amber-500 hover:shadow-md gradient-premium text-white">
-                        <div class="flex items-center justify-between mb-2">
-                            <h4 class="font-bold text-lg flex items-center gap-2">
-                                <i class="fas fa-crown"></i>Plano Premium
-                            </h4>
-                            <div class="text-2xl font-bold">R$ 4,90/mês</div>
-                        </div>
-                        <ul class="text-sm space-y-1">
-                            <li><i class="fas fa-check mr-2"></i>15 Categorias completas</li>
-                            <li><i class="fas fa-check mr-2"></i>Lista de compras + gráficos</li>
-                            <li><i class="fas fa-check mr-2"></i>Notificações WhatsApp</li>
-                            <li><i class="fas fa-check mr-2"></i>Suporte prioritário</li>
-                        </ul>
-                    </div>
+            <form id="registerForm" class="space-y-6">
+                <div>
+                    <label class="block text-sm font-medium text-white mb-2">Nome Completo</label>
+                    <input type="text" id="registerName" required 
+                           class="w-full px-4 py-3 rounded-lg bg-white/20 border border-white/30 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white/50"
+                           placeholder="Seu nome completo">
                 </div>
                 
-                <button onclick="registerWithGoogle()" class="w-full btn-success text-white font-semibold py-4 px-6 rounded-xl flex items-center justify-center gap-3 transition-all hover:shadow-lg">
-                    <i class="fab fa-google text-xl"></i>
-                    Cadastrar com Google
-                </button>
-                <p class="text-center text-sm text-gray-600 mt-2">Plano selecionado: <span id="selectedPlan" class="font-semibold">Grátis</span></p>
-            </div>
-        </div>
-    </div>
-
-    <!-- Main App -->
-    <div id="mainApp" class="hidden">
-        <!-- Header -->
-        <header class="bg-white shadow-sm border-b">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex justify-between items-center h-16">
-                    <div class="flex items-center gap-3">
-                        <div class="text-3xl">⏰</div>
-                        <h1 class="text-xl font-bold text-gray-800">DeadlineX</h1>
-                    </div>
-                    <div class="flex items-center gap-4">
-                        <button onclick="shareApp()" class="text-blue-600 hover:text-blue-800 font-medium">
-                            <i class="fas fa-share-alt mr-2"></i>Compartilhar
-                        </button>
-                        <button onclick="showPolicies()" class="text-gray-600 hover:text-gray-800 font-medium">
-                            <i class="fas fa-shield-alt mr-2"></i>Políticas
-                        </button>
-                        <button onclick="logout()" class="text-red-600 hover:text-red-800">
-                            <i class="fas fa-sign-out-alt"></i>
-                        </button>
-                    </div>
+                <div>
+                    <label class="block text-sm font-medium text-white mb-2">Email</label>
+                    <input type="email" id="registerEmail" required 
+                           class="w-full px-4 py-3 rounded-lg bg-white/20 border border-white/30 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white/50"
+                           placeholder="seu@email.com">
                 </div>
-            </div>
-        </header>
-
-        <!-- Main Buttons -->
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
-                <button onclick="showNewDeadlineModal()" class="btn-success text-white font-semibold py-6 px-6 rounded-xl flex items-center justify-center gap-3 card-hover shadow-lg">
-                    <i class="fas fa-plus text-xl"></i>Novos Prazos
-                </button>
-                <button onclick="showNotifications()" class="btn-primary text-white font-semibold py-6 px-6 rounded-xl flex items-center justify-center gap-3 card-hover shadow-lg">
-                    <i class="fas fa-bell text-xl"></i>Notificações
-                </button>
-                <button onclick="installApp()" class="btn-warning text-white font-semibold py-6 px-6 rounded-xl flex items-center justify-center gap-3 card-hover shadow-lg">
-                    <i class="fas fa-download text-xl"></i>Instalar App
-                </button>
-            </div>
-
-            <!-- Stats Menu -->
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-                <div class="bg-white p-4 rounded-lg shadow-sm text-center">
-                    <div class="text-2xl font-bold text-blue-600" id="totalCount">0</div>
-                    <div class="text-sm text-gray-600">Total</div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-white mb-2">Senha</label>
+                    <input type="password" id="registerPassword" required 
+                           class="w-full px-4 py-3 rounded-lg bg-white/20 border border-white/30 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white/50"
+                           placeholder="••••••••">
                 </div>
-                <div class="bg-white p-4 rounded-lg shadow-sm text-center">
-                    <div class="text-2xl font-bold text-red-600 flex items-center justify-center gap-2">
-                        <i class="fas fa-exclamation-triangle text-lg"></i>
-                        <span id="urgentCount">0</span>
-                    </div>
-                    <div class="text-sm text-gray-600">Urgentes</div>
+                
+                <div class="flex items-center">
+                    <input type="checkbox" id="acceptTerms" required class="mr-2">
+                    <label for="acceptTerms" class="text-sm text-white">
+                        Aceito os <button type="button" id="showTerms" class="underline">Termos de Uso</button> e 
+                        <button type="button" id="showPrivacy" class="underline">Política de Privacidade</button>
+                    </label>
                 </div>
-                <div class="bg-white p-4 rounded-lg shadow-sm text-center">
-                    <div class="text-2xl font-bold text-orange-600" id="weekCount">0</div>
-                    <div class="text-sm text-gray-600">Esta Semana</div>
-                </div>
-                <div class="bg-white p-4 rounded-lg shadow-sm text-center">
-                    <div class="text-2xl font-bold text-green-600" id="completedCount">0</div>
-                    <div class="text-sm text-gray-600">Concluídos</div>
-                </div>
-            </div>
-
-            <!-- Search and Filter -->
-            <div class="bg-white p-6 rounded-lg shadow-sm mb-6">
-                <div class="flex flex-col lg:flex-row gap-4">
-                    <div class="flex-1">
-                        <input type="text" id="searchInput" placeholder="Buscar prazo específico..." class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                    </div>
-                    <div class="flex gap-2">
-                        <select id="categoryFilter" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
-                            <option value="">Todas as categorias</option>
-                            <option value="pessoal">Pessoal</option>
-                            <option value="trabalho">Trabalho</option>
-                            <option value="saude">Saúde</option>
-                            <option value="outros">Outros</option>
-                            <option value="aniversarios" class="premium-option text-gray-400">🔒 Aniversários (Premium)</option>
-                            <option value="educacao" class="premium-option text-gray-400">🔒 Educação (Premium)</option>
-                            <option value="eventos" class="premium-option text-gray-400">🔒 Eventos (Premium)</option>
-                            <option value="financeiro" class="premium-option text-gray-400">🔒 Financeiro (Premium)</option>
-                            <option value="impostos" class="premium-option text-gray-400">🔒 Impostos (Premium)</option>
-                            <option value="juridico" class="premium-option text-gray-400">🔒 Jurídico (Premium)</option>
-                            <option value="manutencao" class="premium-option text-gray-400">🔒 Manutenção (Premium)</option>
-                            <option value="reunioes" class="premium-option text-gray-400">🔒 Reuniões (Premium)</option>
-                            <option value="seguros" class="premium-option text-gray-400">🔒 Seguros (Premium)</option>
-                            <option value="veiculos" class="premium-option text-gray-400">🔒 Veículos (Premium)</option>
-                            <option value="viagens" class="premium-option text-gray-400">🔒 Viagens (Premium)</option>
-                        </select>
-                        <button onclick="clearFilters()" class="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Deadlines List -->
-            <div id="deadlinesList" class="space-y-4 mb-8">
-                <!-- Deadlines will be loaded here -->
-            </div>
-
-            <!-- Shopping List Section (Premium) -->
-            <div id="shoppingSection" class="hidden bg-white p-6 rounded-lg shadow-sm mb-8">
-                <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-xl font-bold text-gray-800">
-                        <i class="fas fa-shopping-cart mr-2"></i>Lista de Compras
-                    </h2>
-                    <button onclick="showNewItemModal()" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg">
-                        <i class="fas fa-plus mr-2"></i>Novo Item
-                    </button>
-                </div>
-                <div id="shoppingList" class="space-y-2">
-                    <!-- Shopping items will be loaded here -->
-                </div>
-                <div class="mt-4 p-4 bg-gray-50 rounded-lg">
-                    <div class="text-lg font-semibold">Total do mês: R$ <span id="monthlyTotal">0,00</span></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Premium Banner Footer -->
-        <footer class="premium-banner p-6 text-center">
-            <div class="max-w-4xl mx-auto">
-                <h3 class="text-xl font-bold text-gray-800 mb-2">
-                    <i class="fas fa-crown mr-2"></i>Upgrade para Premium
-                </h3>
-                <p class="text-gray-700 mb-4">Desbloqueie todas as categorias, lista de compras e notificações WhatsApp!</p>
-                <button onclick="showPremiumModal()" class="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-8 rounded-lg shadow-lg">
-                    Ver Planos Premium
-                </button>
-            </div>
-        </footer>
-    </div>
-
-    <!-- New Deadline Modal -->
-    <div id="newDeadlineModal" class="hidden fixed inset-0 bg-black bg-opacity-50 modal-backdrop flex items-center justify-center z-50">
-        <div class="bg-white rounded-2xl p-6 w-full max-w-md mx-4 max-h-[90vh] overflow-y-auto">
-            <div class="flex justify-between items-center mb-4">
-                <h2 class="text-xl font-bold">Novo Prazo</h2>
-                <button onclick="closeModal('newDeadlineModal')" class="text-gray-500 hover:text-gray-700">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <form id="deadlineForm" class="space-y-4">
-                <input type="text" id="deadlineTitle" placeholder="Título do prazo" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
-                <textarea id="deadlineDescription" placeholder="Descrição (opcional)" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 h-20"></textarea>
-                <input type="datetime-local" id="deadlineDate" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
-                <select id="deadlineCategory" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
-                    <option value="">Selecione uma categoria</option>
-                    <option value="pessoal">Pessoal</option>
-                    <option value="trabalho">Trabalho</option>
-                    <option value="saude">Saúde</option>
-                    <option value="outros">Outros</option>
-                </select>
-                <select id="deadlinePriority" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
-                    <option value="normal">Prioridade Normal</option>
-                    <option value="high">Alta Prioridade</option>
-                    <option value="low">Baixa Prioridade</option>
-                </select>
-                <div class="flex items-center gap-2">
-                    <input type="checkbox" id="deadlineNotification" checked class="rounded">
-                    <label for="deadlineNotification">Ativar notificações</label>
-                </div>
-                <button type="submit" class="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-3 rounded-lg">
-                    Salvar Prazo
+                
+                <button type="submit" 
+                        class="w-full bg-white text-indigo-600 py-3 rounded-lg font-semibold hover:bg-gray-100 transition duration-200">
+                    Criar Conta
                 </button>
             </form>
+            
+            <div class="mt-6 text-center">
+                <button id="showLogin" class="text-white/80 hover:text-white text-sm">
+                    Já tem conta? Faça login
+                </button>
+            </div>
         </div>
     </div>
 
-    <!-- Premium Modal -->
-    <div id="premiumModal" class="hidden fixed inset-0 bg-black bg-opacity-50 modal-backdrop flex items-center justify-center z-50">
-        <div class="bg-white rounded-2xl p-6 w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-2xl font-bold text-purple-600">
-                    <i class="fas fa-crown mr-2"></i>DeadlineX Premium
-                </h2>
-                <button onclick="closeModal('premiumModal')" class="text-gray-500 hover:text-gray-700">
+    <!-- Forgot Password Screen -->
+    <div id="forgotPasswordScreen" class="min-h-screen gradient-bg flex items-center justify-center p-4 hidden">
+        <div class="glass-effect rounded-2xl p-8 w-full max-w-md">
+            <div class="text-center mb-8">
+                <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-key text-2xl text-indigo-600"></i>
+                </div>
+                <h1 class="text-2xl font-bold text-white mb-2">Recuperar Senha</h1>
+                <p class="text-indigo-100">Digite seu email para receber as instruções</p>
+            </div>
+            
+            <form id="forgotPasswordForm" class="space-y-6">
+                <div>
+                    <label class="block text-sm font-medium text-white mb-2">Email</label>
+                    <input type="email" id="forgotEmail" required 
+                           class="w-full px-4 py-3 rounded-lg bg-white/20 border border-white/30 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white/50"
+                           placeholder="seu@email.com">
+                </div>
+                
+                <button type="submit" 
+                        class="w-full bg-white text-indigo-600 py-3 rounded-lg font-semibold hover:bg-gray-100 transition duration-200">
+                    Enviar Instruções
+                </button>
+            </form>
+            
+            <div class="mt-6 text-center">
+                <button id="backToLogin" class="text-white/80 hover:text-white text-sm">
+                    Voltar ao login
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Dashboard -->
+    <div id="dashboard" class="hidden min-h-screen bg-gray-50">
+        <!-- Sidebar -->
+        <div id="sidebar" class="fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg sidebar-transition">
+            <div class="flex items-center justify-between h-16 px-6 border-b">
+                <div class="flex items-center">
+                    <div class="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-clock text-white text-sm"></i>
+                    </div>
+                    <span class="ml-3 text-xl font-semibold text-gray-800">DeadlineX</span>
+                </div>
+                <button id="closeSidebar" class="md:hidden text-gray-500 hover:text-gray-700">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
             
-            <div class="grid md:grid-cols-2 gap-6 mb-6">
-                <div class="border rounded-lg p-4">
-                    <h3 class="font-bold text-lg mb-3">Plano Grátis</h3>
-                    <ul class="space-y-2 text-sm">
-                        <li><i class="fas fa-check text-green-500 mr-2"></i>4 Categorias básicas</li>
-                        <li><i class="fas fa-check text-green-500 mr-2"></i>Notificações locais</li>
-                        <li><i class="fas fa-check text-green-500 mr-2"></i>Funcionalidades básicas</li>
-                    </ul>
+            <nav class="mt-6">
+                <div class="px-6 mb-4">
+                    <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Menu</p>
                 </div>
                 
-                <div class="border-2 border-purple-500 rounded-lg p-4 bg-purple-50">
-                    <h3 class="font-bold text-lg mb-3 text-purple-600">Plano Premium</h3>
-                    <div class="text-2xl font-bold text-purple-600 mb-3">R$ 4,90/mês</div>
-                    <ul class="space-y-2 text-sm">
-                        <li><i class="fas fa-check text-green-500 mr-2"></i>15 Categorias completas</li>
-                        <li><i class="fas fa-check text-green-500 mr-2"></i>Lista de compras inteligente</li>
-                        <li><i class="fas fa-check text-green-500 mr-2"></i>Gráficos de gastos mensais</li>
-                        <li><i class="fas fa-check text-green-500 mr-2"></i>Notificações WhatsApp</li>
-                        <li><i class="fas fa-check text-green-500 mr-2"></i>Suporte prioritário</li>
-                    </ul>
+                <a href="#" id="dashboardTab" class="nav-item active flex items-center px-6 py-3 text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors">
+                    <i class="fas fa-home w-5"></i>
+                    <span class="ml-3">Dashboard</span>
+                </a>
+                
+                <a href="#" id="tasksTab" class="nav-item flex items-center px-6 py-3 text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors">
+                    <i class="fas fa-tasks w-5"></i>
+                    <span class="ml-3">Tarefas</span>
+                </a>
+
+                <a href="#" id="categoriesTab" class="nav-item flex items-center px-6 py-3 text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors">
+                    <i class="fas fa-folder w-5"></i>
+                    <span class="ml-3">Categorias</span>
+                </a>
+                
+                <a href="#" id="calendarTab" class="nav-item flex items-center px-6 py-3 text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors">
+                    <i class="fas fa-calendar w-5"></i>
+                    <span class="ml-3">Calendário</span>
+                </a>
+                
+                <a href="#" id="reportsTab" class="nav-item flex items-center px-6 py-3 text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors">
+                    <i class="fas fa-chart-bar w-5"></i>
+                    <span class="ml-3">Relatórios</span>
+                </a>
+
+                <a href="#" id="premiumTab" class="nav-item premium-feature flex items-center px-6 py-3 text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors">
+                    <i class="fas fa-crown w-5"></i>
+                    <span class="ml-3">Premium</span>
+                </a>
+
+                <a href="#" id="settingsTab" class="nav-item flex items-center px-6 py-3 text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors">
+                    <i class="fas fa-cog w-5"></i>
+                    <span class="ml-3">Configurações</span>
+                </a>
+            </nav>
+            
+            <div class="absolute bottom-0 w-full p-6 border-t">
+                <div class="flex items-center">
+                    <div class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
+                        <i class="fas fa-user text-gray-600 text-sm"></i>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm font-medium text-gray-700" id="userName">Usuário</p>
+                        <div class="flex items-center space-x-2">
+                            <span id="userPlan" class="text-xs text-gray-500">Plano Gratuito</span>
+                            <button id="logoutBtn" class="text-xs text-gray-500 hover:text-gray-700">Sair</button>
+                        </div>
+                    </div>
                 </div>
             </div>
-            
-            <button onclick="purchasePremium()" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-4 rounded-lg text-lg">
-                <i class="fas fa-credit-card mr-2"></i>Assinar Premium - R$ 4,90/mês
-            </button>
+        </div>
+
+        <!-- Main Content -->
+        <div class="md:ml-64">
+            <!-- Header -->
+            <header class="bg-white shadow-sm border-b">
+                <div class="flex items-center justify-between h-16 px-6">
+                    <div class="flex items-center">
+                        <button id="openSidebar" class="md:hidden text-gray-500 hover:text-gray-700 mr-4">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                        <h1 id="pageTitle" class="text-xl font-semibold text-gray-800">Dashboard</h1>
+                    </div>
+                    
+                    <div class="flex items-center space-x-4">
+                        <button id="addTaskBtn" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors">
+                            <i class="fas fa-plus mr-2"></i>Nova Tarefa
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Dashboard Content -->
+            <div id="dashboardContent" class="p-6">
+                <!-- Stats Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <div class="bg-white rounded-xl p-6 shadow-sm border">
+                        <div class="flex items-center">
+                            <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-tasks text-blue-600 text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-600">Total de Tarefas</p>
+                                <p class="text-2xl font-bold text-gray-900" id="totalTasks">0</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-xl p-6 shadow-sm border">
+                        <div class="flex items-center">
+                            <div class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-clock text-yellow-600 text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-600">Pendentes</p>
+                                <p class="text-2xl font-bold text-gray-900" id="pendingTasks">0</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-xl p-6 shadow-sm border">
+                        <div class="flex items-center">
+                            <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-check-circle text-green-600 text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-600">Concluídas</p>
+                                <p class="text-2xl font-bold text-gray-900" id="completedTasks">0</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-xl p-6 shadow-sm border">
+                        <div class="flex items-center">
+                            <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-exclamation-triangle text-red-600 text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-600">Atrasadas</p>
+                                <p class="text-2xl font-bold text-gray-900" id="overdueTasks">0</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Tasks -->
+                <div class="bg-white rounded-xl shadow-sm border">
+                    <div class="p-6 border-b">
+                        <h2 class="text-lg font-semibold text-gray-800">Tarefas Recentes</h2>
+                    </div>
+                    <div class="p-6">
+                        <div id="recentTasksList" class="space-y-4">
+                            <!-- Tasks will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tasks Content -->
+            <div id="tasksContent" class="p-6 hidden">
+                <!-- Filters -->
+                <div class="bg-white rounded-xl p-6 shadow-sm border mb-6">
+                    <div class="flex flex-wrap gap-4">
+                        <select id="statusFilter" class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            <option value="">Todos os Status</option>
+                            <option value="pending">Pendente</option>
+                            <option value="in_progress">Em Andamento</option>
+                            <option value="completed">Concluída</option>
+                            <option value="overdue">Atrasada</option>
+                        </select>
+                        
+                        <select id="priorityFilter" class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            <option value="">Todas as Prioridades</option>
+                            <option value="urgent">Urgente</option>
+                            <option value="high">Alta</option>
+                            <option value="medium">Média</option>
+                            <option value="low">Baixa</option>
+                        </select>
+
+                        <select id="categoryFilter" class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            <option value="">Todas as Categorias</option>
+                        </select>
+                        
+                        <input type="text" id="searchTasks" placeholder="Buscar tarefas..." 
+                               class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 flex-1 min-w-0">
+                    </div>
+                </div>
+
+                <!-- Tasks List -->
+                <div class="bg-white rounded-xl shadow-sm border">
+                    <div class="p-6 border-b">
+                        <h2 class="text-lg font-semibold text-gray-800">Todas as Tarefas</h2>
+                    </div>
+                    <div class="p-6">
+                        <div id="tasksList" class="space-y-4">
+                            <!-- Tasks will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Categories Content -->
+            <div id="categoriesContent" class="p-6 hidden">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800">Categorias</h2>
+                    <button id="addCategoryBtn" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors">
+                        <i class="fas fa-plus mr-2"></i>Nova Categoria
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div id="categoriesList">
+                        <!-- Categories will be loaded here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Calendar Content -->
+            <div id="calendarContent" class="p-6 hidden">
+                <div class="bg-white rounded-xl shadow-sm border p-6">
+                    <h2 class="text-lg font-semibold text-gray-800 mb-4">Calendário de Tarefas</h2>
+                    <div id="calendar" class="text-center text-gray-500">
+                        Calendário em desenvolvimento...
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reports Content -->
+            <div id="reportsContent" class="p-6 hidden">
+                <div class="bg-white rounded-xl shadow-sm border p-6">
+                    <h2 class="text-lg font-semibold text-gray-800 mb-4">Relatórios</h2>
+                    <div id="reports" class="text-center text-gray-500">
+                        Relatórios em desenvolvimento...
+                    </div>
+                </div>
+            </div>
+
+            <!-- Premium Content -->
+            <div id="premiumContent" class="p-6 hidden">
+                <div class="max-w-4xl mx-auto">
+                    <div class="text-center mb-8">
+                        <h1 class="text-3xl font-bold text-gray-800 mb-4">
+                            <i class="fas fa-crown text-yellow-500 mr-2"></i>
+                            DeadlineX Premium
+                        </h1>
+                        <p class="text-gray-600">Desbloqueie todo o potencial do seu gerenciamento de tarefas</p>
+                    </div>
+
+                    <div class="grid md:grid-cols-2 gap-8 mb-8">
+                        <!-- Plano Gratuito -->
+                        <div class="bg-white rounded-xl p-6 border-2 border-gray-200">
+                            <h3 class="text-xl font-semibold mb-4">Plano Gratuito</h3>
+                            <div class="text-3xl font-bold mb-4">R$ 0<span class="text-sm text-gray-500">/mês</span></div>
+                            <ul class="space-y-3 mb-6">
+                                <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i>Até 50 tarefas</li>
+                                <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i>3 categorias</li>
+                                <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i>Relatórios básicos</li>
+                                <li class="flex items-center"><i class="fas fa-times text-red-500 mr-2"></i>Sem notificações</li>
+                                <li class="flex items-center"><i class="fas fa-times text-red-500 mr-2"></i>Sem backup automático</li>
+                            </ul>
+                            <button class="w-full py-2 px-4 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50" disabled>
+                                Plano Atual
+                            </button>
+                        </div>
+
+                        <!-- Plano Premium -->
+                        <div class="bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-xl p-6 border-2 border-yellow-300 relative">
+                            <div class="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                                <span class="premium-badge">MAIS POPULAR</span>
+                            </div>
+                            <h3 class="text-xl font-semibold mb-4">Plano Premium</h3>
+                            <div class="text-3xl font-bold mb-4">R$ 19,90<span class="text-sm text-gray-500">/mês</span></div>
+                            <ul class="space-y-3 mb-6">
+                                <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i>Tarefas ilimitadas</li>
+                                <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i>Categorias ilimitadas</li>
+                                <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i>Relatórios avançados</li>
+                                <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i>Notificações por email/WhatsApp</li>
+                                <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i>Backup automático</li>
+                                <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i>Suporte prioritário</li>
+                                <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i>Temas personalizados</li>
+                            </ul>
+                            <button id="upgradeToPremium" class="w-full py-2 px-4 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 font-semibold">
+                                Assinar Premium
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl p-6 border">
+                        <h3 class="text-lg font-semibold mb-4">Perguntas Frequentes</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <h4 class="font-medium text-gray-800">Posso cancelar a qualquer momento?</h4>
+                                <p class="text-gray-600 text-sm">Sim, você pode cancelar sua assinatura a qualquer momento sem taxas adicionais.</p>
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-gray-800">O que acontece com meus dados se eu cancelar?</h4>
+                                <p class="text-gray-600 text-sm">Seus dados ficam salvos por 30 dias após o cancelamento. Você pode reativar a qualquer momento.</p>
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-gray-800">Há desconto para pagamento anual?</h4>
+                                <p class="text-gray-600 text-sm">Sim! Pagando anualmente você economiza 20% (R$ 191,04/ano).</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Content -->
+            <div id="settingsContent" class="p-6 hidden">
+                <div class="max-w-2xl mx-auto space-y-6">
+                    <h2 class="text-2xl font-bold text-gray-800">Configurações</h2>
+
+                    <!-- Profile Settings -->
+                    <div class="bg-white rounded-xl p-6 shadow-sm border">
+                        <h3 class="text-lg font-semibold mb-4">Perfil</h3>
+                        <form id="profileForm" class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Nome Completo</label>
+                                <input type="text" id="profileName" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                                <input type="email" id="profileEmail" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" disabled>
+                            </div>
+                            <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700">
+                                Salvar Alterações
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Notification Settings -->
+                    <div class="bg-white rounded-xl p-6 shadow-sm border">
+                        <h3 class="text-lg font-semibold mb-4">Notificações</h3>
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h4 class="font-medium">Email</h4>
+                                    <p class="text-sm text-gray-600">Receber notificações por email</p>
+                                </div>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" id="emailNotifications" class="sr-only peer">
+                                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                                </label>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h4 class="font-medium">WhatsApp <span class="premium-badge">Premium</span></h4>
+                                    <p class="text-sm text-gray-600">Receber notificações via WhatsApp</p>
+                                </div>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" id="whatsappNotifications" class="sr-only peer" disabled>
+                                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Security Settings -->
+                    <div class="bg-white rounded-xl p-6 shadow-sm border">
+                        <h3 class="text-lg font-semibold mb-4">Segurança</h3>
+                        <div class="space-y-4">
+                            <button id="changePasswordBtn" class="w-full text-left p-3 border border-gray-300 rounded-lg hover:bg-gray-50">
+                                <i class="fas fa-key mr-2"></i>Alterar Senha
+                            </button>
+                            <button id="exportDataBtn" class="w-full text-left p-3 border border-gray-300 rounded-lg hover:bg-gray-50">
+                                <i class="fas fa-download mr-2"></i>Exportar Dados
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Danger Zone -->
+                    <div class="bg-red-50 rounded-xl p-6 border border-red-200">
+                        <h3 class="text-lg font-semibold text-red-800 mb-4">Zona de Perigo</h3>
+                        <p class="text-red-600 text-sm mb-4">
+                            Estas ações são irreversíveis. Tenha certeza antes de prosseguir.
+                        </p>
+                        <button id="deleteAccountBtn" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700">
+                            Excluir Conta Permanentemente
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- Policies Modal -->
-    <div id="policiesModal" class="hidden fixed inset-0 bg-black bg-opacity-50 modal-backdrop flex items-center justify-center z-50">
-        <div class="bg-white rounded-2xl p-6 w-full max-w-4xl mx-4 max-h-[90vh] overflow-y-auto">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-2xl font-bold">Políticas e Termos</h2>
-                <button onclick="closeModal('policiesModal')" class="text-gray-500 hover:text-gray-700">
-                    <i class="fas fa-times"></i>
-                </button>
+    <!-- Task Modal -->
+    <div id="taskModal" class="fixed inset-0 z-50 hidden">
+        <div class="modal-overlay absolute inset-0" id="modalOverlay"></div>
+        <div class="relative z-10 flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-xl shadow-xl w-full max-w-md">
+                <div class="p-6 border-b">
+                    <h3 class="text-lg font-semibold text-gray-800" id="modalTitle">Nova Tarefa</h3>
+                </div>
+                
+                <form id="taskForm" class="p-6 space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Título</label>
+                        <input type="text" id="taskTitle" required 
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Descrição</label>
+                        <textarea id="taskDescription" rows="3" 
+                                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Prioridade</label>
+                            <select id="taskPriority" required 
+                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                <option value="low">Baixa</option>
+                                <option value="medium" selected>Média</option>
+                                <option value="high">Alta</option>
+                                <option value="urgent">Urgente</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Status</label>
+                            <select id="taskStatus" required 
+                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                <option value="pending" selected>Pendente</option>
+                                <option value="in_progress">Em Andamento</option>
+                                <option value="completed">Concluída</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Categoria</label>
+                        <select id="taskCategory" 
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            <option value="">Sem categoria</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Data de Vencimento</label>
+                        <input type="datetime-local" id="taskDueDate" required 
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                    
+                    <div class="flex justify-end space-x-3 pt-4">
+                        <button type="button" id="cancelTask" 
+                                class="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors">
+                            Cancelar
+                        </button>
+                        <button type="submit" 
+                                class="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors">
+                            Salvar
+                        </button>
+                    </div>
+                </form>
             </div>
-            
-            <div class="space-y-6">
-                <div class="border-b pb-4">
-                    <h3 class="font-bold text-lg mb-2">Política de Privacidade (LGPD)</h3>
-                    <p class="text-gray-600 text-sm">Seus dados são protegidos conforme a Lei Geral de Proteção de Dados. Coletamos apenas informações necessárias para o funcionamento do aplicativo.</p>
+        </div>
+    </div>
+
+    <!-- Category Modal -->
+    <div id="categoryModal" class="fixed inset-0 z-50 hidden">
+        <div class="modal-overlay absolute inset-0" id="categoryModalOverlay"></div>
+        <div class="relative z-10 flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-xl shadow-xl w-full max-w-md">
+                <div class="p-6 border-b">
+                    <h3 class="text-lg font-semibold text-gray-800" id="categoryModalTitle">Nova Categoria</h3>
                 </div>
                 
-                <div class="border-b pb-4">
-                    <h3 class="font-bold text-lg mb-2">Termos de Uso</h3>
-                    <p class="text-gray-600 text-sm">Ao usar o DeadlineX, você concorda com nossos termos de serviço e se compromete a usar a plataforma de forma responsável.</p>
+                <form id="categoryForm" class="p-6 space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Nome</label>
+                        <input type="text" id="categoryName" required 
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Descrição</label>
+                        <textarea id="categoryDescription" rows="3" 
+                                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Cor</label>
+                        <div class="flex space-x-2">
+                            <input type="color" id="categoryColor" value="#3b82f6" 
+                                   class="w-12 h-10 border border-gray-300 rounded-lg">
+                            <input type="text" id="categoryColorText" value="#3b82f6" 
+                                   class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-end space-x-3 pt-4">
+                        <button type="button" id="cancelCategory" 
+                                class="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors">
+                            Cancelar
+                        </button>
+                        <button type="submit" 
+                                class="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors">
+                            Salvar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Terms Modal -->
+    <div id="termsModal" class="fixed inset-0 z-50 hidden">
+        <div class="modal-overlay absolute inset-0" id="termsModalOverlay"></div>
+        <div class="relative z-10 flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-xl shadow-xl w-full max-w-2xl max-h-[80vh] overflow-y-auto">
+                <div class="p-6 border-b">
+                    <h3 class="text-lg font-semibold text-gray-800">Termos de Uso</h3>
                 </div>
-                
-                <div class="border-b pb-4">
-                    <h3 class="font-bold text-lg mb-2">Política de Cookies</h3>
-                    <p class="text-gray-600 text-sm">Utilizamos cookies essenciais para melhorar sua experiência e manter suas preferências de uso.</p>
+                <div class="p-6">
+                    <div class="prose max-w-none">
+                        <h4>1. Aceitação dos Termos</h4>
+                        <p>Ao usar o DeadlineX, você concorda com estes termos de uso.</p>
+                        
+                        <h4>2. Uso do Serviço</h4>
+                        <p>O DeadlineX é um sistema de gerenciamento de tarefas e prazos. Você pode usar o serviço para organizar suas atividades pessoais e profissionais.</p>
+                        
+                        <h4>3. Conta do Usuário</h4>
+                        <p>Você é responsável por manter a segurança de sua conta e senha.</p>
+                        
+                        <h4>4. Privacidade</h4>
+                        <p>Respeitamos sua privacidade conforme descrito em nossa Política de Privacidade.</p>
+                        
+                        <h4>5. Limitações</h4>
+                        <p>O serviço é fornecido "como está" sem garantias de qualquer tipo.</p>
+                    </div>
                 </div>
-                
-                <div class="bg-red-50 p-4 rounded-lg">
-                    <h3 class="font-bold text-lg mb-2 text-red-600">Exclusão de Conta</h3>
-                    <p class="text-gray-600 text-sm mb-3">Você pode solicitar a exclusão completa de sua conta e dados a qualquer momento.</p>
-                    <button onclick="deleteAccount()" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg">
-                        <i class="fas fa-trash mr-2"></i>Excluir Minha Conta
+                <div class="p-6 border-t">
+                    <button id="closeTerms" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700">
+                        Fechar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Privacy Modal -->
+    <div id="privacyModal" class="fixed inset-0 z-50 hidden">
+        <div class="modal-overlay absolute inset-0" id="privacyModalOverlay"></div>
+        <div class="relative z-10 flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-xl shadow-xl w-full max-w-2xl max-h-[80vh] overflow-y-auto">
+                <div class="p-6 border-b">
+                    <h3 class="text-lg font-semibold text-gray-800">Política de Privacidade</h3>
+                </div>
+                <div class="p-6">
+                    <div class="prose max-w-none">
+                        <h4>1. Informações Coletadas</h4>
+                        <p>Coletamos apenas as informações necessárias para o funcionamento do serviço: email, nome e dados das tarefas.</p>
+                        
+                        <h4>2. Uso das Informações</h4>
+                        <p>Suas informações são usadas exclusivamente para fornecer o serviço de gerenciamento de tarefas.</p>
+                        
+                        <h4>3. Compartilhamento</h4>
+                        <p>Não compartilhamos suas informações pessoais com terceiros.</p>
+                        
+                        <h4>4. Segurança</h4>
+                        <p>Implementamos medidas de segurança para proteger suas informações.</p>
+                        
+                        <h4>5. Seus Direitos</h4>
+                        <p>Você pode acessar, corrigir ou excluir suas informações a qualquer momento.</p>
+                    </div>
+                </div>
+                <div class="p-6 border-t">
+                    <button id="closePrivacy" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700">
+                        Fechar
                     </button>
                 </div>
             </div>
@@ -351,646 +851,839 @@
         // Supabase Configuration
         const SUPABASE_URL = 'https://vastjlzaxafpoagptklu.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZhc3RqbHpheGFmcG9hZ3B0a2x1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTYyNjUzMDEsImV4cCI6MjA3MTg0MTMwMX0.4EnnkdyVDEo1qSp1C2-QgVlklUkL2W3ulqOmXX_DiVY';
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-        // Mercado Pago Configuration
-        const MERCADO_PAGO_PUBLIC_KEY = 'YOUR_MERCADO_PAGO_PUBLIC_KEY';
         
-        // WhatsApp API Configuration (Evolution API - Plano grátis generoso)
-        const WHATSAPP_API_URL = 'https://evolution-api.com/api';
-        const WHATSAPP_API_KEY = 'YOUR_EVOLUTION_API_KEY';
-
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        
+        // Global variables
         let currentUser = null;
-        let isPremium = false;
-        let deadlines = [];
-        let selectedRegistrationPlan = 'free';
+        let tasks = [];
+        let categories = [];
+        let editingTaskId = null;
+        let editingCategoryId = null;
+        let userPlan = 'free'; // free or premium
 
-        // Initialize App
-        document.addEventListener('DOMContentLoaded', function() {
-            checkAuth();
+        // DOM Elements
+        const loginScreen = document.getElementById('loginScreen');
+        const registerScreen = document.getElementById('registerScreen');
+        const forgotPasswordScreen = document.getElementById('forgotPasswordScreen');
+        const dashboard = document.getElementById('dashboard');
+        const sidebar = document.getElementById('sidebar');
+        const taskModal = document.getElementById('taskModal');
+        const categoryModal = document.getElementById('categoryModal');
+        const termsModal = document.getElementById('termsModal');
+        const privacyModal = document.getElementById('privacyModal');
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', async () => {
+            await checkAuth();
             setupEventListeners();
-            requestNotificationPermission();
-            
-            // Listen for auth changes
-            supabase.auth.onAuthStateChange((event, session) => {
-                console.log('Auth state changed:', event, session);
-                if (event === 'SIGNED_IN' && session) {
-                    currentUser = session.user;
-                    showMainApp();
-                    loadUserData();
-                } else if (event === 'SIGNED_OUT') {
-                    currentUser = null;
-                    isPremium = false;
-                    deadlines = [];
-                    showLoginScreen();
-                }
-            });
         });
 
-        // Authentication
-        async function loginWithGoogle() {
-            try {
-                const { data, error } = await supabase.auth.signInWithOAuth({
-                    provider: 'google',
-                    options: {
-                        redirectTo: 'https://www.deadlinex.com.br'
-                    }
-                });
-                if (error) throw error;
-            } catch (error) {
-                alert('Erro no login: ' + error.message);
-            }
-        }
-
-        async function registerWithGoogle() {
-            try {
-                const { data, error } = await supabase.auth.signInWithOAuth({
-                    provider: 'google',
-                    options: {
-                        redirectTo: 'https://www.deadlinex.com.br?plan=' + selectedRegistrationPlan
-                    }
-                });
-                if (error) throw error;
-            } catch (error) {
-                alert('Erro no cadastro: ' + error.message);
-            }
-        }
-
-        // Login/Register Form Functions
-        function showLoginForm() {
-            document.getElementById('loginForm').classList.remove('hidden');
-            document.getElementById('registerForm').classList.add('hidden');
-            document.getElementById('loginTab').className = 'flex-1 py-2 px-4 rounded-lg btn-primary text-white font-medium transition-all';
-            document.getElementById('registerTab').className = 'flex-1 py-2 px-4 rounded-lg text-gray-600 font-medium transition-all';
-        }
-
-        function showRegisterForm() {
-            document.getElementById('loginForm').classList.add('hidden');
-            document.getElementById('registerForm').classList.remove('hidden');
-            document.getElementById('loginTab').className = 'flex-1 py-2 px-4 rounded-lg text-gray-600 font-medium transition-all';
-            document.getElementById('registerTab').className = 'flex-1 py-2 px-4 rounded-lg btn-primary text-white font-medium transition-all';
-        }
-
-        function selectPlan(plan) {
-            selectedRegistrationPlan = plan;
-            document.getElementById('selectedPlan').textContent = plan === 'free' ? 'Grátis' : 'Premium';
-            
-            // Update visual selection
-            document.getElementById('freePlan').className = plan === 'free' 
-                ? 'border-2 border-indigo-500 rounded-xl p-4 cursor-pointer transition-all shadow-md bg-indigo-50'
-                : 'border-2 border-gray-200 rounded-xl p-4 cursor-pointer transition-all hover:border-indigo-500 hover:shadow-md';
-            
-            document.getElementById('premiumPlan').className = plan === 'premium'
-                ? 'border-2 border-amber-500 rounded-xl p-4 cursor-pointer transition-all shadow-lg gradient-premium text-white ring-2 ring-amber-300'
-                : 'border-2 border-amber-400 rounded-xl p-4 cursor-pointer transition-all hover:border-amber-500 hover:shadow-md gradient-premium text-white';
-        }
-
+        // Authentication functions
         async function checkAuth() {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (session) {
+                currentUser = session.user;
+                await loadUserProfile();
+                showDashboard();
+                await loadCategories();
+                await loadTasks();
+            } else {
+                showLogin();
+            }
+        }
+
+        async function loadUserProfile() {
             try {
-                const { data: { session }, error } = await supabase.auth.getSession();
-                if (error) {
-                    console.error('Erro na autenticação:', error);
-                    showLoginScreen();
-                    return;
-                }
-                
-                if (session && session.user) {
-                    currentUser = session.user;
-                    console.log('Usuário logado:', currentUser.email);
-                    showMainApp();
-                    await loadUserData();
-                } else {
-                    console.log('Nenhuma sessão ativa');
-                    showLoginScreen();
+                const { data, error } = await supabase
+                    .from('user_profiles')
+                    .select('*')
+                    .eq('user_id', currentUser.id)
+                    .single();
+
+                if (data) {
+                    userPlan = data.plan || 'free';
+                    updateUserPlanDisplay();
                 }
             } catch (error) {
-                console.error('Erro ao verificar autenticação:', error);
-                showLoginScreen();
+                console.log('Profile not found, creating default...');
+                await createUserProfile();
+            }
+        }
+
+        async function createUserProfile() {
+            try {
+                const { error } = await supabase
+                    .from('user_profiles')
+                    .insert([{
+                        user_id: currentUser.id,
+                        plan: 'free',
+                        settings: {}
+                    }]);
+
+                if (error) throw error;
+            } catch (error) {
+                console.error('Error creating profile:', error);
+            }
+        }
+
+        function updateUserPlanDisplay() {
+            const planElement = document.getElementById('userPlan');
+            if (userPlan === 'premium') {
+                planElement.innerHTML = '<span class="premium-badge">Premium</span>';
+            } else {
+                planElement.textContent = 'Plano Gratuito';
+            }
+        }
+
+        async function login(email, password) {
+            try {
+                const { data, error } = await supabase.auth.signInWithPassword({
+                    email: email,
+                    password: password
+                });
+
+                if (error) throw error;
+
+                currentUser = data.user;
+                showNotification('Login realizado com sucesso!', 'success');
+                await loadUserProfile();
+                showDashboard();
+                await loadCategories();
+                await loadTasks();
+            } catch (error) {
+                showNotification('Erro no login: ' + error.message, 'error');
+            }
+        }
+
+        async function register(email, password, name) {
+            try {
+                const { data, error } = await supabase.auth.signUp({
+                    email: email,
+                    password: password,
+                    options: {
+                        data: {
+                            full_name: name
+                        }
+                    }
+                });
+
+                if (error) throw error;
+
+                showNotification('Conta criada com sucesso! Verifique seu email.', 'success');
+                showLogin();
+            } catch (error) {
+                showNotification('Erro no cadastro: ' + error.message, 'error');
+            }
+        }
+
+        async function forgotPassword(email) {
+            try {
+                const { error } = await supabase.auth.resetPasswordForEmail(email);
+                if (error) throw error;
+
+                showNotification('Instruções enviadas para seu email!', 'success');
+                showLogin();
+            } catch (error) {
+                showNotification('Erro: ' + error.message, 'error');
             }
         }
 
         async function logout() {
-            await supabase.auth.signOut();
-            showLoginScreen();
-        }
-
-        function showLoginScreen() {
-            document.getElementById('loginScreen').classList.remove('hidden');
-            document.getElementById('mainApp').classList.add('hidden');
-        }
-
-        function showMainApp() {
-            document.getElementById('loginScreen').classList.add('hidden');
-            document.getElementById('mainApp').classList.remove('hidden');
-        }
-
-        // Load User Data
-        async function loadUserData() {
-            await checkPremiumStatus();
-            await loadDeadlines();
-            updateStats();
-            setupPremiumFeatures();
-        }
-
-        async function checkPremiumStatus() {
             try {
-                const { data, error } = await supabase
-                    .from('user_settings')
-                    .select('settings')
-                    .eq('user_id', currentUser.id)
-                    .single();
-                
-                if (data && data.settings.premium) {
-                    isPremium = true;
-                    document.getElementById('shoppingSection').classList.remove('hidden');
-                }
+                const { error } = await supabase.auth.signOut();
+                if (error) throw error;
+
+                currentUser = null;
+                tasks = [];
+                categories = [];
+                userPlan = 'free';
+                showLogin();
+                showNotification('Logout realizado com sucesso!', 'success');
             } catch (error) {
-                console.log('User settings not found, creating default...');
+                showNotification('Erro no logout: ' + error.message, 'error');
             }
         }
 
-        // Deadlines Management
-        async function loadDeadlines() {
+        // Task functions
+        async function loadTasks() {
             try {
                 const { data, error } = await supabase
-                    .from('deadlines')
+                    .from('tasks')
                     .select('*')
                     .eq('user_id', currentUser.id)
-                    .order('date', { ascending: true });
-                
+                    .order('created_at', { ascending: false });
+
                 if (error) throw error;
-                deadlines = data || [];
-                renderDeadlines();
-                scheduleNotifications();
+
+                tasks = data || [];
+                updateTasksDisplay();
+                updateStats();
             } catch (error) {
-                console.error('Error loading deadlines:', error);
+                showNotification('Erro ao carregar tarefas: ' + error.message, 'error');
             }
         }
 
-        function renderDeadlines() {
-            const container = document.getElementById('deadlinesList');
-            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-            const categoryFilter = document.getElementById('categoryFilter').value;
-            
-            let filteredDeadlines = deadlines.filter(deadline => {
-                const matchesSearch = deadline.title.toLowerCase().includes(searchTerm) || 
-                                    (deadline.description && deadline.description.toLowerCase().includes(searchTerm));
-                const matchesCategory = !categoryFilter || deadline.category === categoryFilter;
-                return matchesSearch && matchesCategory;
-            });
+        async function saveTask(taskData) {
+            try {
+                // Check limits for free users
+                if (userPlan === 'free' && !editingTaskId && tasks.length >= 50) {
+                    showNotification('Limite de 50 tarefas atingido. Faça upgrade para Premium!', 'warning');
+                    return;
+                }
 
-            if (filteredDeadlines.length === 0) {
-                container.innerHTML = `
-                    <div class="text-center py-12 text-gray-500">
-                        <i class="fas fa-calendar-times text-4xl mb-4"></i>
-                        <p>Nenhum prazo encontrado</p>
-                    </div>
-                `;
-                return;
+                if (editingTaskId) {
+                    const { error } = await supabase
+                        .from('tasks')
+                        .update(taskData)
+                        .eq('id', editingTaskId);
+
+                    if (error) throw error;
+                    showNotification('Tarefa atualizada com sucesso!', 'success');
+                } else {
+                    const { error } = await supabase
+                        .from('tasks')
+                        .insert([{ ...taskData, user_id: currentUser.id }]);
+
+                    if (error) throw error;
+                    showNotification('Tarefa criada com sucesso!', 'success');
+                }
+
+                await loadTasks();
+                closeTaskModal();
+            } catch (error) {
+                showNotification('Erro ao salvar tarefa: ' + error.message, 'error');
             }
-
-            container.innerHTML = filteredDeadlines.map(deadline => {
-                const date = new Date(deadline.date);
-                const now = new Date();
-                const isOverdue = date < now && !deadline.completed;
-                const isUrgent = (date - now) <= 24 * 60 * 60 * 1000; // 24 hours
-                
-                return `
-                    <div class="bg-white p-4 rounded-lg shadow-sm card-hover priority-${deadline.priority} ${deadline.completed ? 'opacity-60' : ''}">
-                        <div class="flex justify-between items-start">
-                            <div class="flex-1">
-                                <div class="flex items-center gap-2 mb-2">
-                                    <h3 class="font-semibold text-lg ${deadline.completed ? 'line-through' : ''}">${deadline.title}</h3>
-                                    ${isOverdue ? '<span class="text-red-500 text-sm font-bold">ATRASADO</span>' : ''}
-                                    ${isUrgent && !isOverdue ? '<span class="text-orange-500 text-sm font-bold">URGENTE</span>' : ''}
-                                </div>
-                                <p class="text-gray-600 text-sm mb-2">${deadline.description || ''}</p>
-                                <div class="flex items-center gap-4 text-sm text-gray-500">
-                                    <span><i class="fas fa-tag mr-1"></i>${getCategoryName(deadline.category)}</span>
-                                    <span><i class="fas fa-clock mr-1"></i>${formatDate(deadline.date)}</span>
-                                    <span class="priority-${deadline.priority}"><i class="fas fa-flag mr-1"></i>${getPriorityName(deadline.priority)}</span>
-                                </div>
-                            </div>
-                            <div class="flex items-center gap-2 ml-4">
-                                <button onclick="editDeadline(${deadline.id})" class="text-blue-500 hover:text-blue-700 p-2">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button onclick="toggleComplete(${deadline.id})" class="text-green-500 hover:text-green-700 p-2">
-                                    <i class="fas fa-${deadline.completed ? 'undo' : 'check'}"></i>
-                                </button>
-                                <button onclick="deleteDeadline(${deadline.id})" class="text-red-500 hover:text-red-700 p-2">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }).join('');
         }
 
-        // Deadline Form Handling
-        document.getElementById('deadlineForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const title = document.getElementById('deadlineTitle').value;
-            const description = document.getElementById('deadlineDescription').value;
-            const date = document.getElementById('deadlineDate').value;
-            const category = document.getElementById('deadlineCategory').value;
-            const priority = document.getElementById('deadlinePriority').value;
-            const notification = document.getElementById('deadlineNotification').checked;
-
-            // Check if category is premium and user is not premium
-            const premiumCategories = ['aniversarios', 'educacao', 'eventos', 'financeiro', 'impostos', 'juridico', 'manutencao', 'reunioes', 'seguros', 'veiculos', 'viagens'];
-            if (premiumCategories.includes(category) && !isPremium) {
-                alert('Esta categoria está disponível apenas no plano Premium!');
-                showPremiumModal();
-                return;
-            }
+        async function deleteTask(taskId) {
+            if (!confirm('Tem certeza que deseja excluir esta tarefa?')) return;
 
             try {
-                const { data, error } = await supabase
-                    .from('deadlines')
-                    .insert([{
-                        user_id: currentUser.id,
-                        title,
-                        description,
-                        date,
-                        category,
-                        priority,
-                        notification
-                    }]);
+                const { error } = await supabase
+                    .from('tasks')
+                    .delete()
+                    .eq('id', taskId);
 
                 if (error) throw error;
-                
-                closeModal('newDeadlineModal');
-                document.getElementById('deadlineForm').reset();
-                await loadDeadlines();
-                
-                // Save to localStorage for offline
-                saveToLocalStorage();
-                
+
+                showNotification('Tarefa excluída com sucesso!', 'success');
+                await loadTasks();
             } catch (error) {
-                alert('Erro ao salvar prazo: ' + error.message);
-            }
-        });
-
-        // Notifications
-        function requestNotificationPermission() {
-            if ('Notification' in window && 'serviceWorker' in navigator) {
-                Notification.requestPermission();
+                showNotification('Erro ao excluir tarefa: ' + error.message, 'error');
             }
         }
 
-        function scheduleNotifications() {
-            deadlines.forEach(deadline => {
-                if (deadline.notification && !deadline.completed) {
-                    const deadlineDate = new Date(deadline.date);
-                    const now = new Date();
-                    
-                    // Schedule notifications for 30 days, 1 week, and 24 hours before
-                    const notifications = [
-                        { days: 30, message: `Prazo em 30 dias: ${deadline.title}` },
-                        { days: 7, message: `Prazo em 1 semana: ${deadline.title}` },
-                        { days: 1, message: `Prazo em 24 horas: ${deadline.title}` }
-                    ];
-                    
-                    notifications.forEach(notif => {
-                        const notificationTime = new Date(deadlineDate.getTime() - (notif.days * 24 * 60 * 60 * 1000));
-                        if (notificationTime > now) {
-                            const timeUntilNotification = notificationTime.getTime() - now.getTime();
-                            setTimeout(() => {
-                                showNotification(notif.message);
-                            }, timeUntilNotification);
-                        }
-                    });
+        // Category functions
+        async function loadCategories() {
+            try {
+                const { data, error } = await supabase
+                    .from('categories')
+                    .select('*')
+                    .eq('user_id', currentUser.id)
+                    .order('name');
+
+                if (error) throw error;
+
+                categories = data || [];
+                updateCategoriesDisplay();
+                updateCategorySelects();
+            } catch (error) {
+                showNotification('Erro ao carregar categorias: ' + error.message, 'error');
+            }
+        }
+
+        async function saveCategory(categoryData) {
+            try {
+                // Check limits for free users
+                if (userPlan === 'free' && !editingCategoryId && categories.length >= 3) {
+                    showNotification('Limite de 3 categorias atingido. Faça upgrade para Premium!', 'warning');
+                    return;
                 }
-            });
-        }
 
-        function showNotification(message) {
-            if (Notification.permission === 'granted') {
-                new Notification('DeadlineX', {
-                    body: message,
-                    icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">⏰</text></svg>'
-                });
+                if (editingCategoryId) {
+                    const { error } = await supabase
+                        .from('categories')
+                        .update(categoryData)
+                        .eq('id', editingCategoryId);
+
+                    if (error) throw error;
+                    showNotification('Categoria atualizada com sucesso!', 'success');
+                } else {
+                    const { error } = await supabase
+                        .from('categories')
+                        .insert([{ ...categoryData, user_id: currentUser.id }]);
+
+                    if (error) throw error;
+                    showNotification('Categoria criada com sucesso!', 'success');
+                }
+
+                await loadCategories();
+                closeCategoryModal();
+            } catch (error) {
+                showNotification('Erro ao salvar categoria: ' + error.message, 'error');
             }
         }
 
-        // Utility Functions
-        function formatDate(dateString) {
-            const date = new Date(dateString);
-            return date.toLocaleDateString('pt-BR') + ' ' + date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+        async function deleteCategory(categoryId) {
+            if (!confirm('Tem certeza que deseja excluir esta categoria?')) return;
+
+            try {
+                const { error } = await supabase
+                    .from('categories')
+                    .delete()
+                    .eq('id', categoryId);
+
+                if (error) throw error;
+
+                showNotification('Categoria excluída com sucesso!', 'success');
+                await loadCategories();
+                await loadTasks(); // Reload tasks to update display
+            } catch (error) {
+                showNotification('Erro ao excluir categoria: ' + error.message, 'error');
+            }
         }
 
-        function getCategoryName(category) {
-            const categories = {
-                'pessoal': 'Pessoal',
-                'trabalho': 'Trabalho',
-                'saude': 'Saúde',
-                'outros': 'Outros',
-                'aniversarios': 'Aniversários',
-                'educacao': 'Educação',
-                'eventos': 'Eventos',
-                'financeiro': 'Financeiro',
-                'impostos': 'Impostos',
-                'juridico': 'Jurídico',
-'manutencao': 'Manutenção',
-                'reunioes': 'Reuniões',
-                'seguros': 'Seguros',
-                'veiculos': 'Veículos',
-                'viagens': 'Viagens'
-            };
-            return categories[category] || category;
+        // Account management
+        async function deleteAccount() {
+            const confirmation = prompt('Digite "EXCLUIR" para confirmar a exclusão permanente da sua conta:');
+            if (confirmation !== 'EXCLUIR') return;
+
+            try {
+                // Delete user data
+                await supabase.from('tasks').delete().eq('user_id', currentUser.id);
+                await supabase.from('categories').delete().eq('user_id', currentUser.id);
+                await supabase.from('user_profiles').delete().eq('user_id', currentUser.id);
+
+                // Delete auth user (this might not work from client-side)
+                showNotification('Conta excluída com sucesso!', 'success');
+                await logout();
+            } catch (error) {
+                showNotification('Erro ao excluir conta: ' + error.message, 'error');
+            }
         }
 
-        function getPriorityName(priority) {
-            const priorities = {
-                'high': 'Alta',
-                'normal': 'Normal',
-                'low': 'Baixa'
-            };
-            return priorities[priority] || priority;
+        async function exportData() {
+            try {
+                const userData = {
+                    user: currentUser,
+                    tasks: tasks,
+                    categories: categories,
+                    exported_at: new Date().toISOString()
+                };
+
+                const dataStr = JSON.stringify(userData, null, 2);
+                const dataBlob = new Blob([dataStr], { type: 'application/json' });
+                const url = URL.createObjectURL(dataBlob);
+                
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `deadlinex-backup-${new Date().toISOString().split('T')[0]}.json`;
+                link.click();
+                
+                URL.revokeObjectURL(url);
+                showNotification('Dados exportados com sucesso!', 'success');
+            } catch (error) {
+                showNotification('Erro ao exportar dados: ' + error.message, 'error');
+            }
+        }
+
+        // UI functions
+        function showLogin() {
+            loginScreen.classList.remove('hidden');
+            registerScreen.classList.add('hidden');
+            forgotPasswordScreen.classList.add('hidden');
+            dashboard.classList.add('hidden');
+        }
+
+        function showRegister() {
+            loginScreen.classList.add('hidden');
+            registerScreen.classList.remove('hidden');
+            forgotPasswordScreen.classList.add('hidden');
+            dashboard.classList.add('hidden');
+        }
+
+        function showForgotPassword() {
+            loginScreen.classList.add('hidden');
+            registerScreen.classList.add('hidden');
+            forgotPasswordScreen.classList.remove('hidden');
+            dashboard.classList.add('hidden');
+        }
+
+        function showDashboard() {
+            loginScreen.classList.add('hidden');
+            registerScreen.classList.add('hidden');
+            forgotPasswordScreen.classList.add('hidden');
+            dashboard.classList.remove('hidden');
+            
+            if (currentUser) {
+                document.getElementById('userName').textContent = 
+                    currentUser.user_metadata?.full_name || currentUser.email;
+            }
+        }
+
+        function showTaskModal(task = null) {
+            editingTaskId = task ? task.id : null;
+            
+            if (task) {
+                document.getElementById('modalTitle').textContent = 'Editar Tarefa';
+                document.getElementById('taskTitle').value = task.title;
+                document.getElementById('taskDescription').value = task.description || '';
+                document.getElementById('taskPriority').value = task.priority;
+                document.getElementById('taskStatus').value = task.status;
+                document.getElementById('taskCategory').value = task.category_id || '';
+                document.getElementById('taskDueDate').value = task.due_date ? 
+                    new Date(task.due_date).toISOString().slice(0, 16) : '';
+            } else {
+                document.getElementById('modalTitle').textContent = 'Nova Tarefa';
+                document.getElementById('taskForm').reset();
+            }
+            
+            taskModal.classList.remove('hidden');
+        }
+
+        function closeTaskModal() {
+            taskModal.classList.add('hidden');
+            editingTaskId = null;
+        }
+
+        function showCategoryModal(category = null) {
+            editingCategoryId = category ? category.id : null;
+            
+            if (category) {
+                document.getElementById('categoryModalTitle').textContent = 'Editar Categoria';
+                document.getElementById('categoryName').value = category.name;
+                document.getElementById('categoryDescription').value = category.description || '';
+                document.getElementById('categoryColor').value = category.color || '#3b82f6';
+                document.getElementById('categoryColorText').value = category.color || '#3b82f6';
+            } else {
+                document.getElementById('categoryModalTitle').textContent = 'Nova Categoria';
+                document.getElementById('categoryForm').reset();
+                document.getElementById('categoryColor').value = '#3b82f6';
+                document.getElementById('categoryColorText').value = '#3b82f6';
+            }
+            
+            categoryModal.classList.remove('hidden');
+        }
+
+        function closeCategoryModal() {
+            categoryModal.classList.add('hidden');
+            editingCategoryId = null;
+        }
+
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification ${type}`;
+            notification.classList.add('show');
+
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
         }
 
         function updateStats() {
-            const now = new Date();
-            const weekFromNow = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
-            
-            const total = deadlines.length;
-            const urgent = deadlines.filter(d => !d.completed && new Date(d.date) <= new Date(now.getTime() + 24 * 60 * 60 * 1000)).length;
-            const thisWeek = deadlines.filter(d => !d.completed && new Date(d.date) <= weekFromNow).length;
-            const completed = deadlines.filter(d => d.completed).length;
-            
-            document.getElementById('totalCount').textContent = total;
-            document.getElementById('urgentCount').textContent = urgent;
-            document.getElementById('weekCount').textContent = thisWeek;
-            document.getElementById('completedCount').textContent = completed;
+            const total = tasks.length;
+            const pending = tasks.filter(t => t.status === 'pending').length;
+            const completed = tasks.filter(t => t.status === 'completed').length;
+            const overdue = tasks.filter(t => {
+                return t.status !== 'completed' && new Date(t.due_date) < new Date();
+            }).length;
+
+            document.getElementById('totalTasks').textContent = total;
+            document.getElementById('pendingTasks').textContent = pending;
+            document.getElementById('completedTasks').textContent = completed;
+            document.getElementById('overdueTasks').textContent = overdue;
         }
 
-        // Event Listeners
+        function updateTasksDisplay() {
+            updateRecentTasks();
+            updateAllTasks();
+        }
+
+        function updateRecentTasks() {
+            const container = document.getElementById('recentTasksList');
+            const recentTasks = tasks.slice(0, 5);
+
+            if (recentTasks.length === 0) {
+                container.innerHTML = '<p class="text-gray-500 text-center py-8">Nenhuma tarefa encontrada</p>';
+                return;
+            }
+
+            container.innerHTML = recentTasks.map(task => createTaskCard(task, true)).join('');
+        }
+
+        function updateAllTasks() {
+            const container = document.getElementById('tasksList');
+            let filteredTasks = [...tasks];
+
+            // Apply filters
+            const statusFilter = document.getElementById('statusFilter').value;
+            const priorityFilter = document.getElementById('priorityFilter').value;
+            const categoryFilter = document.getElementById('categoryFilter').value;
+            const searchTerm = document.getElementById('searchTasks').value.toLowerCase();
+
+            if (statusFilter) {
+                filteredTasks = filteredTasks.filter(task => task.status === statusFilter);
+            }
+
+            if (priorityFilter) {
+                filteredTasks = filteredTasks.filter(task => task.priority === priorityFilter);
+            }
+
+            if (categoryFilter) {
+                filteredTasks = filteredTasks.filter(task => task.category_id === categoryFilter);
+            }
+
+            if (searchTerm) {
+                filteredTasks = filteredTasks.filter(task => 
+                    task.title.toLowerCase().includes(searchTerm) ||
+                    (task.description && task.description.toLowerCase().includes(searchTerm))
+                );
+            }
+
+            if (filteredTasks.length === 0) {
+                container.innerHTML = '<p class="text-gray-500 text-center py-8">Nenhuma tarefa encontrada</p>';
+                return;
+            }
+
+            container.innerHTML = filteredTasks.map(task => createTaskCard(task, false)).join('');
+        }
+
+        function updateCategoriesDisplay() {
+            const container = document.getElementById('categoriesList');
+
+            if (categories.length === 0) {
+                container.innerHTML = '<p class="text-gray-500 text-center py-8 col-span-3">Nenhuma categoria encontrada</p>';
+                return;
+            }
+
+            container.innerHTML = categories.map(category => createCategoryCard(category)).join('');
+        }
+
+        function updateCategorySelects() {
+            const taskCategorySelect = document.getElementById('taskCategory');
+            const categoryFilterSelect = document.getElementById('categoryFilter');
+
+            // Clear existing options (except first)
+            taskCategorySelect.innerHTML = '<option value="">Sem categoria</option>';
+            categoryFilterSelect.innerHTML = '<option value="">Todas as Categorias</option>';
+
+            categories.forEach(category => {
+                const option1 = new Option(category.name, category.id);
+                const option2 = new Option(category.name, category.id);
+                taskCategorySelect.add(option1);
+                categoryFilterSelect.add(option2);
+            });
+        }
+
+        function createTaskCard(task, isRecent = false) {
+            const isOverdue = task.status !== 'completed' && new Date(task.due_date) < new Date();
+            const priorityClass = `priority-${task.priority}`;
+            const statusClass = `status-${isOverdue ? 'overdue' : task.status}`;
+            
+            let cardClass = 'task-card normal';
+            if (isOverdue) cardClass = 'task-card urgent';
+            else if (task.priority === 'urgent' || task.priority === 'high') cardClass = 'task-card warning';
+
+            const dueDate = new Date(task.due_date).toLocaleString('pt-BR');
+            const category = categories.find(c => c.id === task.category_id);
+
+            return `
+                <div class="${cardClass} bg-white p-4 rounded-lg border hover:shadow-md transition-all">
+                    <div class="flex items-start justify-between">
+                        <div class="flex-1">
+                            <h3 class="font-semibold text-gray-800 mb-2">${task.title}</h3>
+                            ${task.description ? `<p class="text-gray-600 text-sm mb-3">${task.description}</p>` : ''}
+                            
+                            <div class="flex items-center space-x-3 text-sm flex-wrap gap-2">
+                                <span class="priority-badge ${priorityClass}">${getPriorityLabel(task.priority)}</span>
+                                <span class="status-badge ${statusClass}">${getStatusLabel(task.status, isOverdue)}</span>
+                                ${category ? `<span class="category-badge" style="background-color: ${category.color}20; color: ${category.color};">${category.name}</span>` : ''}
+                                <span class="text-gray-500">
+                                    <i class="fas fa-clock mr-1"></i>${dueDate}
+                                </span>
+                            </div>
+                        </div>
+                        
+                        ${!isRecent ? `
+                            <div class="flex items-center space-x-2 ml-4">
+                                <button onclick="showTaskModal(${JSON.stringify(task).replace(/"/g, '&quot;')})" 
+                                        class="text-blue-600 hover:text-blue-800">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button onclick="deleteTask('${task.id}')" 
+                                        class="text-red-600 hover:text-red-800">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+        }
+
+        function createCategoryCard(category) {
+            const taskCount = tasks.filter(t => t.category_id === category.id).length;
+
+            return `
+                <div class="bg-white rounded-xl p-6 shadow-sm border">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center">
+                            <div class="w-4 h-4 rounded-full mr-3" style="background-color: ${category.color};"></div>
+                            <h3 class="font-semibold text-gray-800">${category.name}</h3>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <button onclick="showCategoryModal(${JSON.stringify(category).replace(/"/g, '&quot;')})" 
+                                    class="text-blue-600 hover:text-blue-800">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button onclick="deleteCategory('${category.id}')" 
+                                    class="text-red-600 hover:text-red-800">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    ${category.description ? `<p class="text-gray-600 text-sm mb-4">${category.description}</p>` : ''}
+                    
+                    <div class="text-sm text-gray-500">
+                        <i class="fas fa-tasks mr-1"></i>
+                        ${taskCount} tarefa${taskCount !== 1 ? 's' : ''}
+                    </div>
+                </div>
+            `;
+        }
+
+        function getPriorityLabel(priority) {
+            const labels = {
+                low: 'Baixa',
+                medium: 'Média',
+                high: 'Alta',
+                urgent: 'Urgente'
+            };
+            return labels[priority] || priority;
+        }
+
+        function getStatusLabel(status, isOverdue = false) {
+            if (isOverdue) return 'Atrasada';
+            
+            const labels = {
+                pending: 'Pendente',
+                in_progress: 'Em Andamento',
+                completed: 'Concluída'
+            };
+            return labels[status] || status;
+        }
+
+        // Navigation
+        function showTab(tabName) {
+            // Hide all content
+            document.getElementById('dashboardContent').classList.add('hidden');
+            document.getElementById('tasksContent').classList.add('hidden');
+            document.getElementById('categoriesContent').classList.add('hidden');
+            document.getElementById('calendarContent').classList.add('hidden');
+            document.getElementById('reportsContent').classList.add('hidden');
+            document.getElementById('premiumContent').classList.add('hidden');
+            document.getElementById('settingsContent').classList.add('hidden');
+
+            // Show selected content
+            document.getElementById(tabName + 'Content').classList.remove('hidden');
+
+            // Update page title
+            const titles = {
+                dashboard: 'Dashboard',
+                tasks: 'Tarefas',
+                categories: 'Categorias',
+                calendar: 'Calendário',
+                reports: 'Relatórios',
+                premium: 'Premium',
+                settings: 'Configurações'
+            };
+            document.getElementById('pageTitle').textContent = titles[tabName];
+
+            // Update active nav item
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active', 'bg-indigo-50', 'text-indigo-600');
+            });
+            document.getElementById(tabName + 'Tab').classList.add('active', 'bg-indigo-50', 'text-indigo-600');
+        }
+
+        // Event listeners
         function setupEventListeners() {
-            document.getElementById('searchInput').addEventListener('input', renderDeadlines);
-            document.getElementById('categoryFilter').addEventListener('change', function() {
-                const selectedValue = this.value;
-                const premiumCategories = ['aniversarios', 'educacao', 'eventos', 'financeiro', 'impostos', 'juridico', 'manutencao', 'reunioes', 'seguros', 'veiculos', 'viagens'];
+            // Auth forms
+            document.getElementById('loginForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const email = document.getElementById('loginEmail').value;
+                const password = document.getElementById('loginPassword').value;
+                await login(email, password);
+            });
+
+            document.getElementById('registerForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const name = document.getElementById('registerName').value;
+                const email = document.getElementById('registerEmail').value;
+                const password = document.getElementById('registerPassword').value;
+                await register(email, password, name);
+            });
+
+            document.getElementById('forgotPasswordForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const email = document.getElementById('forgotEmail').value;
+                await forgotPassword(email);
+            });
+
+            // Navigation
+            document.getElementById('showRegister').addEventListener('click', showRegister);
+            document.getElementById('showLogin').addEventListener('click', showLogin);
+            document.getElementById('showForgotPassword').addEventListener('click', showForgotPassword);
+            document.getElementById('backToLogin').addEventListener('click', showLogin);
+            document.getElementById('logoutBtn').addEventListener('click', logout);
+
+            // Terms and Privacy
+            document.getElementById('showTerms').addEventListener('click', () => {
+                termsModal.classList.remove('hidden');
+            });
+
+            document.getElementById('showPrivacy').addEventListener('click', () => {
+                privacyModal.classList.remove('hidden');
+            });
+
+            document.getElementById('closeTerms').addEventListener('click', () => {
+                termsModal.classList.add('hidden');
+            });
+
+            document.getElementById('closePrivacy').addEventListener('click', () => {
+                privacyModal.classList.add('hidden');
+            });
+
+            document.getElementById('termsModalOverlay').addEventListener('click', () => {
+                termsModal.classList.add('hidden');
+            });
+
+            document.getElementById('privacyModalOverlay').addEventListener('click', () => {
+                privacyModal.classList.add('hidden');
+            });
+
+            // Sidebar
+            document.getElementById('openSidebar').addEventListener('click', () => {
+                sidebar.classList.remove('sidebar-hidden');
+            });
+
+            document.getElementById('closeSidebar').addEventListener('click', () => {
+                sidebar.classList.add('sidebar-hidden');
+            });
+
+            // Navigation tabs
+            document.getElementById('dashboardTab').addEventListener('click', (e) => {
+                e.preventDefault();
+                showTab('dashboard');
+            });
+
+            document.getElementById('tasksTab').addEventListener('click', (e) => {
+                e.preventDefault();
+                showTab('tasks');
+            });
+
+            document.getElementById('categoriesTab').addEventListener('click', (e) => {
+                e.preventDefault();
+                showTab('categories');
+            });
+
+            document.getElementById('calendarTab').addEventListener('click', (e) => {
+                e.preventDefault();
+                showTab('calendar');
+            });
+
+            document.getElementById('reportsTab').addEventListener('click', (e) => {
+                e.preventDefault();
+                showTab('reports');
+            });
+
+            document.getElementById('premiumTab').addEventListener('click', (e) => {
+                e.preventDefault();
+                showTab('premium');
+            });
+
+            document.getElementById('settingsTab').addEventListener('click', (e) => {
+                e.preventDefault();
+                showTab('settings');
+            });
+
+            // Task modal
+            document.getElementById('addTaskBtn').addEventListener('click', () => showTaskModal());
+            document.getElementById('cancelTask').addEventListener('click', closeTaskModal);
+            document.getElementById('modalOverlay').addEventListener('click', closeTaskModal);
+
+            document.getElementById('taskForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
                 
-                if (premiumCategories.includes(selectedValue) && !isPremium) {
-                    alert('Esta categoria está disponível apenas no plano Premium!');
-                    this.value = '';
-                    showPremiumModal();
-                    return;
-                }
-                renderDeadlines();
-            });
-        }
-
-        function setupPremiumFeatures() {
-            const premiumOptions = document.querySelectorAll('.premium-option');
-            premiumOptions.forEach(option => {
-                if (isPremium) {
-                    option.classList.remove('text-gray-400');
-                    option.textContent = option.textContent.replace('🔒 ', '').replace(' (Premium)', '');
-                }
-            });
-        }
-
-        // Modal Functions
-        function showNewDeadlineModal() {
-            document.getElementById('newDeadlineModal').classList.remove('hidden');
-        }
-
-        function showPremiumModal() {
-            document.getElementById('premiumModal').classList.remove('hidden');
-        }
-
-        function showPolicies() {
-            document.getElementById('policiesModal').classList.remove('hidden');
-        }
-
-        function closeModal(modalId) {
-            document.getElementById(modalId).classList.add('hidden');
-        }
-
-        // Premium Functions
-        async function purchasePremium() {
-            try {
-                // Create Mercado Pago preference
-                const preference = {
-                    items: [{
-                        title: 'DeadlineX Premium - Assinatura Mensal',
-                        description: 'Acesso completo a todas as funcionalidades premium',
-                        quantity: 1,
-                        currency_id: 'BRL',
-                        unit_price: 4.90
-                    }],
-                    payer: {
-                        email: currentUser.email,
-                        name: currentUser.user_metadata.full_name
-                    },
-                    back_urls: {
-                        success: window.location.origin + '/success',
-                        failure: window.location.origin + '/failure',
-                        pending: window.location.origin + '/pending'
-                    },
-                    auto_return: 'approved',
-                    external_reference: currentUser.id,
-                    notification_url: 'YOUR_WEBHOOK_URL'
+                const taskData = {
+                    title: document.getElementById('taskTitle').value,
+                    description: document.getElementById('taskDescription').value,
+                    priority: document.getElementById('taskPriority').value,
+                    status: document.getElementById('taskStatus').value,
+                    category_id: document.getElementById('taskCategory').value || null,
+                    due_date: document.getElementById('taskDueDate').value
                 };
 
-                // Call your backend to create the preference
-                const response = await fetch('/api/create-preference', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(preference)
-                });
-
-                const data = await response.json();
-                
-                if (data.init_point) {
-                    // Redirect to Mercado Pago
-                    window.location.href = data.init_point;
-                } else {
-                    throw new Error('Erro ao criar preferência de pagamento');
-                }
-                
-            } catch (error) {
-                console.error('Erro no pagamento:', error);
-                // Fallback - simulate premium for demo
-                alert('Demo: Ativando Premium...\n\nEm produção, você seria redirecionado para o Mercado Pago.');
-                isPremium = true;
-                await updateUserSettings({ premium: true });
-                setupPremiumFeatures();
-                document.getElementById('shoppingSection').classList.remove('hidden');
-                closeModal('premiumModal');
-            }
-        }
-
-        // WhatsApp Notification Function
-        async function sendWhatsAppNotification(message, phoneNumber) {
-            if (!isPremium) return;
-            
-            try {
-                const response = await fetch(`${WHATSAPP_API_URL}/message/sendText`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${WHATSAPP_API_KEY}`
-                    },
-                    body: JSON.stringify({
-                        number: phoneNumber,
-                        text: message
-                    })
-                });
-
-                const result = await response.json();
-                console.log('WhatsApp notification sent:', result);
-            } catch (error) {
-                console.error('Erro ao enviar WhatsApp:', error);
-            }
-        }
-
-        async function updateUserSettings(settings) {
-            try {
-                const { data, error } = await supabase
-                    .from('user_settings')
-                    .upsert([{
-                        user_id: currentUser.id,
-                        settings: settings
-                    }]);
-                
-                if (error) throw error;
-            } catch (error) {
-                console.error('Error updating user settings:', error);
-            }
-        }
-
-        // Other Functions
-        function shareApp() {
-            if (navigator.share) {
-                navigator.share({
-                    title: 'DeadlineX - Gerenciador de Prazos',
-                    text: 'Gerencie seus prazos com inteligência!',
-                    url: window.location.href
-                });
-            } else {
-                navigator.clipboard.writeText(window.location.href);
-                alert('Link copiado para a área de transferência!');
-            }
-        }
-
-        function installApp() {
-            alert('Para instalar o app:\n\n1. No Chrome: Menu > Instalar DeadlineX\n2. No Safari: Compartilhar > Adicionar à Tela Inicial');
-        }
-
-        function showNotifications() {
-            const urgentDeadlines = deadlines.filter(d => {
-                const now = new Date();
-                const deadlineDate = new Date(d.date);
-                return !d.completed && deadlineDate <= new Date(now.getTime() + 24 * 60 * 60 * 1000);
+                await saveTask(taskData);
             });
-            
-            if (urgentDeadlines.length === 0) {
-                alert('Nenhuma notificação urgente no momento!');
-            } else {
-                const message = urgentDeadlines.map(d => `• ${d.title} - ${formatDate(d.date)}`).join('\n');
-                alert(`Prazos urgentes:\n\n${message}`);
-            }
-        }
 
-        function clearFilters() {
-            document.getElementById('searchInput').value = '';
-            document.getElementById('categoryFilter').value = '';
-            renderDeadlines();
-        }
+            // Category modal
+            document.getElementById('addCategoryBtn').addEventListener('click', () => showCategoryModal());
+            document.getElementById('cancelCategory').addEventListener('click', closeCategoryModal);
+            document.getElementById('categoryModalOverlay').addEventListener('click', closeCategoryModal);
 
-        async function toggleComplete(id) {
-            const deadline = deadlines.find(d => d.id === id);
-            if (!deadline) return;
-            
-            try {
-                const { error } = await supabase
-                    .from('deadlines')
-                    .update({ completed: !deadline.completed })
-                    .eq('id', id);
+            document.getElementById('categoryForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
                 
-                if (error) throw error;
-                await loadDeadlines();
-            } catch (error) {
-                alert('Erro ao atualizar prazo: ' + error.message);
-            }
+                const categoryData = {
+                    name: document.getElementById('categoryName').value,
+                    description: document.getElementById('categoryDescription').value,
+                    color: document.getElementById('categoryColor').value
+                };
+
+                await saveCategory(categoryData);
+            });
+
+            // Color picker sync
+            document.getElementById('categoryColor').addEventListener('change', (e) => {
+                document.getElementById('categoryColorText').value = e.target.value;
+            });
+
+            document.getElementById('categoryColorText').addEventListener('change', (e) => {
+                document.getElementById('categoryColor').value = e.target.value;
+            });
+
+            // Filters
+            document.getElementById('statusFilter').addEventListener('change', updateAllTasks);
+            document.getElementById('priorityFilter').addEventListener('change', updateAllTasks);
+            document.getElementById('categoryFilter').addEventListener('change', updateAllTasks);
+            document.getElementById('searchTasks').addEventListener('input', updateAllTasks);
+
+            // Settings
+            document.getElementById('deleteAccountBtn').addEventListener('click', deleteAccount);
+            document.getElementById('exportDataBtn').addEventListener('click', exportData);
+
+            // Premium
+            document.getElementById('upgradeToPremium').addEventListener('click', () => {
+                showNotification('Funcionalidade de pagamento em desenvolvimento!', 'warning');
+            });
+
+            // Close sidebar on outside click (mobile)
+            document.addEventListener('click', (e) => {
+                if (window.innerWidth < 768 && 
+                    !sidebar.contains(e.target) && 
+                    !document.getElementById('openSidebar').contains(e.target)) {
+                    sidebar.classList.add('sidebar-hidden');
+                }
+            });
         }
-
-        async function deleteDeadline(id) {
-            if (!confirm('Tem certeza que deseja excluir este prazo?')) return;
-            
-            try {
-                const { error } = await supabase
-                    .from('deadlines')
-                    .delete()
-                    .eq('id', id);
-                
-                if (error) throw error;
-                await loadDeadlines();
-            } catch (error) {
-                alert('Erro ao excluir prazo: ' + error.message);
-            }
-        }
-
-        async function deleteAccount() {
-            if (!confirm('ATENÇÃO: Esta ação irá excluir permanentemente sua conta e todos os seus dados. Esta ação não pode ser desfeita.\n\nTem certeza que deseja continuar?')) return;
-            
-            try {
-                // Delete user data from all tables
-                await supabase.from('deadlines').delete().eq('user_id', currentUser.id);
-                await supabase.from('user_settings').delete().eq('user_id', currentUser.id);
-                await supabase.from('user_config').delete().eq('user_id', currentUser.id);
-                
-                // Sign out user
-                await supabase.auth.signOut();
-                
-                alert('Sua conta foi excluída com sucesso.');
-                showLoginScreen();
-            } catch (error) {
-                alert('Erro ao excluir conta: ' + error.message);
-            }
-        }
-
-        // Offline Support
-        function saveToLocalStorage() {
-            localStorage.setItem('deadlinex_data', JSON.stringify({
-                deadlines: deadlines,
-                user: currentUser,
-                isPremium: isPremium,
-                lastSync: new Date().toISOString()
-            }));
-        }
-
-        function loadFromLocalStorage() {
-            const data = localStorage.getItem('deadlinex_data');
-            if (data) {
-                const parsed = JSON.parse(data);
-                deadlines = parsed.deadlines || [];
-                isPremium = parsed.isPremium || false;
-                renderDeadlines();
-                updateStats();
-            }
-        }
-
-        // Check for offline mode
-        window.addEventListener('online', function() {
-            console.log('Back online - syncing data...');
-            loadUserData();
-        });
-
-        window.addEventListener('offline', function() {
-            console.log('Offline mode - using local data...');
-            loadFromLocalStorage();
-        });
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97f8b42e979c4d35',t:'MTc1Nzk0NTM4Ny4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97fa0680e1bc011b',t:'MTc1Nzk1OTI0NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
+
 
 
 
