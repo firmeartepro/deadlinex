@@ -10,9 +10,15 @@
   },
   "dependencies": {
     "mercadopago": "^1.5.17",
-    "@supabase/supabase-js": "^2.26.0",
+    "@supabase/supabase-js": "^2.38.0",
     "axios": "^1.4.0"
   },
+  "devDependencies": {
+    "vercel": "^32.0.0"
+  },
+  "keywords": ["deadline", "prazo", "gerenciamento"],
+  "author": "Seu Nome",
+  "license": "MIT",
   "engines": {
     "node": "18.x"
   }
