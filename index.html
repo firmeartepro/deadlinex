@@ -99,41 +99,6 @@
             opacity: 0.6;
             text-decoration: line-through;
         }
-        
-        .notification-popup {
-            animation: slideInRight 0.3s ease-out;
-        }
-        
-        @keyframes slideInRight {
-            from {
-                transform: translateX(100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-        
-        .clock-display {
-            font-family: 'Courier New', monospace;
-            font-weight: bold;
-        }
-        
-        .share-popup {
-            animation: fadeInScale 0.3s ease-out;
-        }
-        
-        @keyframes fadeInScale {
-            from {
-                transform: scale(0.9);
-                opacity: 0;
-            }
-            to {
-                transform: scale(1);
-                opacity: 1;
-            }
-        }
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen">
@@ -146,33 +111,10 @@
                     <h1 class="text-2xl font-bold">DeadlineX</h1>
                 </div>
                 <div class="flex items-center space-x-4">
-                    <div id="liveClock" class="clock-display text-lg bg-white/20 px-3 py-1 rounded-lg">
-                        00:00:00
-                    </div>
                     <span id="userEmail" class="text-sm opacity-90"></span>
-                    <div class="relative">
-                        <button id="menuBtn" class="bg-white/20 hover:bg-white/30 p-2 rounded-lg transition-colors">
-                            <i class="fas fa-bars"></i>
-                        </button>
-                        <div id="dropdownMenu" class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border hidden z-50">
-                            <button id="shareBtn" class="w-full text-left px-4 py-3 hover:bg-gray-50 flex items-center space-x-2 border-b">
-                                <i class="fas fa-share-alt text-indigo-600"></i>
-                                <span>Compartilhar</span>
-                            </button>
-                            <button id="privacyBtn" class="w-full text-left px-4 py-3 hover:bg-gray-50 flex items-center space-x-2 border-b">
-                                <i class="fas fa-shield-alt text-green-600"></i>
-                                <span>Políticas de Privacidade</span>
-                            </button>
-                            <button id="deleteAccountBtn" class="w-full text-left px-4 py-3 hover:bg-red-50 flex items-center space-x-2 border-b text-red-600">
-                                <i class="fas fa-user-times"></i>
-                                <span>Excluir Conta</span>
-                            </button>
-                            <button id="logoutBtn" class="w-full text-left px-4 py-3 hover:bg-gray-50 flex items-center space-x-2">
-                                <i class="fas fa-sign-out-alt text-gray-600"></i>
-                                <span>Sair</span>
-                            </button>
-                        </div>
-                    </div>
+                    <button id="logoutBtn" class="bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg transition-colors">
+                        <i class="fas fa-sign-out-alt mr-2"></i>Sair
+                    </button>
                 </div>
             </div>
         </div>
@@ -462,128 +404,6 @@
         </div>
     </div>
 
-    <!-- Share Modal -->
-    <div id="shareModal" class="fixed inset-0 bg-black/50 modal-overlay flex items-center justify-center z-50 hidden">
-        <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4 shadow-2xl share-popup">
-            <div class="text-center mb-6">
-                <div class="bg-indigo-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <i class="fas fa-share-alt text-2xl text-indigo-600"></i>
-                </div>
-                <h3 class="text-xl font-bold text-gray-800 mb-2">Compartilhar DeadlineX</h3>
-                <p class="text-gray-600">Ajude seus amigos a organizarem melhor seus prazos!</p>
-            </div>
-            
-            <div class="space-y-4">
-                <button onclick="shareViaWhatsApp()" class="w-full bg-green-500 hover:bg-green-600 text-white py-3 px-4 rounded-lg flex items-center justify-center space-x-2 transition-colors">
-                    <i class="fab fa-whatsapp text-xl"></i>
-                    <span>Compartilhar no WhatsApp</span>
-                </button>
-                
-                <button onclick="shareViaEmail()" class="w-full bg-blue-500 hover:bg-blue-600 text-white py-3 px-4 rounded-lg flex items-center justify-center space-x-2 transition-colors">
-                    <i class="fas fa-envelope text-xl"></i>
-                    <span>Compartilhar por Email</span>
-                </button>
-                
-                <button onclick="copyShareLink()" class="w-full bg-gray-500 hover:bg-gray-600 text-white py-3 px-4 rounded-lg flex items-center justify-center space-x-2 transition-colors">
-                    <i class="fas fa-copy text-xl"></i>
-                    <span>Copiar Link</span>
-                </button>
-            </div>
-            
-            <button onclick="closeShareModal()" class="w-full mt-6 bg-gray-100 hover:bg-gray-200 text-gray-800 py-3 px-4 rounded-lg transition-colors">
-                Fechar
-            </button>
-        </div>
-    </div>
-
-    <!-- Privacy Policy Modal -->
-    <div id="privacyModal" class="fixed inset-0 bg-black/50 modal-overlay flex items-center justify-center z-50 hidden">
-        <div class="bg-white rounded-xl p-8 max-w-2xl w-full mx-4 shadow-2xl max-h-[80vh] overflow-y-auto">
-            <div class="flex justify-between items-center mb-6">
-                <h3 class="text-xl font-bold text-gray-800">Políticas de Privacidade</h3>
-                <button onclick="closePrivacyModal()" class="text-gray-400 hover:text-gray-600">
-                    <i class="fas fa-times text-xl"></i>
-                </button>
-            </div>
-            
-            <div class="space-y-6 text-sm text-gray-700">
-                <section>
-                    <h4 class="font-semibold text-gray-800 mb-2">📋 Coleta de Dados</h4>
-                    <p>Coletamos apenas as informações necessárias para o funcionamento do DeadlineX: email para autenticação e dados dos prazos que você criar.</p>
-                </section>
-                
-                <section>
-                    <h4 class="font-semibold text-gray-800 mb-2">🔒 Segurança</h4>
-                    <p>Seus dados são protegidos por criptografia e políticas de segurança do Supabase. Utilizamos autenticação segura e não compartilhamos suas informações com terceiros.</p>
-                </section>
-                
-                <section>
-                    <h4 class="font-semibold text-gray-800 mb-2">🇧🇷 LGPD - Lei Geral de Proteção de Dados</h4>
-                    <p>Em conformidade com a LGPD, você tem direito a:</p>
-                    <ul class="list-disc list-inside mt-2 space-y-1">
-                        <li>Acessar seus dados pessoais</li>
-                        <li>Corrigir dados incompletos ou incorretos</li>
-                        <li>Solicitar a exclusão de seus dados</li>
-                        <li>Revogar o consentimento a qualquer momento</li>
-                    </ul>
-                </section>
-                
-                <section>
-                    <h4 class="font-semibold text-gray-800 mb-2">🍪 Cookies</h4>
-                    <p>Utilizamos cookies apenas para manter sua sessão ativa e melhorar sua experiência. Não utilizamos cookies de rastreamento.</p>
-                </section>
-                
-                <section>
-                    <h4 class="font-semibold text-gray-800 mb-2">📞 Contato</h4>
-                    <p>Para exercer seus direitos ou esclarecer dúvidas sobre privacidade, entre em contato através do menu "Excluir Conta".</p>
-                </section>
-            </div>
-            
-            <button onclick="closePrivacyModal()" class="w-full mt-6 bg-indigo-600 hover:bg-indigo-700 text-white py-3 px-4 rounded-lg transition-colors">
-                Entendi
-            </button>
-        </div>
-    </div>
-
-    <!-- Delete Account Modal -->
-    <div id="deleteAccountModal" class="fixed inset-0 bg-black/50 modal-overlay flex items-center justify-center z-50 hidden">
-        <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4 shadow-2xl">
-            <div class="text-center mb-6">
-                <div class="bg-red-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <i class="fas fa-exclamation-triangle text-2xl text-red-600"></i>
-                </div>
-                <h3 class="text-xl font-bold text-gray-800 mb-2">Excluir Conta</h3>
-                <p class="text-gray-600">Esta ação não pode ser desfeita. Todos os seus dados serão permanentemente removidos.</p>
-            </div>
-            
-            <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
-                <p class="text-sm text-yellow-800">
-                    <i class="fas fa-info-circle mr-2"></i>
-                    Ao excluir sua conta, você perderá todos os prazos cadastrados e não poderá recuperá-los.
-                </p>
-            </div>
-            
-            <div class="space-y-4">
-                <input type="password" id="deletePassword" placeholder="Digite sua senha para confirmar" 
-                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500">
-                
-                <div class="flex space-x-3">
-                    <button onclick="closeDeleteModal()" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 py-3 px-4 rounded-lg transition-colors">
-                        Cancelar
-                    </button>
-                    <button onclick="confirmDeleteAccount()" class="flex-1 bg-red-600 hover:bg-red-700 text-white py-3 px-4 rounded-lg transition-colors">
-                        Excluir Conta
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Notification Container -->
-    <div id="notificationContainer" class="fixed top-4 right-4 space-y-2 z-40">
-        <!-- Notifications will appear here -->
-    </div>
-
     <!-- Loading Overlay -->
     <div id="loadingOverlay" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden">
         <div class="bg-white rounded-lg p-6 flex items-center space-x-3">
@@ -606,8 +426,6 @@
         let isSignupMode = false;
         let currentView = 'list';
         let currentDate = new Date();
-        let notificationInterval = null;
-        let clockInterval = null;
 
         // DOM Elements
         const loginModal = document.getElementById('loginModal');
@@ -619,8 +437,6 @@
         document.addEventListener('DOMContentLoaded', async () => {
             await checkAuth();
             setupEventListeners();
-            startClock();
-            startNotificationSystem();
         });
 
         // Authentication Functions
@@ -664,14 +480,7 @@
             // Auth form
             document.getElementById('authForm').addEventListener('submit', handleAuth);
             
-            // Menu dropdown
-            document.getElementById('menuBtn').addEventListener('click', toggleMenu);
-            document.addEventListener('click', closeMenuOnClickOutside);
-            
-            // Menu actions
-            document.getElementById('shareBtn').addEventListener('click', openShareModal);
-            document.getElementById('privacyBtn').addEventListener('click', openPrivacyModal);
-            document.getElementById('deleteAccountBtn').addEventListener('click', openDeleteModal);
+            // Logout
             document.getElementById('logoutBtn').addEventListener('click', handleLogout);
             
             // Add deadline
@@ -763,255 +572,7 @@
             await supabase.auth.signOut();
             currentUser = null;
             deadlines = [];
-            stopNotificationSystem();
             showLoginModal();
-        }
-
-        // Clock Functions
-        function startClock() {
-            updateClock();
-            clockInterval = setInterval(updateClock, 1000);
-        }
-
-        function updateClock() {
-            const now = new Date();
-            const timeString = now.toLocaleTimeString('pt-BR', {
-                hour12: false,
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit'
-            });
-            document.getElementById('liveClock').textContent = timeString;
-        }
-
-        // Notification System
-        function startNotificationSystem() {
-            if (notificationInterval) clearInterval(notificationInterval);
-            
-            // Check notifications every minute
-            notificationInterval = setInterval(() => {
-                if (currentUser && deadlines.length > 0) {
-                    checkDeadlineNotifications();
-                }
-            }, 60000); // 1 minute
-            
-            // Initial check
-            if (currentUser && deadlines.length > 0) {
-                setTimeout(checkDeadlineNotifications, 2000);
-            }
-        }
-
-        function stopNotificationSystem() {
-            if (notificationInterval) {
-                clearInterval(notificationInterval);
-                notificationInterval = null;
-            }
-        }
-
-        function checkDeadlineNotifications() {
-            const now = new Date();
-            
-            deadlines.forEach(deadline => {
-                if (deadline.completed || !deadline.notification) return;
-                
-                const deadlineDate = new Date(deadline.date);
-                const timeDiff = deadlineDate - now;
-                const daysDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
-                
-                // Check for 30 days, 7 days, and 1 day notifications
-                if (daysDiff === 30) {
-                    showNotification(`📅 Prazo em 30 dias: ${deadline.title}`, 'info');
-                } else if (daysDiff === 7) {
-                    showNotification(`⚠️ Prazo em 1 semana: ${deadline.title}`, 'warning');
-                } else if (daysDiff === 1) {
-                    showNotification(`🚨 Prazo amanhã: ${deadline.title}`, 'urgent');
-                } else if (daysDiff === 0) {
-                    showNotification(`⏰ Prazo hoje: ${deadline.title}`, 'urgent');
-                } else if (daysDiff < 0) {
-                    showNotification(`❌ Prazo vencido: ${deadline.title}`, 'error');
-                }
-            });
-        }
-
-        function showNotification(message, type = 'info') {
-            const container = document.getElementById('notificationContainer');
-            const notification = document.createElement('div');
-            
-            const typeClasses = {
-                info: 'bg-blue-500 border-blue-600',
-                warning: 'bg-orange-500 border-orange-600',
-                urgent: 'bg-red-500 border-red-600',
-                error: 'bg-red-600 border-red-700',
-                success: 'bg-green-500 border-green-600'
-            };
-            
-            notification.className = `notification-popup ${typeClasses[type]} text-white px-4 py-3 rounded-lg shadow-lg border-l-4 max-w-sm`;
-            notification.innerHTML = `
-                <div class="flex items-center justify-between">
-                    <span class="text-sm font-medium">${message}</span>
-                    <button onclick="this.parentElement.parentElement.remove()" class="ml-3 text-white hover:text-gray-200">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-            `;
-            
-            container.appendChild(notification);
-            
-            // Auto remove after 5 seconds
-            setTimeout(() => {
-                if (notification.parentElement) {
-                    notification.remove();
-                }
-            }, 5000);
-        }
-
-        // Menu Functions
-        function toggleMenu() {
-            const menu = document.getElementById('dropdownMenu');
-            menu.classList.toggle('hidden');
-        }
-
-        function closeMenuOnClickOutside(event) {
-            const menu = document.getElementById('dropdownMenu');
-            const menuBtn = document.getElementById('menuBtn');
-            
-            if (!menu.contains(event.target) && !menuBtn.contains(event.target)) {
-                menu.classList.add('hidden');
-            }
-        }
-
-        // Share Functions
-        function openShareModal() {
-            document.getElementById('dropdownMenu').classList.add('hidden');
-            document.getElementById('shareModal').classList.remove('hidden');
-        }
-
-        function closeShareModal() {
-            document.getElementById('shareModal').classList.add('hidden');
-        }
-
-        function shareViaWhatsApp() {
-            const message = encodeURIComponent('🎯 Descobri o DeadlineX! Um organizador de prazos incrível que me ajuda a nunca mais perder um prazo importante. Experimente você também!');
-            const url = encodeURIComponent(window.location.href);
-            window.open(`https://wa.me/?text=${message}%20${url}`, '_blank');
-        }
-
-        function shareViaEmail() {
-            const subject = encodeURIComponent('DeadlineX - Organizador de Prazos');
-            const body = encodeURIComponent(`Olá!
-
-Descobri uma ferramenta incrível para organizar prazos e queria compartilhar com você: o DeadlineX!
-
-🎯 Com ele você pode:
-• Organizar todos os seus prazos em um só lugar
-• Receber notificações automáticas
-• Visualizar em lista ou calendário
-• Categorizar por tipo (saúde, trabalho, etc.)
-
-Acesse aqui: ${window.location.href}
-
-Vale muito a pena experimentar!`);
-            
-            window.open(`mailto:?subject=${subject}&body=${body}`, '_blank');
-        }
-
-        function copyShareLink() {
-            const shareText = `🎯 DeadlineX - Organizador de Prazos\n\nNunca mais perca um prazo importante!\n\n${window.location.href}`;
-            
-            if (navigator.clipboard) {
-                navigator.clipboard.writeText(shareText).then(() => {
-                    showNotification('✅ Link copiado para a área de transferência!', 'success');
-                });
-            } else {
-                // Fallback for older browsers
-                const textArea = document.createElement('textarea');
-                textArea.value = shareText;
-                document.body.appendChild(textArea);
-                textArea.select();
-                document.execCommand('copy');
-                document.body.removeChild(textArea);
-                showNotification('✅ Link copiado para a área de transferência!', 'success');
-            }
-            
-            closeShareModal();
-        }
-
-        // Privacy Functions
-        function openPrivacyModal() {
-            document.getElementById('dropdownMenu').classList.add('hidden');
-            document.getElementById('privacyModal').classList.remove('hidden');
-        }
-
-        function closePrivacyModal() {
-            document.getElementById('privacyModal').classList.add('hidden');
-        }
-
-        // Delete Account Functions
-        function openDeleteModal() {
-            document.getElementById('dropdownMenu').classList.add('hidden');
-            document.getElementById('deleteAccountModal').classList.remove('hidden');
-        }
-
-        function closeDeleteModal() {
-            document.getElementById('deleteAccountModal').classList.add('hidden');
-            document.getElementById('deletePassword').value = '';
-        }
-
-        async function confirmDeleteAccount() {
-            const password = document.getElementById('deletePassword').value;
-            
-            if (!password) {
-                showNotification('❌ Digite sua senha para confirmar', 'error');
-                return;
-            }
-            
-            showLoading();
-            
-            try {
-                // Re-authenticate user before deletion
-                const { error: authError } = await supabase.auth.signInWithPassword({
-                    email: currentUser.email,
-                    password: password
-                });
-                
-                if (authError) {
-                    throw new Error('Senha incorreta');
-                }
-                
-                // Delete all user deadlines first
-                const { error: deleteDataError } = await supabase
-                    .from('deadlines')
-                    .delete()
-                    .eq('user_id', currentUser.id);
-                
-                if (deleteDataError) {
-                    console.error('Erro ao excluir dados:', deleteDataError);
-                }
-                
-                // Delete user account
-                const { error: deleteUserError } = await supabase.auth.admin.deleteUser(currentUser.id);
-                
-                if (deleteUserError) {
-                    // If admin delete fails, sign out user
-                    await supabase.auth.signOut();
-                }
-                
-                showNotification('✅ Conta excluída com sucesso', 'success');
-                closeDeleteModal();
-                
-                // Redirect to login
-                setTimeout(() => {
-                    currentUser = null;
-                    deadlines = [];
-                    stopNotificationSystem();
-                    showLoginModal();
-                }, 2000);
-                
-            } catch (error) {
-                showNotification(`❌ ${error.message}`, 'error');
-            } finally {
-                hideLoading();
-            }
         }
 
         function showError(message, type = 'error') {
@@ -1055,9 +616,6 @@ Vale muito a pena experimentar!`);
                 deadlines = data || [];
                 renderDeadlines();
                 updateStats();
-                
-                // Restart notification system with new data
-                startNotificationSystem();
                 
             } catch (error) {
                 console.error('Erro ao carregar prazos:', error);
@@ -1537,7 +1095,7 @@ Vale muito a pena experimentar!`);
             }
         });
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9803e80192986ead',t:'MTc1ODA2Mjg1My4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9803fb02d32ea188',t:'MTc1ODA2MzYzMi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
 
 
