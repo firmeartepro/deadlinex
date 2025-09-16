@@ -3,61 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DeadlineX PRO - Gerenciador Completo</title>
-    
-    <!-- PWA Meta Tags -->
-    <meta name="theme-color" content="#6366f1">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="DeadlineX">
-    <meta name="description" content="Gerenciador completo de prazos e tarefas com notificações inteligentes">
-    
-    <!-- PWA Icons -->
-    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' fill='%236366f1' rx='20'/%3E%3Ctext x='96' y='120' text-anchor='middle' fill='white' font-size='80' font-family='Arial'%3E🚀%3C/text%3E%3C/svg%3E">
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%236366f1' rx='4'/%3E%3Ctext x='16' y='22' text-anchor='middle' fill='white' font-size='16'%3E🚀%3C/text%3E%3C/svg%3E">
-    
-    <!-- PWA Manifest -->
-    <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIkRlYWRsaW5lWCBQUk8iLAogICJzaG9ydF9uYW1lIjogIkRlYWRsaW5lWCIsCiAgImRlc2NyaXB0aW9uIjogIkdlcmVuY2lhZG9yIGNvbXBsZXRvIGRlIHByYXpvcyBlIHRhcmVmYXMgY29tIG5vdGlmaWNhw6fDtWVzIGludGVsaWdlbnRlcyIsCiAgInN0YXJ0X3VybCI6ICIvIiwKICAiZGlzcGxheSI6ICJzdGFuZGFsb25lIiwKICAiYmFja2dyb3VuZF9jb2xvciI6ICIjZjlmYWZiIiwKICAidGhlbWVfY29sb3IiOiAiIzYzNjZmMSIsCiAgImljb25zIjogWwogICAgewogICAgICAic3JjIjogImRhdGE6aW1hZ2Uvc3ZnK3htbCwlM0NzdmcgeG1sbnM9J2h0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnJyB2aWV3Qm94PScwIDAgMTkyIDE5MiclM0UlM0NyZWN0IHdpZHRoPScxOTInIGhlaWdodD0nMTkyJyBmaWxsPSclMjM2MzY2ZjEnIHJ4PScyMCcvJTNFJTNDdGV4dCB4PSc5NicgeT0nMTIwJyB0ZXh0LWFuY2hvcj0nbWlkZGxlJyBmaWxsPSd3aGl0ZScgZm9udC1zaXplPSc4MCcgZm9udC1mYW1pbHk9J0FyaWFsJyUzRSVGMCU5RiU5QSU4MCUzQy90ZXh0JTNFJTNDL3N2ZyUzRSIsCiAgICAgICJzaXplcyI6ICIxOTJ4MTkyIiwKICAgICAgInR5cGUiOiAiaW1hZ2Uvc3ZnK3htbCIKICAgIH0sCiAgICB7CiAgICAgICJzcmMiOiAiZGF0YTppbWFnZS9zdmcreG1sLCUzQ3N2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA1MTIgNTEyJyUzRSUzQ3JlY3Qgd2lkdGg9JzUxMicgaGVpZ2h0PSc1MTInIGZpbGw9JyUyMzYzNjZmMScgcng9JzUwJy8lM0UlM0N0ZXh0IHg9JzI1NicgeT0nMzIwJyB0ZXh0LWFuY2hvcj0nbWlkZGxlJyBmaWxsPSd3aGl0ZScgZm9udC1zaXplPScyMDAnIGZvbnQtZmFtaWx5PSdBcmlhbCclM0UlRjAlOUYlOUElODAlM0MvdGV4dCUzRSUzQy9zdmclM0UiLAogICAgICAic2l6ZXMiOiAiNTEyeDUxMiIsCiAgICAgICJ0eXBlIjogImltYWdlL3N2Zyt4bWwiCiAgICB9CiAgXQp9">
+    <title>DeadlineX - Gerenciador de Prazos</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         body { font-family: 'Inter', sans-serif; }
         
         .gradient-bg {
-            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);
-        }
-        
-        .gradient-pro {
-            background: linear-gradient(135deg, #f59e0b 0%, #f97316 50%, #dc2626 100%);
-        }
-        
-        .glass-effect {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        
-        /* Debug styles for menu */
-        #dropdownMenu {
-            border: 2px solid red !important;
-            background: white !important;
-        }
-        
-        #dropdownMenu button {
-            border: 1px solid blue !important;
-        }
-        
-        .pro-badge {
-            background: linear-gradient(45deg, #fbbf24, #f59e0b);
-            animation: shimmer 2s infinite;
-        }
-        
-        @keyframes shimmer {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.8; }
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
         
         .card-hover {
@@ -183,91 +138,31 @@
 </head>
 <body class="bg-gray-50 min-h-screen">
     <!-- Header -->
-    <header class="gradient-bg text-white shadow-2xl relative overflow-hidden">
-        <div class="absolute inset-0 bg-black/10"></div>
-        <div class="container mx-auto px-4 py-6 relative z-10">
+    <header class="gradient-bg text-white shadow-lg">
+        <div class="container mx-auto px-4 py-6">
             <div class="flex justify-between items-center">
-                <div class="flex items-center space-x-4">
-                    <div class="bg-white/20 p-3 rounded-xl glass-effect">
-                        <i class="fas fa-rocket text-2xl"></i>
-                    </div>
-                    <div>
-                        <div class="flex items-center space-x-2">
-                            <h1 class="text-2xl font-bold">DeadlineX</h1>
-                            <span id="proStatus" class="pro-badge text-xs font-bold px-2 py-1 rounded-full text-white hidden">
-                                PRO
-                            </span>
-                        </div>
-                        <p class="text-sm opacity-80">Gerenciador Completo de Vida</p>
-                    </div>
+                <div class="flex items-center space-x-3">
+                    <i class="fas fa-clock text-2xl"></i>
+                    <h1 class="text-2xl font-bold">DeadlineX</h1>
                 </div>
                 <div class="flex items-center space-x-4">
-                    <div id="liveClock" class="clock-display text-lg glass-effect px-4 py-2 rounded-xl font-mono">
+                    <div id="liveClock" class="clock-display text-lg bg-white/20 px-3 py-1 rounded-lg">
                         00:00:00
                     </div>
-                    <div class="text-right">
-                        <span id="userEmail" class="text-sm opacity-90 block"></span>
-                        <span id="planStatus" class="text-xs opacity-70">Plano Gratuito</span>
-                    </div>
-                    <button id="installBtn" class="glass-effect hover:bg-white/20 p-3 rounded-xl transition-all duration-300 hidden" title="Instalar App">
-                        <i class="fas fa-download"></i>
-                    </button>
+                    <span id="userEmail" class="text-sm opacity-90"></span>
                     <div class="relative">
-                        <button id="menuBtn" class="glass-effect hover:bg-white/20 p-3 rounded-xl transition-all duration-300">
+                        <button id="menuBtn" class="bg-white/20 hover:bg-white/30 p-2 rounded-lg transition-colors">
                             <i class="fas fa-bars"></i>
                         </button>
-                        <div id="dropdownMenu" class="absolute right-0 mt-2 w-72 bg-white rounded-xl shadow-2xl border border-gray-100 hidden z-50 overflow-visible max-h-96 overflow-y-auto">
-                            <!-- PRO Section -->
-                            <div id="proSection" class="bg-gradient-to-r from-orange-400 to-red-500 text-white px-4 py-2 text-sm font-medium">
-                                <i class="fas fa-crown mr-2"></i>Upgrade para PRO
-                            </div>
-                            <button id="upgradeBtn" class="w-full text-left px-4 py-3 hover:bg-orange-50 flex items-center space-x-2 border-b text-orange-600 font-medium cursor-pointer transition-colors bg-white">
-                                <i class="fas fa-star text-orange-500"></i>
-                                <span class="flex-1">Assinar PRO - R$ 9,90/mês</span>
-                                <i class="fas fa-arrow-right text-orange-400"></i>
-                            </button>
-                            
-                            <!-- PRO Features -->
-                            <button id="shoppingBtn" class="w-full text-left px-4 py-3 hover:bg-blue-50 flex items-center space-x-2 border-b pro-feature">
-                                <i class="fas fa-shopping-cart text-blue-600"></i>
-                                <span>Lista de Compras</span>
-                                <i class="fas fa-crown text-orange-400 ml-auto text-xs"></i>
-                            </button>
-                            <button id="whatsappBtn" class="w-full text-left px-4 py-3 hover:bg-green-50 flex items-center space-x-2 border-b pro-feature">
-                                <i class="fab fa-whatsapp text-green-600"></i>
-                                <span>Config. WhatsApp</span>
-                                <i class="fas fa-crown text-orange-400 ml-auto text-xs"></i>
-                            </button>
-                            
-                            <!-- General Features -->
-                            <div class="bg-gray-50 px-4 py-2 text-xs font-medium text-gray-600 border-b">
-                                GERAL
-                            </div>
-                            <button id="notificationBtn" class="w-full text-left px-4 py-3 hover:bg-purple-50 flex items-center space-x-2 border-b cursor-pointer transition-colors">
-                                <i class="fas fa-bell text-purple-600"></i>
-                                <span>Notificações do Navegador</span>
-                            </button>
-                            <button id="installMenuBtn" class="w-full text-left px-4 py-3 hover:bg-blue-50 flex items-center space-x-2 border-b cursor-pointer transition-colors">
-                                <i class="fas fa-mobile-alt text-blue-600"></i>
-                                <span>Instalar App</span>
-                            </button>
-                            <button id="shareBtn" class="w-full text-left px-4 py-3 hover:bg-indigo-50 flex items-center space-x-2 border-b cursor-pointer transition-colors">
+                        <div id="dropdownMenu" class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border hidden z-50">
+                            <button id="shareBtn" class="w-full text-left px-4 py-3 hover:bg-gray-50 flex items-center space-x-2 border-b">
                                 <i class="fas fa-share-alt text-indigo-600"></i>
-                                <span>Compartilhar e Ganhar PRO</span>
+                                <span>Compartilhar</span>
                             </button>
-                            <button id="privacyBtn" class="w-full text-left px-4 py-3 hover:bg-green-50 flex items-center space-x-2 border-b cursor-pointer transition-colors">
+                            <button id="privacyBtn" class="w-full text-left px-4 py-3 hover:bg-gray-50 flex items-center space-x-2 border-b">
                                 <i class="fas fa-shield-alt text-green-600"></i>
                                 <span>Políticas de Privacidade</span>
                             </button>
-                            <button id="supportBtn" class="w-full text-left px-4 py-3 hover:bg-yellow-50 flex items-center space-x-2 border-b cursor-pointer transition-colors">
-                                <i class="fas fa-headset text-yellow-600"></i>
-                                <span>Suporte e Ajuda</span>
-                            </button>
-                            
-                            <!-- Account Section -->
-                            <div class="bg-gray-50 px-4 py-2 text-xs font-medium text-gray-600 border-b">
-                                CONTA
-                            </div>
                             <button id="deleteAccountBtn" class="w-full text-left px-4 py-3 hover:bg-red-50 flex items-center space-x-2 border-b text-red-600">
                                 <i class="fas fa-user-times"></i>
                                 <span>Excluir Conta</span>
@@ -569,50 +464,33 @@
 
     <!-- Share Modal -->
     <div id="shareModal" class="fixed inset-0 bg-black/50 modal-overlay flex items-center justify-center z-50 hidden">
-        <div class="bg-white rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl share-popup">
+        <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4 shadow-2xl share-popup">
             <div class="text-center mb-6">
-                <div class="bg-indigo-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <i class="fas fa-share-alt text-3xl text-indigo-600"></i>
+                <div class="bg-indigo-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-share-alt text-2xl text-indigo-600"></i>
                 </div>
-                <h3 class="text-2xl font-bold text-gray-800 mb-2">Compartilhar DeadlineX</h3>
+                <h3 class="text-xl font-bold text-gray-800 mb-2">Compartilhar DeadlineX</h3>
                 <p class="text-gray-600">Ajude seus amigos a organizarem melhor seus prazos!</p>
             </div>
             
-            <div class="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl p-4 mb-6">
-                <p class="text-sm text-gray-700 text-center">
-                    <i class="fas fa-gift text-indigo-600 mr-2"></i>
-                    <strong>Ganhe 1 mês PRO grátis</strong> para cada amigo que se cadastrar!
-                </p>
-            </div>
-            
-            <div class="space-y-3">
-                <button onclick="shareViaWhatsApp()" class="w-full bg-green-500 hover:bg-green-600 text-white py-4 px-4 rounded-xl flex items-center justify-center space-x-3 transition-colors font-medium">
-                    <i class="fab fa-whatsapp text-2xl"></i>
+            <div class="space-y-4">
+                <button onclick="shareViaWhatsApp()" class="w-full bg-green-500 hover:bg-green-600 text-white py-3 px-4 rounded-lg flex items-center justify-center space-x-2 transition-colors">
+                    <i class="fab fa-whatsapp text-xl"></i>
                     <span>Compartilhar no WhatsApp</span>
                 </button>
                 
-                <button onclick="shareViaFacebook()" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-4 px-4 rounded-xl flex items-center justify-center space-x-3 transition-colors font-medium">
-                    <i class="fab fa-facebook text-2xl"></i>
-                    <span>Compartilhar no Facebook</span>
-                </button>
-                
-                <button onclick="shareViaTwitter()" class="w-full bg-sky-500 hover:bg-sky-600 text-white py-4 px-4 rounded-xl flex items-center justify-center space-x-3 transition-colors font-medium">
-                    <i class="fab fa-twitter text-2xl"></i>
-                    <span>Compartilhar no Twitter</span>
-                </button>
-                
-                <button onclick="shareViaEmail()" class="w-full bg-gray-600 hover:bg-gray-700 text-white py-4 px-4 rounded-xl flex items-center justify-center space-x-3 transition-colors font-medium">
-                    <i class="fas fa-envelope text-2xl"></i>
+                <button onclick="shareViaEmail()" class="w-full bg-blue-500 hover:bg-blue-600 text-white py-3 px-4 rounded-lg flex items-center justify-center space-x-2 transition-colors">
+                    <i class="fas fa-envelope text-xl"></i>
                     <span>Compartilhar por Email</span>
                 </button>
                 
-                <button onclick="copyShareLink()" class="w-full bg-indigo-100 hover:bg-indigo-200 text-indigo-700 py-4 px-4 rounded-xl flex items-center justify-center space-x-3 transition-colors font-medium border border-indigo-200">
+                <button onclick="copyShareLink()" class="w-full bg-gray-500 hover:bg-gray-600 text-white py-3 px-4 rounded-lg flex items-center justify-center space-x-2 transition-colors">
                     <i class="fas fa-copy text-xl"></i>
-                    <span>Copiar Link de Convite</span>
+                    <span>Copiar Link</span>
                 </button>
             </div>
             
-            <button onclick="closeShareModal()" class="w-full mt-6 bg-gray-100 hover:bg-gray-200 text-gray-800 py-3 px-4 rounded-xl transition-colors">
+            <button onclick="closeShareModal()" class="w-full mt-6 bg-gray-100 hover:bg-gray-200 text-gray-800 py-3 px-4 rounded-lg transition-colors">
                 Fechar
             </button>
         </div>
@@ -667,51 +545,6 @@
         </div>
     </div>
 
-    <!-- Support Modal -->
-    <div id="supportModal" class="fixed inset-0 bg-black/50 modal-overlay flex items-center justify-center z-50 hidden">
-        <div class="bg-white rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl">
-            <div class="text-center mb-6">
-                <div class="bg-yellow-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <i class="fas fa-headset text-2xl text-yellow-600"></i>
-                </div>
-                <h3 class="text-xl font-bold text-gray-800 mb-2">Suporte e Ajuda</h3>
-                <p class="text-gray-600">Como podemos te ajudar hoje?</p>
-            </div>
-            
-            <div class="space-y-3">
-                <button onclick="openWhatsAppSupport()" class="w-full bg-green-500 hover:bg-green-600 text-white py-3 px-4 rounded-xl flex items-center justify-center space-x-3 transition-colors">
-                    <i class="fab fa-whatsapp text-xl"></i>
-                    <span>Suporte via WhatsApp</span>
-                </button>
-                
-                <button onclick="openEmailSupport()" class="w-full bg-blue-500 hover:bg-blue-600 text-white py-3 px-4 rounded-xl flex items-center justify-center space-x-3 transition-colors">
-                    <i class="fas fa-envelope text-xl"></i>
-                    <span>Enviar Email</span>
-                </button>
-                
-                <button onclick="openFAQ()" class="w-full bg-purple-500 hover:bg-purple-600 text-white py-3 px-4 rounded-xl flex items-center justify-center space-x-3 transition-colors">
-                    <i class="fas fa-question-circle text-xl"></i>
-                    <span>Perguntas Frequentes</span>
-                </button>
-                
-                <div class="bg-gray-50 rounded-xl p-4 text-center">
-                    <p class="text-sm text-gray-600 mb-2">
-                        <i class="fas fa-clock mr-2"></i>
-                        <strong>Horário de Atendimento:</strong>
-                    </p>
-                    <p class="text-xs text-gray-500">
-                        Segunda a Sexta: 9h às 18h<br>
-                        Sábado: 9h às 14h
-                    </p>
-                </div>
-            </div>
-            
-            <button onclick="closeSupportModal()" class="w-full mt-6 bg-gray-100 hover:bg-gray-200 text-gray-800 py-3 px-4 rounded-xl transition-colors">
-                Fechar
-            </button>
-        </div>
-    </div>
-
     <!-- Delete Account Modal -->
     <div id="deleteAccountModal" class="fixed inset-0 bg-black/50 modal-overlay flex items-center justify-center z-50 hidden">
         <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4 shadow-2xl">
@@ -746,238 +579,6 @@
         </div>
     </div>
 
-    <!-- PRO Upgrade Modal -->
-    <div id="upgradeModal" class="fixed inset-0 bg-black/50 modal-overlay flex items-center justify-center z-50 hidden">
-        <div class="bg-white rounded-2xl p-8 max-w-lg w-full mx-4 shadow-2xl">
-            <div class="text-center mb-8">
-                <div class="gradient-pro w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <i class="fas fa-crown text-3xl text-white"></i>
-                </div>
-                <h3 class="text-2xl font-bold text-gray-800 mb-2">DeadlineX PRO</h3>
-                <p class="text-gray-600">Desbloqueie todo o potencial do seu gerenciador!</p>
-            </div>
-            
-            <div class="space-y-4 mb-8">
-                <div class="flex items-center space-x-3">
-                    <i class="fas fa-shopping-cart text-blue-500"></i>
-                    <span>Lista de Compras Inteligente</span>
-                </div>
-                <div class="flex items-center space-x-3">
-                    <i class="fas fa-chart-line text-green-500"></i>
-                    <span>Controle de Gastos Mensais</span>
-                </div>
-                <div class="flex items-center space-x-3">
-                    <i class="fab fa-whatsapp text-green-600"></i>
-                    <span>Notificações via WhatsApp</span>
-                </div>
-                <div class="flex items-center space-x-3">
-                    <i class="fas fa-cloud text-purple-500"></i>
-                    <span>Backup Automático na Nuvem</span>
-                </div>
-                <div class="flex items-center space-x-3">
-                    <i class="fas fa-mobile-alt text-indigo-500"></i>
-                    <span>Sincronização Multi-dispositivos</span>
-                </div>
-            </div>
-            
-            <div class="bg-gradient-to-r from-orange-100 to-red-100 rounded-xl p-6 mb-6 text-center">
-                <div class="text-3xl font-bold text-gray-800">R$ 9,90</div>
-                <div class="text-sm text-gray-600">por mês</div>
-                <div class="text-xs text-green-600 mt-1">7 dias grátis para testar!</div>
-            </div>
-            
-            <div class="space-y-3">
-                <button onclick="startProTrial()" class="w-full gradient-pro text-white py-4 px-6 rounded-xl font-bold text-lg hover:opacity-90 transition-opacity">
-                    Começar Teste Grátis
-                </button>
-                <button onclick="closeUpgradeModal()" class="w-full bg-gray-100 hover:bg-gray-200 text-gray-800 py-3 px-6 rounded-xl transition-colors">
-                    Talvez Depois
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Shopping List Modal -->
-    <div id="shoppingModal" class="fixed inset-0 bg-black/50 modal-overlay flex items-center justify-center z-50 hidden">
-        <div class="bg-white rounded-2xl p-6 max-w-4xl w-full mx-4 shadow-2xl max-h-[90vh] overflow-y-auto">
-            <div class="flex justify-between items-center mb-6">
-                <div class="flex items-center space-x-3">
-                    <div class="bg-blue-100 p-3 rounded-xl">
-                        <i class="fas fa-shopping-cart text-blue-600 text-xl"></i>
-                    </div>
-                    <div>
-                        <h3 class="text-xl font-bold text-gray-800">Lista de Compras</h3>
-                        <p class="text-sm text-gray-600">Organize suas compras e controle gastos</p>
-                    </div>
-                </div>
-                <button onclick="closeShoppingModal()" class="text-gray-400 hover:text-gray-600">
-                    <i class="fas fa-times text-xl"></i>
-                </button>
-            </div>
-            
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <!-- Add Item Form -->
-                <div class="lg:col-span-1">
-                    <div class="bg-gray-50 rounded-xl p-4 mb-4">
-                        <h4 class="font-semibold mb-3">Adicionar Item</h4>
-                        <form id="addItemForm" class="space-y-3">
-                            <input type="text" id="itemName" placeholder="Nome do produto" required
-                                   class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
-                            <input type="number" id="itemPrice" placeholder="Preço (R$)" step="0.01" required
-                                   class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
-                            <input type="number" id="itemQuantity" placeholder="Quantidade" value="1" min="1" required
-                                   class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
-                            <select id="itemCategory" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
-                                <option value="alimentacao">Alimentação</option>
-                                <option value="limpeza">Limpeza</option>
-                                <option value="higiene">Higiene</option>
-                                <option value="outros">Outros</option>
-                            </select>
-                            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg transition-colors">
-                                <i class="fas fa-plus mr-2"></i>Adicionar
-                            </button>
-                        </form>
-                    </div>
-                    
-                    <!-- Shopping Summary -->
-                    <div class="bg-green-50 rounded-xl p-4">
-                        <h4 class="font-semibold mb-3 text-green-800">Resumo da Compra</h4>
-                        <div class="space-y-2 text-sm">
-                            <div class="flex justify-between">
-                                <span>Total de Itens:</span>
-                                <span id="totalItems">0</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span>No Carrinho:</span>
-                                <span id="cartItems">0</span>
-                            </div>
-                            <div class="flex justify-between font-bold text-lg border-t pt-2">
-                                <span>Total:</span>
-                                <span id="totalPrice">R$ 0,00</span>
-                            </div>
-                        </div>
-                        <button onclick="finalizePurchase()" class="w-full bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-lg mt-4 transition-colors">
-                            <i class="fas fa-check mr-2"></i>Finalizar Compra
-                        </button>
-                    </div>
-                </div>
-                
-                <!-- Shopping List -->
-                <div class="lg:col-span-2">
-                    <div class="flex justify-between items-center mb-4">
-                        <h4 class="font-semibold">Itens da Lista</h4>
-                        <button onclick="clearShoppingList()" class="text-red-600 hover:text-red-700 text-sm">
-                            <i class="fas fa-trash mr-1"></i>Limpar Lista
-                        </button>
-                    </div>
-                    <div id="shoppingList" class="space-y-2 max-h-96 overflow-y-auto">
-                        <!-- Shopping items will be loaded here -->
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Monthly Expenses Chart -->
-            <div class="mt-8 bg-gray-50 rounded-xl p-6">
-                <h4 class="font-semibold mb-4">Gastos do Mês</h4>
-                <div class="h-64">
-                    <canvas id="expensesChart"></canvas>
-                </div>
-                <div class="flex justify-between items-center mt-4">
-                    <div class="text-sm text-gray-600">
-                        Total do mês: <span id="monthlyTotal" class="font-bold">R$ 0,00</span>
-                    </div>
-                    <button onclick="clearMonthlyData()" class="text-red-600 hover:text-red-700 text-sm">
-                        <i class="fas fa-refresh mr-1"></i>Limpar Dados do Mês
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- WhatsApp Setup Modal -->
-    <div id="whatsappModal" class="fixed inset-0 bg-black/50 modal-overlay flex items-center justify-center z-50 hidden">
-        <div class="bg-white rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl">
-            <div class="text-center mb-6">
-                <div class="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <i class="fab fa-whatsapp text-2xl text-green-600"></i>
-                </div>
-                <h3 class="text-xl font-bold text-gray-800 mb-2">Notificações WhatsApp</h3>
-                <p class="text-gray-600">Configure seu número para receber lembretes</p>
-            </div>
-            
-            <form id="whatsappForm" class="space-y-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Número do WhatsApp</label>
-                    <input type="tel" id="whatsappNumber" placeholder="(11) 99999-9999" required
-                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500">
-                    <p class="text-xs text-gray-500 mt-1">Formato: (DD) 9XXXX-XXXX</p>
-                </div>
-                
-                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                    <p class="text-sm text-blue-800">
-                        <i class="fas fa-info-circle mr-2"></i>
-                        Utilizamos a API da <strong>Evolution API</strong> para envio de mensagens. 
-                        Plano gratuito: 1000 mensagens/mês.
-                    </p>
-                </div>
-                
-                <div class="flex space-x-3">
-                    <button type="button" onclick="closeWhatsAppModal()" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 py-3 px-4 rounded-lg transition-colors">
-                        Cancelar
-                    </button>
-                    <button type="submit" class="flex-1 bg-green-600 hover:bg-green-700 text-white py-3 px-4 rounded-lg transition-colors">
-                        Salvar
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Install PWA Modal -->
-    <div id="installModal" class="fixed inset-0 bg-black/50 modal-overlay flex items-center justify-center z-50 hidden">
-        <div class="bg-white rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl">
-            <div class="text-center mb-6">
-                <div class="bg-indigo-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <i class="fas fa-mobile-alt text-3xl text-indigo-600"></i>
-                </div>
-                <h3 class="text-2xl font-bold text-gray-800 mb-2">Instalar DeadlineX</h3>
-                <p class="text-gray-600">Instale o app no seu dispositivo para acesso rápido e notificações!</p>
-            </div>
-            
-            <div class="space-y-4 mb-6">
-                <div class="flex items-center space-x-3 text-sm text-gray-700">
-                    <i class="fas fa-check-circle text-green-500"></i>
-                    <span>Acesso offline aos seus prazos</span>
-                </div>
-                <div class="flex items-center space-x-3 text-sm text-gray-700">
-                    <i class="fas fa-check-circle text-green-500"></i>
-                    <span>Notificações push nativas</span>
-                </div>
-                <div class="flex items-center space-x-3 text-sm text-gray-700">
-                    <i class="fas fa-check-circle text-green-500"></i>
-                    <span>Ícone na tela inicial</span>
-                </div>
-                <div class="flex items-center space-x-3 text-sm text-gray-700">
-                    <i class="fas fa-check-circle text-green-500"></i>
-                    <span>Experiência como app nativo</span>
-                </div>
-            </div>
-            
-            <div class="space-y-3">
-                <button id="installAppBtn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-4 px-6 rounded-xl font-bold text-lg transition-colors">
-                    <i class="fas fa-download mr-2"></i>Instalar Agora
-                </button>
-                <button onclick="closeInstallModal()" class="w-full bg-gray-100 hover:bg-gray-200 text-gray-800 py-3 px-6 rounded-xl transition-colors">
-                    Talvez Depois
-                </button>
-            </div>
-            
-            <div class="mt-4 text-xs text-gray-500 text-center">
-                <p>💡 <strong>Dica:</strong> No Chrome/Safari, procure por "Instalar" ou "Adicionar à tela inicial" no menu do navegador</p>
-            </div>
-        </div>
-    </div>
-
     <!-- Notification Container -->
     <div id="notificationContainer" class="fixed top-4 right-4 space-y-2 z-40">
         <!-- Notifications will appear here -->
@@ -1007,16 +608,6 @@
         let currentDate = new Date();
         let notificationInterval = null;
         let clockInterval = null;
-        let isProUser = false;
-        let proTrialEnd = null;
-        let shoppingList = [];
-        let monthlyExpenses = [];
-        let expensesChart = null;
-        let deferredPrompt = null;
-        
-        // Evolution API Configuration (Demo - replace with real credentials)
-        const EVOLUTION_API_URL = 'https://api.evolution-api.com/v1';
-        const EVOLUTION_API_KEY = 'demo-key-replace-with-real';
 
         // DOM Elements
         const loginModal = document.getElementById('loginModal');
@@ -1026,135 +617,11 @@
         
         // Initialize App
         document.addEventListener('DOMContentLoaded', async () => {
-            console.log('🚀 DeadlineX iniciando...');
             await checkAuth();
             setupEventListeners();
             startClock();
             startNotificationSystem();
-            checkBrowserNotificationPermission();
-            setupPWA();
-            console.log('✅ DeadlineX carregado com sucesso!');
         });
-        
-        // PWA Setup
-        function setupPWA() {
-            // Listen for beforeinstallprompt event
-            window.addEventListener('beforeinstallprompt', (e) => {
-                e.preventDefault();
-                deferredPrompt = e;
-                document.getElementById('installBtn').classList.remove('hidden');
-            });
-            
-            // Listen for app installed event
-            window.addEventListener('appinstalled', () => {
-                showNotification('🎉 DeadlineX instalado com sucesso!', 'success');
-                document.getElementById('installBtn').classList.add('hidden');
-                deferredPrompt = null;
-            });
-            
-            // Check if already installed
-            if (window.matchMedia('(display-mode: standalone)').matches) {
-                document.getElementById('installBtn').classList.add('hidden');
-            }
-        }
-        
-        function openInstallModal() {
-            document.getElementById('dropdownMenu').classList.add('hidden');
-            document.getElementById('installModal').classList.remove('hidden');
-        }
-        
-        function closeInstallModal() {
-            document.getElementById('installModal').classList.add('hidden');
-        }
-        
-        async function installPWA() {
-            if (!deferredPrompt) {
-                // Fallback for browsers that don't support beforeinstallprompt
-                showInstallInstructions();
-                return;
-            }
-            
-            try {
-                deferredPrompt.prompt();
-                const { outcome } = await deferredPrompt.userChoice;
-                
-                if (outcome === 'accepted') {
-                    showNotification('🎉 Instalação iniciada!', 'success');
-                } else {
-                    showNotification('ℹ️ Instalação cancelada', 'info');
-                }
-                
-                deferredPrompt = null;
-                closeInstallModal();
-                
-            } catch (error) {
-                console.error('Erro na instalação:', error);
-                showInstallInstructions();
-            }
-        }
-        
-        function showInstallInstructions() {
-            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-            const isAndroid = /Android/.test(navigator.userAgent);
-            
-            let instructions = '';
-            
-            if (isIOS) {
-                instructions = `
-                    <div class="text-center">
-                        <h4 class="font-bold mb-3">Como instalar no iOS:</h4>
-                        <div class="space-y-2 text-sm text-left">
-                            <p>1. Toque no botão <i class="fas fa-share"></i> (compartilhar)</p>
-                            <p>2. Role para baixo e toque em "Adicionar à Tela de Início"</p>
-                            <p>3. Toque em "Adicionar" no canto superior direito</p>
-                        </div>
-                    </div>
-                `;
-            } else if (isAndroid) {
-                instructions = `
-                    <div class="text-center">
-                        <h4 class="font-bold mb-3">Como instalar no Android:</h4>
-                        <div class="space-y-2 text-sm text-left">
-                            <p>1. Toque no menu <i class="fas fa-ellipsis-v"></i> do navegador</p>
-                            <p>2. Procure por "Instalar app" ou "Adicionar à tela inicial"</p>
-                            <p>3. Toque em "Instalar"</p>
-                        </div>
-                    </div>
-                `;
-            } else {
-                instructions = `
-                    <div class="text-center">
-                        <h4 class="font-bold mb-3">Como instalar:</h4>
-                        <div class="space-y-2 text-sm text-left">
-                            <p>1. Procure pelo ícone <i class="fas fa-download"></i> na barra de endereços</p>
-                            <p>2. Ou vá no menu do navegador</p>
-                            <p>3. Procure por "Instalar DeadlineX" ou "Adicionar à área de trabalho"</p>
-                        </div>
-                    </div>
-                `;
-            }
-            
-            document.querySelector('#installModal .bg-white').innerHTML = `
-                <div class="text-center mb-6">
-                    <div class="bg-indigo-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-mobile-alt text-3xl text-indigo-600"></i>
-                    </div>
-                    <h3 class="text-2xl font-bold text-gray-800 mb-2">Instalar DeadlineX</h3>
-                </div>
-                
-                ${instructions}
-                
-                <button onclick="closeInstallModal()" class="w-full mt-6 bg-indigo-600 hover:bg-indigo-700 text-white py-3 px-6 rounded-xl transition-colors">
-                    Entendi
-                </button>
-            `;
-        }
-        
-        function checkBrowserNotificationPermission() {
-            if ("Notification" in window && Notification.permission === "granted") {
-                browserNotificationsEnabled = true;
-            }
-        }
 
         // Authentication Functions
         async function checkAuth() {
@@ -1202,57 +669,10 @@
             document.addEventListener('click', closeMenuOnClickOutside);
             
             // Menu actions
-            console.log('🔧 Configurando event listeners do menu...');
-            document.getElementById('upgradeBtn').addEventListener('click', () => {
-                console.log('Upgrade button clicked');
-                openUpgradeModal();
-            });
-            document.getElementById('shoppingBtn').addEventListener('click', () => {
-                console.log('Shopping button clicked');
-                openShoppingModal();
-            });
-            document.getElementById('whatsappBtn').addEventListener('click', () => {
-                console.log('WhatsApp button clicked');
-                openWhatsAppModal();
-            });
-            document.getElementById('notificationBtn').addEventListener('click', () => {
-                console.log('Notification button clicked');
-                setupBrowserNotifications();
-            });
-            document.getElementById('installMenuBtn').addEventListener('click', () => {
-                console.log('Install menu button clicked');
-                openInstallModal();
-            });
-            document.getElementById('shareBtn').addEventListener('click', () => {
-                console.log('Share button clicked');
-                openShareModal();
-            });
-            document.getElementById('privacyBtn').addEventListener('click', () => {
-                console.log('Privacy button clicked');
-                openPrivacyModal();
-            });
-            document.getElementById('supportBtn').addEventListener('click', () => {
-                console.log('Support button clicked');
-                openSupportModal();
-            });
-            document.getElementById('deleteAccountBtn').addEventListener('click', () => {
-                console.log('Delete account button clicked');
-                openDeleteModal();
-            });
-            document.getElementById('logoutBtn').addEventListener('click', () => {
-                console.log('Logout button clicked');
-                handleLogout();
-            });
-            
-            // PWA Install
-            document.getElementById('installBtn').addEventListener('click', openInstallModal);
-            document.getElementById('installAppBtn').addEventListener('click', installPWA);
-            
-            // Shopping list
-            document.getElementById('addItemForm').addEventListener('submit', addShoppingItem);
-            
-            // WhatsApp form
-            document.getElementById('whatsappForm').addEventListener('submit', saveWhatsAppNumber);
+            document.getElementById('shareBtn').addEventListener('click', openShareModal);
+            document.getElementById('privacyBtn').addEventListener('click', openPrivacyModal);
+            document.getElementById('deleteAccountBtn').addEventListener('click', openDeleteModal);
+            document.getElementById('logoutBtn').addEventListener('click', handleLogout);
             
             // Add deadline
             document.getElementById('addDeadlineBtn').addEventListener('click', openAddModal);
@@ -1364,66 +784,6 @@
             document.getElementById('liveClock').textContent = timeString;
         }
 
-        // Browser Notification System
-        let browserNotificationsEnabled = false;
-        
-        async function setupBrowserNotifications() {
-            document.getElementById('dropdownMenu').classList.add('hidden');
-            
-            if (!("Notification" in window)) {
-                showNotification('❌ Seu navegador não suporta notificações', 'error');
-                return;
-            }
-            
-            if (Notification.permission === "granted") {
-                browserNotificationsEnabled = true;
-                showNotification('✅ Notificações já estão ativadas!', 'success');
-                return;
-            }
-            
-            if (Notification.permission !== "denied") {
-                const permission = await Notification.requestPermission();
-                if (permission === "granted") {
-                    browserNotificationsEnabled = true;
-                    showNotification('🔔 Notificações ativadas! Você receberá lembretes mesmo com o navegador fechado.', 'success');
-                    
-                    // Test notification
-                    new Notification("DeadlineX", {
-                        body: "Notificações ativadas com sucesso! 🎉",
-                        icon: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='40' fill='%236366f1'/%3E%3Ctext x='50' y='60' text-anchor='middle' fill='white' font-size='30'%3E🚀%3C/text%3E%3C/svg%3E"
-                    });
-                } else {
-                    showNotification('❌ Permissão negada. Ative nas configurações do navegador.', 'error');
-                }
-            } else {
-                showNotification('❌ Notificações bloqueadas. Ative nas configurações do navegador.', 'error');
-            }
-        }
-        
-        function sendBrowserNotification(title, body, urgent = false) {
-            if (!browserNotificationsEnabled || Notification.permission !== "granted") {
-                return;
-            }
-            
-            const notification = new Notification(title, {
-                body: body,
-                icon: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='40' fill='%236366f1'/%3E%3Ctext x='50' y='60' text-anchor='middle' fill='white' font-size='30'%3E🚀%3C/text%3E%3C/svg%3E",
-                badge: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='40' fill='%23ef4444'/%3E%3Ctext x='50' y='60' text-anchor='middle' fill='white' font-size='20'%3E⚠️%3C/text%3E%3C/svg%3E",
-                requireInteraction: urgent,
-                silent: false
-            });
-            
-            notification.onclick = function() {
-                window.focus();
-                notification.close();
-            };
-            
-            // Auto close after 10 seconds if not urgent
-            if (!urgent) {
-                setTimeout(() => notification.close(), 10000);
-            }
-        }
-
         // Notification System
         function startNotificationSystem() {
             if (notificationInterval) clearInterval(notificationInterval);
@@ -1458,38 +818,17 @@
                 const timeDiff = deadlineDate - now;
                 const daysDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
                 
-                let message = '';
-                let type = 'info';
-                let urgent = false;
-                
-                // Check for different notification periods
+                // Check for 30 days, 7 days, and 1 day notifications
                 if (daysDiff === 30) {
-                    message = `📅 Prazo em 30 dias: ${deadline.title}`;
-                    type = 'info';
+                    showNotification(`📅 Prazo em 30 dias: ${deadline.title}`, 'info');
                 } else if (daysDiff === 7) {
-                    message = `⚠️ Prazo em 1 semana: ${deadline.title}`;
-                    type = 'warning';
+                    showNotification(`⚠️ Prazo em 1 semana: ${deadline.title}`, 'warning');
                 } else if (daysDiff === 1) {
-                    message = `🚨 Prazo amanhã: ${deadline.title}`;
-                    type = 'urgent';
-                    urgent = true;
+                    showNotification(`🚨 Prazo amanhã: ${deadline.title}`, 'urgent');
                 } else if (daysDiff === 0) {
-                    message = `⏰ Prazo hoje: ${deadline.title}`;
-                    type = 'urgent';
-                    urgent = true;
+                    showNotification(`⏰ Prazo hoje: ${deadline.title}`, 'urgent');
                 } else if (daysDiff < 0) {
-                    message = `❌ Prazo vencido: ${deadline.title}`;
-                    type = 'error';
-                    urgent = true;
-                }
-                
-                if (message) {
-                    // Show in-app notification
-                    showNotification(message, type);
-                    
-                    // Send browser notification for all users (free and PRO)
-                    const notificationBody = `${deadline.description || 'Sem descrição'}\nData: ${formatDate(deadline.date)}`;
-                    sendBrowserNotification('DeadlineX - Lembrete', `${message}\n\n${notificationBody}`, urgent);
+                    showNotification(`❌ Prazo vencido: ${deadline.title}`, 'error');
                 }
             });
         }
@@ -1552,95 +891,36 @@
         }
 
         function shareViaWhatsApp() {
-            const referralCode = currentUser ? btoa(currentUser.id).substring(0, 8) : 'GUEST';
-            const message = encodeURIComponent(`🎯 *DeadlineX* - O melhor organizador de prazos!
-
-✅ Nunca mais perca um prazo importante
-🔔 Notificações inteligentes
-📱 Instale como app no celular
-💼 Versão PRO com lista de compras e controle de gastos
-
-🎁 *Use meu código de convite: ${referralCode}*
-E ganhe 1 mês PRO grátis!
-
-Baixe agora:`);
-            const url = encodeURIComponent(`${window.location.href}?ref=${referralCode}`);
+            const message = encodeURIComponent('🎯 Descobri o DeadlineX! Um organizador de prazos incrível que me ajuda a nunca mais perder um prazo importante. Experimente você também!');
+            const url = encodeURIComponent(window.location.href);
             window.open(`https://wa.me/?text=${message}%20${url}`, '_blank');
-            closeShareModal();
-        }
-
-        function shareViaFacebook() {
-            const referralCode = currentUser ? btoa(currentUser.id).substring(0, 8) : 'GUEST';
-            const url = encodeURIComponent(`${window.location.href}?ref=${referralCode}`);
-            const text = encodeURIComponent('🎯 DeadlineX - O melhor organizador de prazos! Nunca mais perca um prazo importante. Ganhe 1 mês PRO grátis com meu convite!');
-            window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}&quote=${text}`, '_blank');
-            closeShareModal();
-        }
-
-        function shareViaTwitter() {
-            const referralCode = currentUser ? btoa(currentUser.id).substring(0, 8) : 'GUEST';
-            const text = encodeURIComponent(`🎯 DeadlineX - O melhor organizador de prazos!
-
-✅ Notificações inteligentes
-📱 App para celular
-💼 Lista de compras integrada
-
-🎁 Ganhe 1 mês PRO grátis com meu código: ${referralCode}`);
-            const url = encodeURIComponent(`${window.location.href}?ref=${referralCode}`);
-            window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, '_blank');
-            closeShareModal();
         }
 
         function shareViaEmail() {
-            const referralCode = currentUser ? btoa(currentUser.id).substring(0, 8) : 'GUEST';
-            const subject = encodeURIComponent('🎯 DeadlineX - Organizador de Prazos (Convite Especial)');
+            const subject = encodeURIComponent('DeadlineX - Organizador de Prazos');
             const body = encodeURIComponent(`Olá!
 
-Descobri uma ferramenta INCRÍVEL para organizar prazos e queria compartilhar com você: o DeadlineX!
+Descobri uma ferramenta incrível para organizar prazos e queria compartilhar com você: o DeadlineX!
 
-🎯 O QUE ELE FAZ:
-✅ Organiza todos os seus prazos em um só lugar
-🔔 Notificações automáticas no celular
-📱 Instala como app nativo
-📊 Visualização em lista ou calendário
-🏷️ Categorização inteligente (saúde, trabalho, etc.)
+🎯 Com ele você pode:
+• Organizar todos os seus prazos em um só lugar
+• Receber notificações automáticas
+• Visualizar em lista ou calendário
+• Categorizar por tipo (saúde, trabalho, etc.)
 
-💼 VERSÃO PRO:
-🛒 Lista de compras inteligente
-💰 Controle de gastos mensais
-📱 Notificações via WhatsApp
-☁️ Backup automático na nuvem
+Acesse aqui: ${window.location.href}
 
-🎁 OFERTA ESPECIAL:
-Use meu código de convite: ${referralCode}
-E ganhe 1 MÊS PRO GRÁTIS!
-
-👉 Acesse aqui: ${window.location.href}?ref=${referralCode}
-
-Vale muito a pena experimentar! Eu uso todos os dias e nunca mais perdi um prazo importante.
-
-Abraços!`);
+Vale muito a pena experimentar!`);
             
             window.open(`mailto:?subject=${subject}&body=${body}`, '_blank');
-            closeShareModal();
         }
 
         function copyShareLink() {
-            const referralCode = currentUser ? btoa(currentUser.id).substring(0, 8) : 'GUEST';
-            const shareText = `🎯 DeadlineX - O melhor organizador de prazos!
-
-✅ Nunca mais perca um prazo importante
-🔔 Notificações inteligentes
-📱 Instale como app no celular
-💼 Lista de compras e controle de gastos
-
-🎁 Ganhe 1 mês PRO grátis com meu código: ${referralCode}
-
-👉 ${window.location.href}?ref=${referralCode}`;
+            const shareText = `🎯 DeadlineX - Organizador de Prazos\n\nNunca mais perca um prazo importante!\n\n${window.location.href}`;
             
             if (navigator.clipboard) {
                 navigator.clipboard.writeText(shareText).then(() => {
-                    showNotification('✅ Link de convite copiado! Cole onde quiser compartilhar.', 'success');
+                    showNotification('✅ Link copiado para a área de transferência!', 'success');
                 });
             } else {
                 // Fallback for older browsers
@@ -1650,7 +930,7 @@ Abraços!`);
                 textArea.select();
                 document.execCommand('copy');
                 document.body.removeChild(textArea);
-                showNotification('✅ Link de convite copiado! Cole onde quiser compartilhar.', 'success');
+                showNotification('✅ Link copiado para a área de transferência!', 'success');
             }
             
             closeShareModal();
@@ -1664,122 +944,6 @@ Abraços!`);
 
         function closePrivacyModal() {
             document.getElementById('privacyModal').classList.add('hidden');
-        }
-
-        // Support Functions
-        function openSupportModal() {
-            document.getElementById('dropdownMenu').classList.add('hidden');
-            document.getElementById('supportModal').classList.remove('hidden');
-        }
-
-        function closeSupportModal() {
-            document.getElementById('supportModal').classList.add('hidden');
-        }
-
-        function openWhatsAppSupport() {
-            const message = encodeURIComponent(`🎯 *DeadlineX - Suporte*
-
-Olá! Preciso de ajuda com:
-
-📧 Email da conta: ${currentUser?.email || 'Não logado'}
-📱 Navegador: ${navigator.userAgent.split(' ')[0]}
-🔧 Problema: [Descreva seu problema aqui]
-
-Obrigado!`);
-            window.open(`https://wa.me/5511999999999?text=${message}`, '_blank');
-            closeSupportModal();
-        }
-
-        function openEmailSupport() {
-            const subject = encodeURIComponent('DeadlineX - Solicitação de Suporte');
-            const body = encodeURIComponent(`Olá equipe DeadlineX!
-
-Preciso de ajuda com o sistema.
-
-INFORMAÇÕES DA CONTA:
-📧 Email: ${currentUser?.email || 'Não logado'}
-📱 Navegador: ${navigator.userAgent}
-🕐 Data/Hora: ${new Date().toLocaleString('pt-BR')}
-
-DESCRIÇÃO DO PROBLEMA:
-[Descreva detalhadamente seu problema aqui]
-
-PASSOS PARA REPRODUZIR:
-1. [Primeiro passo]
-2. [Segundo passo]
-3. [Terceiro passo]
-
-RESULTADO ESPERADO:
-[O que deveria acontecer]
-
-RESULTADO ATUAL:
-[O que está acontecendo]
-
-Obrigado pela atenção!`);
-            
-            window.open(`mailto:suporte@deadlinex.com?subject=${subject}&body=${body}`, '_blank');
-            closeSupportModal();
-        }
-
-        function openFAQ() {
-            closeSupportModal();
-            
-            // Create FAQ modal
-            const faqModal = document.createElement('div');
-            faqModal.className = 'fixed inset-0 bg-black/50 modal-overlay flex items-center justify-center z-50';
-            faqModal.innerHTML = `
-                <div class="bg-white rounded-2xl p-8 max-w-2xl w-full mx-4 shadow-2xl max-h-[80vh] overflow-y-auto">
-                    <div class="flex justify-between items-center mb-6">
-                        <h3 class="text-xl font-bold text-gray-800">Perguntas Frequentes</h3>
-                        <button onclick="this.closest('.fixed').remove()" class="text-gray-400 hover:text-gray-600">
-                            <i class="fas fa-times text-xl"></i>
-                        </button>
-                    </div>
-                    
-                    <div class="space-y-6">
-                        <div class="border-b pb-4">
-                            <h4 class="font-semibold text-gray-800 mb-2">❓ Como funciona o sistema de notificações?</h4>
-                            <p class="text-sm text-gray-600">O DeadlineX envia notificações automáticas 30 dias, 7 dias, 1 dia antes e no dia do prazo. Você pode ativar notificações do navegador no menu.</p>
-                        </div>
-                        
-                        <div class="border-b pb-4">
-                            <h4 class="font-semibold text-gray-800 mb-2">💎 Quais são os benefícios do PRO?</h4>
-                            <p class="text-sm text-gray-600">PRO inclui: Lista de compras inteligente, controle de gastos, notificações WhatsApp, backup na nuvem e sincronização multi-dispositivos.</p>
-                        </div>
-                        
-                        <div class="border-b pb-4">
-                            <h4 class="font-semibold text-gray-800 mb-2">📱 Como instalar o app no celular?</h4>
-                            <p class="text-sm text-gray-600">No menu, clique em "Instalar App". No Chrome/Safari, procure o ícone de instalação na barra de endereços ou use "Adicionar à tela inicial".</p>
-                        </div>
-                        
-                        <div class="border-b pb-4">
-                            <h4 class="font-semibold text-gray-800 mb-2">🎁 Como funciona o sistema de referência?</h4>
-                            <p class="text-sm text-gray-600">Compartilhe o DeadlineX usando seu código único. Para cada amigo que se cadastrar, você ganha 1 mês PRO grátis!</p>
-                        </div>
-                        
-                        <div class="border-b pb-4">
-                            <h4 class="font-semibold text-gray-800 mb-2">🔒 Meus dados estão seguros?</h4>
-                            <p class="text-sm text-gray-600">Sim! Usamos criptografia e políticas de segurança do Supabase. Seus dados são protegidos e não compartilhamos com terceiros.</p>
-                        </div>
-                        
-                        <div class="border-b pb-4">
-                            <h4 class="font-semibold text-gray-800 mb-2">💳 Como cancelar a assinatura PRO?</h4>
-                            <p class="text-sm text-gray-600">Entre em contato conosco via WhatsApp ou email. O cancelamento é processado imediatamente e você mantém acesso até o fim do período pago.</p>
-                        </div>
-                        
-                        <div>
-                            <h4 class="font-semibold text-gray-800 mb-2">🆘 Não encontrou sua resposta?</h4>
-                            <p class="text-sm text-gray-600">Entre em contato conosco via WhatsApp ou email. Nossa equipe responde em até 24 horas!</p>
-                        </div>
-                    </div>
-                    
-                    <button onclick="this.closest('.fixed').remove()" class="w-full mt-6 bg-indigo-600 hover:bg-indigo-700 text-white py-3 px-4 rounded-xl transition-colors">
-                        Fechar
-                    </button>
-                </div>
-            `;
-            
-            document.body.appendChild(faqModal);
         }
 
         // Delete Account Functions
@@ -2360,609 +1524,20 @@ Obrigado pela atenção!`);
             renderDeadlines();
         }
 
-        // PRO Functions
-        async function checkProStatus() {
-            if (!currentUser) return;
-            
-            try {
-                const { data, error } = await supabase
-                    .from('user_subscriptions')
-                    .select('*')
-                    .eq('user_id', currentUser.id)
-                    .single();
-                
-                if (data && data.active) {
-                    isProUser = true;
-                    proTrialEnd = new Date(data.trial_end);
-                    updateProUI();
-                }
-            } catch (error) {
-                console.log('No PRO subscription found');
-            }
-        }
-
-        function updateProUI() {
-            const proStatus = document.getElementById('proStatus');
-            const planStatus = document.getElementById('planStatus');
-            const proFeatures = document.querySelectorAll('.pro-feature');
-            const proSection = document.getElementById('proSection');
-            
-            if (isProUser) {
-                proStatus.classList.remove('hidden');
-                planStatus.textContent = 'Plano PRO';
-                proSection.innerHTML = '<i class="fas fa-crown mr-2"></i>Usuário PRO Ativo';
-                proSection.className = 'bg-gradient-to-r from-green-400 to-blue-500 text-white px-4 py-2 text-sm font-medium';
-                proFeatures.forEach(feature => {
-                    feature.classList.remove('opacity-50');
-                    feature.style.pointerEvents = 'auto';
-                });
-            } else {
-                proStatus.classList.add('hidden');
-                planStatus.textContent = 'Plano Gratuito';
-                proSection.innerHTML = '<i class="fas fa-crown mr-2"></i>Upgrade para PRO';
-                proSection.className = 'bg-gradient-to-r from-orange-400 to-red-500 text-white px-4 py-2 text-sm font-medium';
-                proFeatures.forEach(feature => {
-                    feature.classList.add('opacity-50');
-                    feature.style.pointerEvents = 'none';
-                });
-            }
-        }
-
-        function openUpgradeModal() {
-            document.getElementById('dropdownMenu').classList.add('hidden');
-            document.getElementById('upgradeModal').classList.remove('hidden');
-        }
-
-        function closeUpgradeModal() {
-            document.getElementById('upgradeModal').classList.add('hidden');
-        }
-
-        async function startProTrial() {
-            showLoading();
-            
-            try {
-                const trialEnd = new Date();
-                trialEnd.setDate(trialEnd.getDate() + 7);
-                
-                const { error } = await supabase
-                    .from('user_subscriptions')
-                    .upsert({
-                        user_id: currentUser.id,
-                        active: true,
-                        trial_end: trialEnd.toISOString(),
-                        plan: 'pro_trial',
-                        price: 0
-                    });
-                
-                if (error) throw error;
-                
-                isProUser = true;
-                proTrialEnd = trialEnd;
-                updateProUI();
-                closeUpgradeModal();
-                
-                showNotification('🎉 Teste PRO ativado! 7 dias grátis para você explorar!', 'success');
-                
-                // Load PRO features
-                await loadShoppingList();
-                await loadMonthlyExpenses();
-                
-            } catch (error) {
-                console.error('Erro ao ativar teste:', error);
-                showNotification('❌ Erro ao ativar teste PRO', 'error');
-            } finally {
-                hideLoading();
-            }
-        }
-
-        // Shopping List Functions
-        function openShoppingModal() {
-            if (!isProUser) {
-                openUpgradeModal();
-                return;
-            }
-            
-            document.getElementById('dropdownMenu').classList.add('hidden');
-            document.getElementById('shoppingModal').classList.remove('hidden');
-            loadShoppingList();
-            loadExpensesChart();
-        }
-
-        function closeShoppingModal() {
-            document.getElementById('shoppingModal').classList.add('hidden');
-        }
-
-        async function addShoppingItem(e) {
-            e.preventDefault();
-            
-            const name = document.getElementById('itemName').value;
-            const price = parseFloat(document.getElementById('itemPrice').value);
-            const quantity = parseInt(document.getElementById('itemQuantity').value);
-            const category = document.getElementById('itemCategory').value;
-            
-            const item = {
-                id: Date.now(),
-                name,
-                price,
-                quantity,
-                category,
-                total: price * quantity,
-                inCart: false,
-                purchased: false,
-                user_id: currentUser.id,
-                created_at: new Date().toISOString()
-            };
-            
-            try {
-                const { error } = await supabase
-                    .from('shopping_items')
-                    .insert([item]);
-                
-                if (error) throw error;
-                
-                document.getElementById('addItemForm').reset();
-                document.getElementById('itemQuantity').value = '1';
-                
-                await loadShoppingList();
-                showNotification('✅ Item adicionado à lista!', 'success');
-                
-            } catch (error) {
-                console.error('Erro ao adicionar item:', error);
-                showNotification('❌ Erro ao adicionar item', 'error');
-            }
-        }
-
-        async function loadShoppingList() {
-            if (!currentUser || !isProUser) return;
-            
-            try {
-                const { data, error } = await supabase
-                    .from('shopping_items')
-                    .select('*')
-                    .eq('user_id', currentUser.id)
-                    .eq('purchased', false)
-                    .order('created_at', { ascending: false });
-                
-                if (error) throw error;
-                
-                shoppingList = data || [];
-                renderShoppingList();
-                updateShoppingSummary();
-                
-            } catch (error) {
-                console.error('Erro ao carregar lista:', error);
-            }
-        }
-
-        function renderShoppingList() {
-            const container = document.getElementById('shoppingList');
-            
-            if (shoppingList.length === 0) {
-                container.innerHTML = `
-                    <div class="text-center py-8 text-gray-500">
-                        <i class="fas fa-shopping-cart text-4xl mb-4"></i>
-                        <p>Sua lista está vazia</p>
-                        <p class="text-sm">Adicione itens para começar!</p>
-                    </div>
-                `;
-                return;
-            }
-            
-            container.innerHTML = shoppingList.map(item => `
-                <div class="bg-white border rounded-lg p-4 flex items-center justify-between ${item.inCart ? 'bg-green-50 border-green-200' : ''}">
-                    <div class="flex items-center space-x-3">
-                        <button onclick="toggleCart(${item.id})" 
-                                class="w-6 h-6 rounded border-2 flex items-center justify-center transition-colors ${
-                                    item.inCart ? 'bg-green-500 border-green-500 text-white' : 'border-gray-300 hover:border-green-500'
-                                }">
-                            ${item.inCart ? '<i class="fas fa-check text-xs"></i>' : ''}
-                        </button>
-                        <div class="${item.inCart ? 'opacity-60' : ''}">
-                            <div class="font-medium">${item.name}</div>
-                            <div class="text-sm text-gray-500">
-                                ${item.quantity}x R$ ${item.price.toFixed(2)} = R$ ${item.total.toFixed(2)}
-                            </div>
-                            <span class="inline-block px-2 py-1 text-xs bg-gray-100 text-gray-600 rounded-full">
-                                ${getCategoryLabel(item.category)}
-                            </span>
-                        </div>
-                    </div>
-                    <button onclick="removeShoppingItem(${item.id})" 
-                            class="text-red-500 hover:text-red-700 p-2">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                </div>
-            `).join('');
-        }
-
-        async function toggleCart(itemId) {
-            const item = shoppingList.find(i => i.id === itemId);
-            if (!item) return;
-            
-            try {
-                const { error } = await supabase
-                    .from('shopping_items')
-                    .update({ inCart: !item.inCart })
-                    .eq('id', itemId);
-                
-                if (error) throw error;
-                
-                await loadShoppingList();
-                
-            } catch (error) {
-                console.error('Erro ao atualizar item:', error);
-            }
-        }
-
-        async function removeShoppingItem(itemId) {
-            if (!confirm('Remover este item da lista?')) return;
-            
-            try {
-                const { error } = await supabase
-                    .from('shopping_items')
-                    .delete()
-                    .eq('id', itemId);
-                
-                if (error) throw error;
-                
-                await loadShoppingList();
-                showNotification('✅ Item removido!', 'success');
-                
-            } catch (error) {
-                console.error('Erro ao remover item:', error);
-            }
-        }
-
-        function updateShoppingSummary() {
-            const totalItems = shoppingList.length;
-            const cartItems = shoppingList.filter(item => item.inCart).length;
-            const totalPrice = shoppingList.reduce((sum, item) => sum + (item.inCart ? item.total : 0), 0);
-            
-            document.getElementById('totalItems').textContent = totalItems;
-            document.getElementById('cartItems').textContent = cartItems;
-            document.getElementById('totalPrice').textContent = `R$ ${totalPrice.toFixed(2)}`;
-        }
-
-        async function finalizePurchase() {
-            const cartItems = shoppingList.filter(item => item.inCart);
-            
-            if (cartItems.length === 0) {
-                showNotification('❌ Adicione itens ao carrinho primeiro!', 'error');
-                return;
-            }
-            
-            if (!confirm(`Finalizar compra de ${cartItems.length} itens por R$ ${cartItems.reduce((sum, item) => sum + item.total, 0).toFixed(2)}?`)) {
-                return;
-            }
-            
-            showLoading();
-            
-            try {
-                // Mark items as purchased
-                const itemIds = cartItems.map(item => item.id);
-                const { error: updateError } = await supabase
-                    .from('shopping_items')
-                    .update({ purchased: true, purchased_at: new Date().toISOString() })
-                    .in('id', itemIds);
-                
-                if (updateError) throw updateError;
-                
-                // Add to monthly expenses
-                const totalAmount = cartItems.reduce((sum, item) => sum + item.total, 0);
-                const expense = {
-                    user_id: currentUser.id,
-                    amount: totalAmount,
-                    date: new Date().toISOString().split('T')[0],
-                    items_count: cartItems.length,
-                    categories: [...new Set(cartItems.map(item => item.category))]
-                };
-                
-                const { error: expenseError } = await supabase
-                    .from('monthly_expenses')
-                    .insert([expense]);
-                
-                if (expenseError) throw expenseError;
-                
-                await loadShoppingList();
-                await loadMonthlyExpenses();
-                loadExpensesChart();
-                
-                showNotification(`🎉 Compra finalizada! Total: R$ ${totalAmount.toFixed(2)}`, 'success');
-                
-                // Send WhatsApp notification if configured
-                await sendWhatsAppNotification(`🛒 Compra finalizada!\n\n💰 Total: R$ ${totalAmount.toFixed(2)}\n📦 ${cartItems.length} itens comprados\n\n✅ Registrado no seu controle de gastos!`);
-                
-            } catch (error) {
-                console.error('Erro ao finalizar compra:', error);
-                showNotification('❌ Erro ao finalizar compra', 'error');
-            } finally {
-                hideLoading();
-            }
-        }
-
-        async function clearShoppingList() {
-            if (!confirm('Limpar toda a lista de compras?')) return;
-            
-            try {
-                const { error } = await supabase
-                    .from('shopping_items')
-                    .delete()
-                    .eq('user_id', currentUser.id)
-                    .eq('purchased', false);
-                
-                if (error) throw error;
-                
-                await loadShoppingList();
-                showNotification('✅ Lista limpa!', 'success');
-                
-            } catch (error) {
-                console.error('Erro ao limpar lista:', error);
-            }
-        }
-
-        // Monthly Expenses Functions
-        async function loadMonthlyExpenses() {
-            if (!currentUser || !isProUser) return;
-            
-            try {
-                const currentMonth = new Date().toISOString().slice(0, 7); // YYYY-MM
-                
-                const { data, error } = await supabase
-                    .from('monthly_expenses')
-                    .select('*')
-                    .eq('user_id', currentUser.id)
-                    .gte('date', currentMonth + '-01')
-                    .lt('date', getNextMonth(currentMonth) + '-01')
-                    .order('date', { ascending: true });
-                
-                if (error) throw error;
-                
-                monthlyExpenses = data || [];
-                updateMonthlyTotal();
-                
-            } catch (error) {
-                console.error('Erro ao carregar gastos:', error);
-            }
-        }
-
-        function updateMonthlyTotal() {
-            const total = monthlyExpenses.reduce((sum, expense) => sum + expense.amount, 0);
-            document.getElementById('monthlyTotal').textContent = `R$ ${total.toFixed(2)}`;
-        }
-
-        function loadExpensesChart() {
-            const ctx = document.getElementById('expensesChart').getContext('2d');
-            
-            if (expensesChart) {
-                expensesChart.destroy();
-            }
-            
-            const dailyExpenses = {};
-            const currentMonth = new Date().toISOString().slice(0, 7);
-            const daysInMonth = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate();
-            
-            // Initialize all days with 0
-            for (let i = 1; i <= daysInMonth; i++) {
-                const day = i.toString().padStart(2, '0');
-                dailyExpenses[`${currentMonth}-${day}`] = 0;
-            }
-            
-            // Fill with actual expenses
-            monthlyExpenses.forEach(expense => {
-                dailyExpenses[expense.date] = (dailyExpenses[expense.date] || 0) + expense.amount;
-            });
-            
-            const labels = Object.keys(dailyExpenses).map(date => date.split('-')[2]);
-            const data = Object.values(dailyExpenses);
-            
-            expensesChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Gastos Diários (R$)',
-                        data: data,
-                        borderColor: '#3b82f6',
-                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                        borderWidth: 2,
-                        fill: true,
-                        tension: 0.4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                callback: function(value) {
-                                    return 'R$ ' + value.toFixed(2);
-                                }
-                            }
-                        }
-                    },
-                    plugins: {
-                        legend: {
-                            display: false
-                        }
-                    }
-                }
-            });
-        }
-
-        async function clearMonthlyData() {
-            if (!confirm('Limpar todos os dados de gastos do mês atual?')) return;
-            
-            try {
-                const currentMonth = new Date().toISOString().slice(0, 7);
-                
-                const { error } = await supabase
-                    .from('monthly_expenses')
-                    .delete()
-                    .eq('user_id', currentUser.id)
-                    .gte('date', currentMonth + '-01')
-                    .lt('date', getNextMonth(currentMonth) + '-01');
-                
-                if (error) throw error;
-                
-                await loadMonthlyExpenses();
-                loadExpensesChart();
-                showNotification('✅ Dados do mês limpos!', 'success');
-                
-            } catch (error) {
-                console.error('Erro ao limpar dados:', error);
-            }
-        }
-
-        // WhatsApp Functions
-        function openWhatsAppModal() {
-            if (!isProUser) {
-                openUpgradeModal();
-                return;
-            }
-            document.getElementById('dropdownMenu').classList.add('hidden');
-            document.getElementById('whatsappModal').classList.remove('hidden');
-        }
-
-        function closeWhatsAppModal() {
-            document.getElementById('whatsappModal').classList.add('hidden');
-        }
-
-        async function saveWhatsAppNumber(e) {
-            e.preventDefault();
-            
-            const number = document.getElementById('whatsappNumber').value;
-            
-            try {
-                const { error } = await supabase
-                    .from('user_settings')
-                    .upsert({
-                        user_id: currentUser.id,
-                        whatsapp_number: number,
-                        whatsapp_enabled: true
-                    });
-                
-                if (error) throw error;
-                
-                closeWhatsAppModal();
-                showNotification('✅ Número do WhatsApp salvo!', 'success');
-                
-            } catch (error) {
-                console.error('Erro ao salvar número:', error);
-                showNotification('❌ Erro ao salvar número', 'error');
-            }
-        }
-
-        async function sendWhatsAppNotification(message) {
-            if (!isProUser) return;
-            
-            try {
-                const { data: settings } = await supabase
-                    .from('user_settings')
-                    .select('whatsapp_number, whatsapp_enabled')
-                    .eq('user_id', currentUser.id)
-                    .single();
-                
-                if (!settings || !settings.whatsapp_enabled || !settings.whatsapp_number) {
-                    return;
-                }
-                
-                // Demo implementation - replace with real Evolution API call
-                console.log('WhatsApp notification would be sent:', {
-                    number: settings.whatsapp_number,
-                    message: message
-                });
-                
-                // Real implementation would be:
-                /*
-                const response = await fetch(`${EVOLUTION_API_URL}/message/sendText`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${EVOLUTION_API_KEY}`
-                    },
-                    body: JSON.stringify({
-                        number: settings.whatsapp_number,
-                        text: message
-                    })
-                });
-                */
-                
-            } catch (error) {
-                console.error('Erro ao enviar WhatsApp:', error);
-            }
-        }
-
-        // Utility Functions
-        function getNextMonth(monthString) {
-            const date = new Date(monthString + '-01');
-            date.setMonth(date.getMonth() + 1);
-            return date.toISOString().slice(0, 7);
-        }
-
-        // Enhanced notification system for PRO users
-        async function checkDeadlineNotifications() {
-            const now = new Date();
-            
-            deadlines.forEach(async (deadline) => {
-                if (deadline.completed || !deadline.notification) return;
-                
-                const deadlineDate = new Date(deadline.date);
-                const timeDiff = deadlineDate - now;
-                const daysDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
-                
-                let message = '';
-                let type = 'info';
-                
-                if (daysDiff === 30) {
-                    message = `📅 Prazo em 30 dias: ${deadline.title}`;
-                    type = 'info';
-                } else if (daysDiff === 7) {
-                    message = `⚠️ Prazo em 1 semana: ${deadline.title}`;
-                    type = 'warning';
-                } else if (daysDiff === 1) {
-                    message = `🚨 Prazo amanhã: ${deadline.title}`;
-                    type = 'urgent';
-                } else if (daysDiff === 0) {
-                    message = `⏰ Prazo hoje: ${deadline.title}`;
-                    type = 'urgent';
-                } else if (daysDiff < 0) {
-                    message = `❌ Prazo vencido: ${deadline.title}`;
-                    type = 'error';
-                }
-                
-                if (message) {
-                    showNotification(message, type);
-                    
-                    // Send WhatsApp notification for PRO users
-                    if (isProUser && (daysDiff <= 1 || daysDiff === 7)) {
-                        await sendWhatsAppNotification(`🎯 DeadlineX - Lembrete de Prazo\n\n${message}\n\n📝 ${deadline.description || 'Sem descrição'}\n📅 Data: ${formatDate(deadline.date)}`);
-                    }
-                }
-            });
-        }
-
         // Listen for auth changes
-        supabase.auth.onAuthStateChange(async (event, session) => {
+        supabase.auth.onAuthStateChange((event, session) => {
             if (event === 'SIGNED_IN') {
                 currentUser = session.user;
                 showMainContent();
-                await loadDeadlines();
-                await checkProStatus();
-                if (isProUser) {
-                    await loadShoppingList();
-                    await loadMonthlyExpenses();
-                }
+                loadDeadlines();
             } else if (event === 'SIGNED_OUT') {
                 currentUser = null;
                 deadlines = [];
-                isProUser = false;
                 showLoginModal();
             }
         });
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9803aefec1bad457',t:'MTc1ODA2MDUxOC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9803e80192986ead',t:'MTc1ODA2Mjg1My4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
 
 
