@@ -4,15 +4,40 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DeadlineX - Sistema de Gestão de Prazos</title>
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#667eea">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="DeadlineX">
+    <meta name="description" content="Sistema inteligente de gestão de prazos e tarefas">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" id="manifest-placeholder">
+    
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap');
         * { font-family: 'Inter', sans-serif; }
         
         .gradient-bg {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .tech-gradient {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+        }
+        
+        .cyber-glow {
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .neon-border {
+            border: 2px solid #667eea;
+            box-shadow: 0 0 10px rgba(102, 126, 234, 0.5);
         }
         
         .glass-effect {
@@ -77,6 +102,15 @@
             to { opacity: 1; transform: translateY(0); }
         }
         
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .pulse-animation {
+            animation: pulse 2s infinite;
+        }
+        
         .notification {
             position: fixed;
             top: 20px;
@@ -97,6 +131,7 @@
         .notification.success { background: #10b981; }
         .notification.error { background: #ef4444; }
         .notification.warning { background: #f59e0b; }
+        .notification.info { background: #3b82f6; }
         
         .modal-overlay {
             background: rgba(0, 0, 0, 0.5);
@@ -133,40 +168,157 @@
             right: -5px;
             font-size: 12px;
         }
+        
+        /* Digital Clock Styles */
+        .digital-clock {
+            font-family: 'JetBrains Mono', monospace;
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            border: 2px solid #475569;
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+        }
+        
+        .clock-digit {
+            color: #00ff88;
+            text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+        }
+        
+        /* Enhanced Buttons */
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+        
+        /* PWA Install Banner */
+        .install-banner {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+        
+        .install-banner.hidden {
+            transform: translateX(-50%) translateY(100px);
+            opacity: 0;
+        }
+        
+        /* Notification Permission Banner */
+        .notification-banner {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: white;
+            padding: 1rem;
+            text-align: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1001;
+            transform: translateY(-100%);
+            transition: transform 0.3s ease;
+        }
+        
+        .notification-banner.show {
+            transform: translateY(0);
+        }
+        
+        /* Enhanced Stats Cards */
+        .stats-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+        
+        .stats-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .stats-icon {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
     </style>
 </head>
 <body class="bg-gray-50">
+    <!-- Notification Permission Banner -->
+    <div id="notificationBanner" class="notification-banner">
+        <div class="flex items-center justify-between max-w-4xl mx-auto">
+            <div class="flex items-center">
+                <i class="fas fa-bell mr-3"></i>
+                <span>Ative as notificações para receber lembretes dos seus prazos!</span>
+            </div>
+            <div class="flex items-center space-x-3">
+                <button id="enableNotifications" class="bg-white text-orange-600 px-4 py-2 rounded-lg font-semibold hover:bg-gray-100">
+                    Ativar
+                </button>
+                <button id="dismissNotificationBanner" class="text-white hover:text-gray-200">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PWA Install Banner -->
+    <div id="installBanner" class="install-banner hidden">
+        <div class="flex items-center space-x-4">
+            <i class="fas fa-mobile-alt text-2xl"></i>
+            <div>
+                <div class="font-semibold">Instalar DeadlineX</div>
+                <div class="text-sm opacity-90">Adicione à tela inicial para acesso rápido</div>
+            </div>
+            <div class="flex items-center space-x-2">
+                <button id="installApp" class="bg-white text-indigo-600 px-4 py-2 rounded-lg font-semibold hover:bg-gray-100">
+                    Instalar
+                </button>
+                <button id="dismissInstall" class="text-white hover:text-gray-200">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Notification Container -->
     <div id="notification" class="notification"></div>
 
     <!-- Login Screen -->
-    <div id="loginScreen" class="min-h-screen gradient-bg flex items-center justify-center p-4">
-        <div class="glass-effect rounded-2xl p-8 w-full max-w-md">
+    <div id="loginScreen" class="min-h-screen tech-gradient flex items-center justify-center p-4">
+        <div class="glass-effect rounded-2xl p-8 w-full max-w-md cyber-glow">
             <div class="text-center mb-8">
-                <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4">
+                <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4 cyber-glow">
                     <i class="fas fa-clock text-2xl text-indigo-600"></i>
                 </div>
                 <h1 class="text-2xl font-bold text-white mb-2">DeadlineX</h1>
-                <p class="text-indigo-100">Sistema de Gestão de Prazos</p>
+                <p class="text-indigo-100">Sistema Inteligente de Gestão de Prazos</p>
             </div>
             
             <form id="loginForm" class="space-y-6">
                 <div>
                     <label class="block text-sm font-medium text-white mb-2">Email</label>
                     <input type="email" id="loginEmail" required 
-                           class="w-full px-4 py-3 rounded-lg bg-white/20 border border-white/30 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white/50"
+                           class="w-full px-4 py-3 rounded-lg bg-white/20 border border-white/30 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white/50 neon-border"
                            placeholder="seu@email.com">
                 </div>
                 
                 <div>
                     <label class="block text-sm font-medium text-white mb-2">Senha</label>
                     <input type="password" id="loginPassword" required 
-                           class="w-full px-4 py-3 rounded-lg bg-white/20 border border-white/30 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white/50"
+                           class="w-full px-4 py-3 rounded-lg bg-white/20 border border-white/30 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white/50 neon-border"
                            placeholder="••••••••">
                 </div>
                 
                 <button type="submit" 
-                        class="w-full bg-white text-indigo-600 py-3 rounded-lg font-semibold hover:bg-gray-100 transition duration-200">
+                        class="w-full bg-white text-indigo-600 py-3 rounded-lg font-semibold hover:bg-gray-100 transition duration-200 cyber-glow">
                     Entrar
                 </button>
             </form>
@@ -183,10 +335,10 @@
     </div>
 
     <!-- Register Screen -->
-    <div id="registerScreen" class="min-h-screen gradient-bg flex items-center justify-center p-4 hidden">
-        <div class="glass-effect rounded-2xl p-8 w-full max-w-md">
+    <div id="registerScreen" class="min-h-screen tech-gradient flex items-center justify-center p-4 hidden">
+        <div class="glass-effect rounded-2xl p-8 w-full max-w-md cyber-glow">
             <div class="text-center mb-8">
-                <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4">
+                <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4 cyber-glow">
                     <i class="fas fa-user-plus text-2xl text-indigo-600"></i>
                 </div>
                 <h1 class="text-2xl font-bold text-white mb-2">Criar Conta</h1>
@@ -197,21 +349,21 @@
                 <div>
                     <label class="block text-sm font-medium text-white mb-2">Nome Completo</label>
                     <input type="text" id="registerName" required 
-                           class="w-full px-4 py-3 rounded-lg bg-white/20 border border-white/30 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white/50"
+                           class="w-full px-4 py-3 rounded-lg bg-white/20 border border-white/30 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white/50 neon-border"
                            placeholder="Seu nome completo">
                 </div>
                 
                 <div>
                     <label class="block text-sm font-medium text-white mb-2">Email</label>
                     <input type="email" id="registerEmail" required 
-                           class="w-full px-4 py-3 rounded-lg bg-white/20 border border-white/30 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white/50"
+                           class="w-full px-4 py-3 rounded-lg bg-white/20 border border-white/30 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white/50 neon-border"
                            placeholder="seu@email.com">
                 </div>
                 
                 <div>
                     <label class="block text-sm font-medium text-white mb-2">Senha</label>
                     <input type="password" id="registerPassword" required 
-                           class="w-full px-4 py-3 rounded-lg bg-white/20 border border-white/30 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white/50"
+                           class="w-full px-4 py-3 rounded-lg bg-white/20 border border-white/30 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white/50 neon-border"
                            placeholder="••••••••">
                 </div>
                 
@@ -224,7 +376,7 @@
                 </div>
                 
                 <button type="submit" 
-                        class="w-full bg-white text-indigo-600 py-3 rounded-lg font-semibold hover:bg-gray-100 transition duration-200">
+                        class="w-full bg-white text-indigo-600 py-3 rounded-lg font-semibold hover:bg-gray-100 transition duration-200 cyber-glow">
                     Criar Conta
                 </button>
             </form>
@@ -238,10 +390,10 @@
     </div>
 
     <!-- Forgot Password Screen -->
-    <div id="forgotPasswordScreen" class="min-h-screen gradient-bg flex items-center justify-center p-4 hidden">
-        <div class="glass-effect rounded-2xl p-8 w-full max-w-md">
+    <div id="forgotPasswordScreen" class="min-h-screen tech-gradient flex items-center justify-center p-4 hidden">
+        <div class="glass-effect rounded-2xl p-8 w-full max-w-md cyber-glow">
             <div class="text-center mb-8">
-                <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4">
+                <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4 cyber-glow">
                     <i class="fas fa-key text-2xl text-indigo-600"></i>
                 </div>
                 <h1 class="text-2xl font-bold text-white mb-2">Recuperar Senha</h1>
@@ -252,12 +404,12 @@
                 <div>
                     <label class="block text-sm font-medium text-white mb-2">Email</label>
                     <input type="email" id="forgotEmail" required 
-                           class="w-full px-4 py-3 rounded-lg bg-white/20 border border-white/30 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white/50"
+                           class="w-full px-4 py-3 rounded-lg bg-white/20 border border-white/30 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white/50 neon-border"
                            placeholder="seu@email.com">
                 </div>
                 
                 <button type="submit" 
-                        class="w-full bg-white text-indigo-600 py-3 rounded-lg font-semibold hover:bg-gray-100 transition duration-200">
+                        class="w-full bg-white text-indigo-600 py-3 rounded-lg font-semibold hover:bg-gray-100 transition duration-200 cyber-glow">
                     Enviar Instruções
                 </button>
             </form>
@@ -276,7 +428,7 @@
         <div id="sidebar" class="fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg sidebar-transition">
             <div class="flex items-center justify-between h-16 px-6 border-b">
                 <div class="flex items-center">
-                    <div class="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center">
+                    <div class="w-8 h-8 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-lg flex items-center justify-center cyber-glow">
                         <i class="fas fa-clock text-white text-sm"></i>
                     </div>
                     <span class="ml-3 text-xl font-semibold text-gray-800">DeadlineX</span>
@@ -329,8 +481,8 @@
             
             <div class="absolute bottom-0 w-full p-6 border-t">
                 <div class="flex items-center">
-                    <div class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
-                        <i class="fas fa-user text-gray-600 text-sm"></i>
+                    <div class="w-8 h-8 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-full flex items-center justify-center">
+                        <i class="fas fa-user text-white text-sm"></i>
                     </div>
                     <div class="ml-3">
                         <p class="text-sm font-medium text-gray-700" id="userName">Usuário</p>
@@ -356,7 +508,19 @@
                     </div>
                     
                     <div class="flex items-center space-x-4">
-                        <button id="addTaskBtn" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors">
+                        <!-- Digital Clock -->
+                        <div id="digitalClock" class="hidden md:flex items-center digital-clock px-4 py-2 rounded-lg">
+                            <i class="fas fa-clock mr-2 text-blue-400"></i>
+                            <span id="clockTime" class="clock-digit font-mono text-sm font-semibold"></span>
+                        </div>
+                        
+                        <!-- Notification Status -->
+                        <div id="notificationStatus" class="hidden items-center text-sm">
+                            <i id="notificationIcon" class="fas fa-bell-slash text-gray-400 mr-1"></i>
+                            <span id="notificationText" class="text-gray-500">Notificações desativadas</span>
+                        </div>
+                        
+                        <button id="addTaskBtn" class="btn-primary text-white px-6 py-2 rounded-lg font-semibold">
                             <i class="fas fa-plus mr-2"></i>Nova Tarefa
                         </button>
                     </div>
@@ -367,10 +531,10 @@
             <div id="dashboardContent" class="p-6">
                 <!-- Stats Cards -->
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                    <div class="bg-white rounded-xl p-6 shadow-sm border">
+                    <div class="stats-card rounded-xl p-6 shadow-sm">
                         <div class="flex items-center">
-                            <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                                <i class="fas fa-tasks text-blue-600 text-xl"></i>
+                            <div class="w-12 h-12 stats-icon rounded-lg flex items-center justify-center">
+                                <i class="fas fa-tasks text-white text-xl"></i>
                             </div>
                             <div class="ml-4">
                                 <p class="text-sm font-medium text-gray-600">Total de Tarefas</p>
@@ -379,10 +543,10 @@
                         </div>
                     </div>
                     
-                    <div class="bg-white rounded-xl p-6 shadow-sm border">
+                    <div class="stats-card rounded-xl p-6 shadow-sm">
                         <div class="flex items-center">
-                            <div class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
-                                <i class="fas fa-clock text-yellow-600 text-xl"></i>
+                            <div class="w-12 h-12 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-clock text-white text-xl"></i>
                             </div>
                             <div class="ml-4">
                                 <p class="text-sm font-medium text-gray-600">Pendentes</p>
@@ -391,10 +555,10 @@
                         </div>
                     </div>
                     
-                    <div class="bg-white rounded-xl p-6 shadow-sm border">
+                    <div class="stats-card rounded-xl p-6 shadow-sm">
                         <div class="flex items-center">
-                            <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                                <i class="fas fa-check-circle text-green-600 text-xl"></i>
+                            <div class="w-12 h-12 bg-gradient-to-r from-green-500 to-emerald-500 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-check-circle text-white text-xl"></i>
                             </div>
                             <div class="ml-4">
                                 <p class="text-sm font-medium text-gray-600">Concluídas</p>
@@ -403,10 +567,10 @@
                         </div>
                     </div>
                     
-                    <div class="bg-white rounded-xl p-6 shadow-sm border">
+                    <div class="stats-card rounded-xl p-6 shadow-sm">
                         <div class="flex items-center">
-                            <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
-                                <i class="fas fa-exclamation-triangle text-red-600 text-xl"></i>
+                            <div class="w-12 h-12 bg-gradient-to-r from-red-500 to-pink-500 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-exclamation-triangle text-white text-xl pulse-animation"></i>
                             </div>
                             <div class="ml-4">
                                 <p class="text-sm font-medium text-gray-600">Atrasadas</p>
@@ -476,7 +640,7 @@
             <div id="categoriesContent" class="p-6 hidden">
                 <div class="flex justify-between items-center mb-6">
                     <h2 class="text-2xl font-bold text-gray-800">Categorias</h2>
-                    <button id="addCategoryBtn" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors">
+                    <button id="addCategoryBtn" class="btn-primary text-white px-4 py-2 rounded-lg font-semibold">
                         <i class="fas fa-plus mr-2"></i>Nova Categoria
                     </button>
                 </div>
@@ -551,6 +715,7 @@
                                 <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i>Backup automático</li>
                                 <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i>Suporte prioritário</li>
                                 <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i>Temas personalizados</li>
+                                <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i>Lista de compras inteligente</li>
                             </ul>
                             <button id="upgradeToPremium" class="w-full py-2 px-4 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 font-semibold">
                                 Assinar Premium
@@ -595,7 +760,7 @@
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
                                 <input type="email" id="profileEmail" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" disabled>
                             </div>
-                            <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700">
+                            <button type="submit" class="btn-primary text-white px-4 py-2 rounded-lg font-semibold">
                                 Salvar Alterações
                             </button>
                         </form>
@@ -607,11 +772,21 @@
                         <div class="space-y-4">
                             <div class="flex items-center justify-between">
                                 <div>
-                                    <h4 class="font-medium">Email</h4>
+                                    <h4 class="font-medium">Notificações do Navegador</h4>
+                                    <p class="text-sm text-gray-600">Receber lembretes dos prazos</p>
+                                </div>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" id="browserNotifications" class="sr-only peer">
+                                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                                </label>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h4 class="font-medium">Email <span class="premium-badge">Premium</span></h4>
                                     <p class="text-sm text-gray-600">Receber notificações por email</p>
                                 </div>
                                 <label class="relative inline-flex items-center cursor-pointer">
-                                    <input type="checkbox" id="emailNotifications" class="sr-only peer">
+                                    <input type="checkbox" id="emailNotifications" class="sr-only peer" disabled>
                                     <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
                                 </label>
                             </div>
@@ -721,7 +896,7 @@
                             Cancelar
                         </button>
                         <button type="submit" 
-                                class="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors">
+                                class="btn-primary text-white px-6 py-2 rounded-lg font-semibold">
                             Salvar
                         </button>
                     </div>
@@ -768,7 +943,7 @@
                             Cancelar
                         </button>
                         <button type="submit" 
-                                class="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors">
+                                class="btn-primary text-white px-6 py-2 rounded-lg font-semibold">
                             Salvar
                         </button>
                     </div>
@@ -804,7 +979,7 @@
                     </div>
                 </div>
                 <div class="p-6 border-t">
-                    <button id="closeTerms" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700">
+                    <button id="closeTerms" class="btn-primary text-white px-4 py-2 rounded-lg font-semibold">
                         Fechar
                     </button>
                 </div>
@@ -839,7 +1014,7 @@
                     </div>
                 </div>
                 <div class="p-6 border-t">
-                    <button id="closePrivacy" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700">
+                    <button id="closePrivacy" class="btn-primary text-white px-4 py-2 rounded-lg font-semibold">
                         Fechar
                     </button>
                 </div>
@@ -861,6 +1036,8 @@
         let editingTaskId = null;
         let editingCategoryId = null;
         let userPlan = 'free'; // free or premium
+        let notificationsEnabled = false;
+        let deferredPrompt = null;
 
         // DOM Elements
         const loginScreen = document.getElementById('loginScreen');
@@ -873,77 +1050,389 @@
         const termsModal = document.getElementById('termsModal');
         const privacyModal = document.getElementById('privacyModal');
 
-        // Initialize app
-        document.addEventListener('DOMContentLoaded', async () => {
-            console.log('=== DEADLINEX DEBUG INICIADO ===');
-            console.log('Supabase URL:', SUPABASE_URL);
-            console.log('Supabase client:', supabase);
-            
-            // Test connection and tables
-            try {
-                console.log('🔍 TESTANDO CONEXÃO BÁSICA...');
-                
-                // Test basic connection
-                const { data: connectionTest, error: connectionError } = await supabase
-                    .from('information_schema.tables')
-                    .select('table_name')
-                    .eq('table_schema', 'public')
-                    .limit(5);
-                
-                console.log('📊 Connection test result:', { data: connectionTest, error: connectionError });
-                
-                // Test each table individually
-                console.log('🔍 TESTANDO TABELA USER_CONFIG...');
-                const userConfigTest = await supabase.from('user_config').select('*').limit(1);
-                console.log('📋 User Config result:', userConfigTest);
-                console.log('📋 User Config data:', userConfigTest.data);
-                console.log('📋 User Config error:', userConfigTest.error);
-                console.log('📋 User Config status:', userConfigTest.status);
-                console.log('📋 User Config statusText:', userConfigTest.statusText);
-                
-                console.log('🔍 TESTANDO TABELA DEADLINES...');
-                const deadlinesTest = await supabase.from('deadlines').select('*').limit(1);
-                console.log('📋 Deadlines result:', deadlinesTest);
-                console.log('📋 Deadlines data:', deadlinesTest.data);
-                console.log('📋 Deadlines error:', deadlinesTest.error);
-                console.log('📋 Deadlines status:', deadlinesTest.status);
-                console.log('📋 Deadlines statusText:', deadlinesTest.statusText);
-                
-                console.log('🔍 TESTANDO TABELA USER_SETTINGS...');
-                const userSettingsTest = await supabase.from('user_settings').select('*').limit(1);
-                console.log('📋 User Settings result:', userSettingsTest);
-                console.log('📋 User Settings data:', userSettingsTest.data);
-                console.log('📋 User Settings error:', userSettingsTest.error);
-                console.log('📋 User Settings status:', userSettingsTest.status);
-                console.log('📋 User Settings statusText:', userSettingsTest.statusText);
-                
-                // Test auth
-                console.log('🔍 TESTANDO AUTENTICAÇÃO...');
-                const { data: authData, error: authError } = await supabase.auth.getSession();
-                console.log('🔐 Auth session:', { data: authData, error: authError });
-                
-                // Test RLS policies
-                console.log('🔍 TESTANDO POLÍTICAS RLS...');
-                try {
-                    const rlsTest = await supabase.rpc('check_rls_policies');
-                    console.log('🛡️ RLS policies test:', rlsTest);
-                } catch (rlsError) {
-                    console.log('🛡️ RLS test failed (expected):', rlsError);
+        // PWA and Notification System
+        class NotificationManager {
+            constructor() {
+                this.checkInterval = null;
+                this.notificationPermission = 'default';
+                this.init();
+            }
+
+            async init() {
+                // Check notification permission
+                if ('Notification' in window) {
+                    this.notificationPermission = Notification.permission;
+                    this.updateNotificationStatus();
                 }
+
+                // Register service worker for PWA
+                if ('serviceWorker' in navigator) {
+                    try {
+                        await this.registerServiceWorker();
+                    } catch (error) {
+                        console.log('Service Worker registration failed:', error);
+                    }
+                }
+
+                // Start checking for notifications
+                this.startNotificationCheck();
+            }
+
+            async registerServiceWorker() {
+                const swCode = `
+                    self.addEventListener('install', (event) => {
+                        console.log('Service Worker installing...');
+                        self.skipWaiting();
+                    });
+
+                    self.addEventListener('activate', (event) => {
+                        console.log('Service Worker activating...');
+                        event.waitUntil(self.clients.claim());
+                    });
+
+                    self.addEventListener('notificationclick', (event) => {
+                        event.notification.close();
+                        event.waitUntil(
+                            self.clients.openWindow('/')
+                        );
+                    });
+
+                    self.addEventListener('push', (event) => {
+                        if (event.data) {
+                            const data = event.data.json();
+                            event.waitUntil(
+                                self.registration.showNotification(data.title, {
+                                    body: data.body,
+                                    icon: '/icon-192x192.png',
+                                    badge: '/badge-72x72.png',
+                                    tag: data.tag || 'deadline-notification'
+                                })
+                            );
+                        }
+                    });
+                `;
+
+                const blob = new Blob([swCode], { type: 'application/javascript' });
+                const swUrl = URL.createObjectURL(blob);
                 
-            } catch (err) {
-                console.error('❌ ERRO GERAL DE CONEXÃO:', err);
-                console.error('❌ Error details:', {
-                    message: err.message,
-                    stack: err.stack,
-                    name: err.name
+                const registration = await navigator.serviceWorker.register(swUrl);
+                console.log('Service Worker registered:', registration);
+                return registration;
+            }
+
+            async requestPermission() {
+                if ('Notification' in window) {
+                    const permission = await Notification.requestPermission();
+                    this.notificationPermission = permission;
+                    this.updateNotificationStatus();
+                    
+                    if (permission === 'granted') {
+                        showNotification('Notificações ativadas com sucesso!', 'success');
+                        this.saveNotificationPreference(true);
+                        this.hideNotificationBanner();
+                    } else {
+                        showNotification('Permissão de notificação negada', 'warning');
+                    }
+                    
+                    return permission === 'granted';
+                }
+                return false;
+            }
+
+            updateNotificationStatus() {
+                const statusElement = document.getElementById('notificationStatus');
+                const iconElement = document.getElementById('notificationIcon');
+                const textElement = document.getElementById('notificationText');
+
+                if (this.notificationPermission === 'granted') {
+                    statusElement.classList.remove('hidden');
+                    statusElement.classList.add('flex');
+                    iconElement.className = 'fas fa-bell text-green-500 mr-1';
+                    textElement.textContent = 'Notificações ativas';
+                    textElement.className = 'text-green-600';
+                    notificationsEnabled = true;
+                } else {
+                    statusElement.classList.remove('hidden');
+                    statusElement.classList.add('flex');
+                    iconElement.className = 'fas fa-bell-slash text-gray-400 mr-1';
+                    textElement.textContent = 'Notificações desativadas';
+                    textElement.className = 'text-gray-500';
+                    notificationsEnabled = false;
+                }
+            }
+
+            saveNotificationPreference(enabled) {
+                localStorage.setItem('deadlinex_notifications', enabled.toString());
+            }
+
+            loadNotificationPreference() {
+                const saved = localStorage.getItem('deadlinex_notifications');
+                return saved === 'true';
+            }
+
+            hideNotificationBanner() {
+                const banner = document.getElementById('notificationBanner');
+                banner.classList.remove('show');
+                localStorage.setItem('deadlinex_notification_banner_dismissed', 'true');
+            }
+
+            showNotificationBanner() {
+                const dismissed = localStorage.getItem('deadlinex_notification_banner_dismissed');
+                if (!dismissed && this.notificationPermission !== 'granted') {
+                    const banner = document.getElementById('notificationBanner');
+                    setTimeout(() => {
+                        banner.classList.add('show');
+                    }, 2000);
+                }
+            }
+
+            startNotificationCheck() {
+                // Check every minute for upcoming deadlines
+                this.checkInterval = setInterval(() => {
+                    this.checkUpcomingDeadlines();
+                }, 60000);
+
+                // Also check immediately
+                setTimeout(() => {
+                    this.checkUpcomingDeadlines();
+                }, 5000);
+            }
+
+            checkUpcomingDeadlines() {
+                if (!notificationsEnabled || !currentUser || tasks.length === 0) return;
+
+                const now = new Date();
+                const notifications = [];
+
+                tasks.forEach(task => {
+                    if (task.completed) return;
+
+                    const dueDate = new Date(task.date);
+                    const timeDiff = dueDate.getTime() - now.getTime();
+                    const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
+                    const hoursDiff = Math.ceil(timeDiff / (1000 * 3600));
+
+                    // Check if we should notify
+                    const notificationKey = `task_${task.id}`;
+                    const lastNotified = localStorage.getItem(`${notificationKey}_last_notified`);
+                    const today = now.toDateString();
+
+                    // Don't notify more than once per day for the same task
+                    if (lastNotified === today) return;
+
+                    let shouldNotify = false;
+                    let message = '';
+
+                    if (daysDiff === 30) {
+                        shouldNotify = true;
+                        message = `Prazo em 30 dias: ${task.title}`;
+                    } else if (daysDiff === 7) {
+                        shouldNotify = true;
+                        message = `Prazo em 7 dias: ${task.title}`;
+                    } else if (hoursDiff === 24) {
+                        shouldNotify = true;
+                        message = `Prazo em 24 horas: ${task.title}`;
+                    } else if (daysDiff < 0) {
+                        shouldNotify = true;
+                        message = `Tarefa atrasada: ${task.title}`;
+                    }
+
+                    if (shouldNotify) {
+                        notifications.push({
+                            task,
+                            message,
+                            key: notificationKey
+                        });
+                    }
+                });
+
+                // Send notifications
+                notifications.forEach(({ task, message, key }) => {
+                    this.sendNotification('DeadlineX - Lembrete', message, task);
+                    localStorage.setItem(`${key}_last_notified`, now.toDateString());
                 });
             }
+
+            sendNotification(title, body, task = null) {
+                if (!notificationsEnabled) return;
+
+                if ('Notification' in window && Notification.permission === 'granted') {
+                    const notification = new Notification(title, {
+                        body: body,
+                        icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="%23667eea"/><text x="50" y="60" text-anchor="middle" fill="white" font-size="40" font-family="Arial">⏰</text></svg>',
+                        badge: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="%23667eea"/><text x="50" y="60" text-anchor="middle" fill="white" font-size="40" font-family="Arial">⏰</text></svg>',
+                        tag: task ? `task-${task.id}` : 'deadline-notification',
+                        requireInteraction: true
+                    });
+
+                    notification.onclick = () => {
+                        window.focus();
+                        notification.close();
+                        if (task) {
+                            // Navigate to tasks tab and highlight the task
+                            showTab('tasks');
+                        }
+                    };
+
+                    // Auto close after 10 seconds
+                    setTimeout(() => {
+                        notification.close();
+                    }, 10000);
+                }
+            }
+        }
+
+        // PWA Install Manager
+        class PWAManager {
+            constructor() {
+                this.deferredPrompt = null;
+                this.init();
+            }
+
+            init() {
+                // Listen for the beforeinstallprompt event
+                window.addEventListener('beforeinstallprompt', (e) => {
+                    e.preventDefault();
+                    this.deferredPrompt = e;
+                    this.showInstallBanner();
+                });
+
+                // Listen for the appinstalled event
+                window.addEventListener('appinstalled', () => {
+                    console.log('PWA was installed');
+                    this.hideInstallBanner();
+                    showNotification('DeadlineX instalado com sucesso!', 'success');
+                });
+
+                // Check if already installed
+                if (window.matchMedia('(display-mode: standalone)').matches) {
+                    console.log('PWA is running in standalone mode');
+                }
+            }
+
+            showInstallBanner() {
+                const dismissed = localStorage.getItem('deadlinex_install_banner_dismissed');
+                if (!dismissed) {
+                    const banner = document.getElementById('installBanner');
+                    setTimeout(() => {
+                        banner.classList.remove('hidden');
+                    }, 5000);
+                }
+            }
+
+            hideInstallBanner() {
+                const banner = document.getElementById('installBanner');
+                banner.classList.add('hidden');
+                localStorage.setItem('deadlinex_install_banner_dismissed', 'true');
+            }
+
+            async installApp() {
+                if (!this.deferredPrompt) {
+                    showNotification('Instalação não disponível neste navegador', 'warning');
+                    return;
+                }
+
+                const result = await this.deferredPrompt.prompt();
+                console.log('Install prompt result:', result);
+
+                if (result.outcome === 'accepted') {
+                    console.log('User accepted the install prompt');
+                } else {
+                    console.log('User dismissed the install prompt');
+                }
+
+                this.deferredPrompt = null;
+                this.hideInstallBanner();
+            }
+        }
+
+        // Digital Clock
+        class DigitalClock {
+            constructor() {
+                this.clockElement = document.getElementById('clockTime');
+                this.start();
+            }
+
+            start() {
+                this.updateTime();
+                setInterval(() => {
+                    this.updateTime();
+                }, 1000);
+            }
+
+            updateTime() {
+                const now = new Date();
+                const timeString = now.toLocaleTimeString('pt-BR', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    hour12: false
+                });
+                
+                if (this.clockElement) {
+                    this.clockElement.textContent = timeString;
+                }
+            }
+        }
+
+        // Initialize managers
+        let notificationManager;
+        let pwaManager;
+        let digitalClock;
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', async () => {
+            console.log('=== DEADLINEX INICIADO ===');
             
-            console.log('🚀 INICIANDO AUTENTICAÇÃO...');
+            // Initialize managers
+            notificationManager = new NotificationManager();
+            pwaManager = new PWAManager();
+            digitalClock = new DigitalClock();
+            
+            // Setup PWA manifest dynamically
+            setupPWAManifest();
+            
             await checkAuth();
             setupEventListeners();
         });
+
+        function setupPWAManifest() {
+            const manifest = {
+                name: 'DeadlineX - Gestão de Prazos',
+                short_name: 'DeadlineX',
+                description: 'Sistema inteligente de gestão de prazos e tarefas',
+                start_url: '/',
+                display: 'standalone',
+                background_color: '#667eea',
+                theme_color: '#667eea',
+                orientation: 'portrait-primary',
+                icons: [
+                    {
+                        src: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="%23667eea"/><text x="50" y="60" text-anchor="middle" fill="white" font-size="40" font-family="Arial">⏰</text></svg>',
+                        sizes: '192x192',
+                        type: 'image/svg+xml'
+                    },
+                    {
+                        src: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="%23667eea"/><text x="50" y="60" text-anchor="middle" fill="white" font-size="40" font-family="Arial">⏰</text></svg>',
+                        sizes: '512x512',
+                        type: 'image/svg+xml'
+                    }
+                ]
+            };
+
+            const manifestBlob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
+            const manifestURL = URL.createObjectURL(manifestBlob);
+            
+            const manifestLink = document.getElementById('manifest-placeholder');
+            if (manifestLink) {
+                manifestLink.href = manifestURL;
+            } else {
+                const link = document.createElement('link');
+                link.rel = 'manifest';
+                link.href = manifestURL;
+                document.head.appendChild(link);
+            }
+        }
 
         // Authentication functions
         async function checkAuth() {
@@ -970,6 +1459,9 @@
                 
                 console.log('📝 CARREGANDO TAREFAS...');
                 await loadTasks();
+
+                // Show notification banner if needed
+                notificationManager.showNotificationBanner();
             } else {
                 console.log('❌ USUÁRIO NÃO AUTENTICADO - MOSTRANDO LOGIN');
                 showLogin();
@@ -1075,6 +1567,9 @@
                 
                 console.log('📝 CARREGANDO TAREFAS APÓS LOGIN...');
                 await loadTasks();
+
+                // Show notification banner if needed
+                notificationManager.showNotificationBanner();
             } catch (error) {
                 console.error('❌ ERRO COMPLETO NO LOGIN:', error);
                 showNotification('Erro no login: ' + error.message, 'error');
@@ -1714,6 +2209,24 @@
                 privacyModal.classList.add('hidden');
             });
 
+            // Notification Banner
+            document.getElementById('enableNotifications').addEventListener('click', async () => {
+                await notificationManager.requestPermission();
+            });
+
+            document.getElementById('dismissNotificationBanner').addEventListener('click', () => {
+                notificationManager.hideNotificationBanner();
+            });
+
+            // PWA Install Banner
+            document.getElementById('installApp').addEventListener('click', async () => {
+                await pwaManager.installApp();
+            });
+
+            document.getElementById('dismissInstall').addEventListener('click', () => {
+                pwaManager.hideInstallBanner();
+            });
+
             // Sidebar
             document.getElementById('openSidebar').addEventListener('click', () => {
                 sidebar.classList.remove('sidebar-hidden');
@@ -1815,6 +2328,20 @@
             document.getElementById('deleteAccountBtn').addEventListener('click', deleteAccount);
             document.getElementById('exportDataBtn').addEventListener('click', exportData);
 
+            // Notification settings
+            document.getElementById('browserNotifications').addEventListener('change', async (e) => {
+                if (e.target.checked) {
+                    const granted = await notificationManager.requestPermission();
+                    if (!granted) {
+                        e.target.checked = false;
+                    }
+                } else {
+                    notificationManager.saveNotificationPreference(false);
+                    notificationsEnabled = false;
+                    notificationManager.updateNotificationStatus();
+                }
+            });
+
             // Premium
             document.getElementById('upgradeToPremium').addEventListener('click', () => {
                 showNotification('Funcionalidade de pagamento em desenvolvimento!', 'warning');
@@ -1830,7 +2357,7 @@
             });
         }
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97fa4892f7da6b18',t:'MTc1Nzk2MTk1MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9800acac629e007f',t:'MTc1ODAyODk2Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
 
 
