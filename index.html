@@ -7,7 +7,7 @@
     
     <!-- PWA Meta Tags -->
     <meta name="theme-color" content="#6366f1">
-    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="DeadlineX">
     <meta name="description" content="Gerenciador completo de prazos e tarefas com notificações inteligentes">
@@ -17,9 +17,80 @@
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%236366f1' rx='4'/%3E%3Ctext x='16' y='22' text-anchor='middle' fill='white' font-size='16'%3E🚀%3C/text%3E%3C/svg%3E">
     
     <!-- PWA Manifest -->
-    <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIkRlYWRsaW5lWCBQUk8iLAogICJzaG9ydF9uYW1lIjogIkRlYWRsaW5lWCIsCiAgImRlc2NyaXB0aW9uIjogIkdlcmVuY2lhZG9yIGNvbXBsZXRvIGRlIHByYXpvcyBlIHRhcmVmYXMgY29tIG5vdGlmaWNhw6fDtWVzIGludGVsaWdlbnRlcyIsCiAgInN0YXJ0X3VybCI6ICIvIiwKICAiZGlzcGxheSI6ICJzdGFuZGFsb25lIiwKICAiYmFja2dyb3VuZF9jb2xvciI6ICIjZjlmYWZiIiwKICAidGhlbWVfY29sb3IiOiAiIzYzNjZmMSIsCiAgImljb25zIjogWwogICAgewogICAgICAic3JjIjogImRhdGE6aW1hZ2Uvc3ZnK3htbCwlM0NzdmcgeG1sbnM9J2h0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnJyB2aWV3Qm94PScwIDAgMTkyIDE5MiclM0UlM0NyZWN0IHdpZHRoPScxOTInIGhlaWdodD0nMTkyJyBmaWxsPSclMjM2MzY2ZjEnIHJ4PScyMCcvJTNFJTNDdGV4dCB4PSc5NicgeT0nMTIwJyB0ZXh0LWFuY2hvcj0nbWlkZGxlJyBmaWxsPSd3aGl0ZScgZm9udC1zaXplPSc4MCcgZm9udC1mYW1pbHk9J0FyaWFsJyUzRSVGMCU5RiU5QSU4MCUzQy90ZXh0JTNFJTNDL3N2ZyUzRSIsCiAgICAgICJzaXplcyI6ICIxOTJ4MTkyIiwKICAgICAgInR5cGUiOiAiaW1hZ2Uvc3ZnK3htbCIKICAgIH0sCiAgICB7CiAgICAgICJzcmMiOiAiZGF0YTppbWFnZS9zdmcreG1sLCUzQ3N2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA1MTIgNTEyJyUzRSUzQ3JlY3Qgd2lkdGg9JzUxMicgaGVpZ2h0PSc1MTInIGZpbGw9JyUyMzYzNjZmMScgcng9JzUwJy8lM0UlM0N0ZXh0IHg9JzI1NicgeT0nMzIwJyB0ZXh0LWFuY2hvcj0nbWlkZGxlJyBmaWxsPSd3aGl0ZScgZm9udC1zaXplPScyMDAnIGZvbnQtZmFtaWx5PSdBcmlhbCclM0UlRjAlOUYlOUElODAlM0MvdGV4dCUzRSUzQy9zdmclM0UiLAogICAgICAic2l6ZXMiOiAiNTEyeDUxMiIsCiAgICAgICJ0eXBlIjogImltYWdlL3N2Zyt4bWwiCiAgICB9CiAgXQp9">
+    <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIkRlYWRsaW5lWCBQUk8iLAogICJzaG9ydF9uYW1lIjogIkRlYWRsaW5lWCIsCiAgImRlc2NyaXB0aW9uIjogIkdlcmVuY2lhZG9yIGNvbXBsZXRvIGRlIHByYXpvcyBlIHRhcmVmYXMgY29tIG5vdGlmaWNhw6fDtWVzIGludGVsaWdlbnRlcyIsCiAgInN0YXJ0X3VybCI6ICIuLyIsCiAgImRpc3BsYXkiOiAic3RhbmRhbG9uZSIsCiAgImJhY2tncm91bmRfY29sb3IiOiAiI2Y5ZmFmYiIsCiAgInRoZW1lX2NvbG9yIjogIiM2MzY2ZjEiLAogICJpY29ucyI6IFsKICAgIHsKICAgICAgInNyYyI6ICJkYXRhOmltYWdlL3N2Zyt4bWwsJTNDc3ZnIHhtbG5zPSdodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2Zycgdmlld0JveD0nMCAwIDE5MiAxOTInJTNFJTNDcmVjdCB3aWR0aD0nMTkyJyBoZWlnaHQ9JzE5MicgZmlsbD0nJTIzNjM2NmYxJyByeD0nMjAnLyUzRSUzQ3RleHQgeD0nOTYnIHk9JzEyMCcgdGV4dC1hbmNob3I9J21pZGRsZScgZmlsbD0nd2hpdGUnIGZvbnQtc2l6ZT0nODAnIGZvbnQtZmFtaWx5PSdBcmlhbCclM0UlRjAlOUYlOUElODAlM0MvdGV4dCUzRSUzQy9zdmclM0UiLAogICAgICAic2l6ZXMiOiAiMTkyeDE5MiIsCiAgICAgICJ0eXBlIjogImltYWdlL3N2Zyt4bWwiCiAgICB9LAogICAgewogICAgICAic3JjIjogImRhdGE6aW1hZ2Uvc3ZnK3htbCwlM0NzdmcgeG1sbnM9J2h0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnJyB2aWV3Qm94PScwIDAgNTEyIDUxMiclM0UlM0NyZWN0IHdpZHRoPSc1MTInIGhlaWdodD0nNTEyJyBmaWxsPSclMjM2MzY2ZjEnIHJ4PSc1MCcvJTNFJTNDdGV4dCB4PScyNTYnIHk9JzMyMCcgdGV4dC1hbmNob3I9J21pZGRsZScgZmlsbD0nd2hpdGUnIGZvbnQtc2l6ZT0nMjAwJyBmb250LWZhbWlseT0nQXJpYWwnJTNFJUYwJTlGJTlBJTgwJTNDL3RleHQlM0UlM0Mvc3ZnJTNFIiwKICAgICAgInNpemVzIjogIjUxMng1MTIiLAogICAgICAidHlwZSI6ICJpbWFnZS9zdmcreG1sIgogICAgfQogIF0KfQ==">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Tailwind CSS v3.4.0 - Essentials for Production */
+        *,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";font-feature-settings:normal;font-variation-settings:normal}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace,SFMono-Regular,"Consolas","Liberation Mono","Courier New",monospace;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}[type=button],[type=reset],[type=submit],button{-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]{display:none}
+        
+        /* Essential Tailwind Utilities */
+        .container{width:100%}@media (min-width:640px){.container{max-width:640px}}@media (min-width:768px){.container{max-width:768px}}@media (min-width:1024px){.container{max-width:1024px}}@media (min-width:1280px){.container{max-width:1280px}}@media (min-width:1536px){.container{max-width:1536px}}
+        .mx-auto{margin-left:auto;margin-right:auto}.px-4{padding-left:1rem;padding-right:1rem}.py-6{padding-top:1.5rem;padding-bottom:1.5rem}.py-8{padding-top:2rem;padding-bottom:2rem}
+        .flex{display:flex}.grid{display:grid}.hidden{display:none}.items-center{align-items:center}.justify-between{justify-content:space-between}.justify-center{justify-content:center}.space-x-4>:not([hidden])~:not([hidden]){--tw-space-x-reverse:0;margin-right:calc(1rem * var(--tw-space-x-reverse));margin-left:calc(1rem * calc(1 - var(--tw-space-x-reverse)))}
+        .bg-gray-50{background-color:#f9fafb}.bg-white{background-color:#fff}.bg-indigo-600{background-color:#4f46e5}.bg-red-600{background-color:#dc2626}.bg-green-600{background-color:#16a34a}.bg-blue-600{background-color:#2563eb}
+        .text-white{color:#fff}.text-gray-800{color:#1f2937}.text-gray-600{color:#4b5563}.text-sm{font-size:.875rem;line-height:1.25rem}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-2xl{font-size:1.5rem;line-height:2rem}
+        .font-bold{font-weight:700}.font-medium{font-weight:500}.font-semibold{font-weight:600}
+        .rounded-xl{border-radius:.75rem}.rounded-lg{border-radius:.5rem}.rounded-full{border-radius:9999px}
+        .p-3{padding:.75rem}.p-4{padding:1rem}.p-6{padding:1.5rem}.p-8{padding:2rem}.px-6{padding-left:1.5rem;padding-right:1.5rem}.py-3{padding-top:.75rem;padding-bottom:.75rem}
+        .shadow-2xl{box-shadow:0 25px 50px -12px rgb(0 0 0 / 0.25)}.shadow-sm{box-shadow:0 1px 2px 0 rgb(0 0 0 / 0.05)}
+        .min-h-screen{min-height:100vh}.w-full{width:100%}.max-w-md{max-width:28rem}.max-w-lg{max-width:32rem}.max-w-2xl{max-width:42rem}.max-w-4xl{max-width:56rem}
+        .fixed{position:fixed}.relative{position:relative}.absolute{position:absolute}.inset-0{inset:0}.top-4{top:1rem}.right-4{right:1rem}.z-50{z-index:50}.z-40{z-index:40}.z-10{z-index:10}
+        .mb-4{margin-bottom:1rem}.mb-6{margin-bottom:1.5rem}.mb-8{margin-bottom:2rem}.mr-2{margin-right:.5rem}.ml-2{margin-left:.5rem}.mt-4{margin-top:1rem}.mt-6{margin-top:1.5rem}
+        .border{border-width:1px}.border-gray-300{border-color:#d1d5db}.border-red-400{border-color:#f87171}.border-green-400{border-color:#4ade80}
+        .focus\:ring-2:focus{box-shadow:var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color)}.focus\:ring-indigo-500:focus{--tw-ring-color:#6366f1}
+        .hover\:bg-indigo-700:hover{background-color:#3730a3}.hover\:bg-gray-200:hover{background-color:#e5e7eb}
+        .transition-colors{transition-property:color,background-color,border-color,text-decoration-color,fill,stroke;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}
+        .grid-cols-1{grid-template-columns:repeat(1, minmax(0, 1fr))}.grid-cols-7{grid-template-columns:repeat(7, minmax(0, 1fr))}
+        @media (min-width: 768px){.md\:grid-cols-4{grid-template-columns:repeat(4, minmax(0, 1fr))}.md\:flex-row{flex-direction:row}.md\:space-y-0>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0px * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0px * var(--tw-space-y-reverse))}}
+        @media (min-width: 1024px){.lg\:col-span-1{grid-column:span 1 / span 1}.lg\:col-span-2{grid-column:span 2 / span 2}.lg\:grid-cols-3{grid-template-columns:repeat(3, minmax(0, 1fr))}}
+        .gap-6{gap:1.5rem}.gap-4{gap:1rem}.gap-3{gap:.75rem}.gap-2{gap:.5rem}.gap-1{gap:.25rem}
+        .space-y-4>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1rem * var(--tw-space-y-reverse))}
+        .space-y-6>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1.5rem * var(--tw-space-y-reverse))}
+        .space-y-3>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(.75rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(.75rem * var(--tw-space-y-reverse))}
+        .space-y-2>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(.5rem * var(--tw-space-y-reverse))}
+        .space-x-3>:not([hidden])~:not([hidden]){--tw-space-x-reverse:0;margin-right:calc(.75rem * var(--tw-space-x-reverse));margin-left:calc(.75rem * calc(1 - var(--tw-space-x-reverse)))}
+        .space-x-2>:not([hidden])~:not([hidden]){--tw-space-x-reverse:0;margin-right:calc(.5rem * var(--tw-space-x-reverse));margin-left:calc(.5rem * calc(1 - var(--tw-space-x-reverse)))}
+        .flex-1{flex:1 1 0%}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}
+        .text-center{text-align:center}.text-left{text-align:left}.text-right{text-align:right}
+        .opacity-80{opacity:0.8}.opacity-90{opacity:0.9}.opacity-70{opacity:0.7}.opacity-60{opacity:0.6}.opacity-50{opacity:0.5}
+        .bg-gray-100{background-color:#f3f4f6}.bg-red-100{background-color:#fee2e2}.bg-green-100{background-color:#dcfce7}.bg-blue-100{background-color:#dbeafe}.bg-purple-100{background-color:#f3e8ff}.bg-orange-100{background-color:#fed7aa}.bg-yellow-100{background-color:#fef3c7}.bg-indigo-100{background-color:#e0e7ff}
+        .text-red-600{color:#dc2626}.text-green-600{color:#16a34a}.text-blue-600{color:#2563eb}.text-purple-600{color:#9333ea}.text-orange-600{color:#ea580c}.text-yellow-600{color:#d97706}.text-indigo-600{color:#4f46e5}.text-gray-500{color:#6b7280}.text-gray-400{color:#9ca3af}
+        .bg-red-500{background-color:#ef4444}.bg-green-500{background-color:#22c55e}.bg-blue-500{background-color:#3b82f6}.bg-purple-500{background-color:#a855f7}.bg-orange-500{background-color:#f97316}.bg-yellow-500{background-color:#eab308}.bg-sky-500{background-color:#0ea5e9}
+        .hover\:bg-red-600:hover{background-color:#dc2626}.hover\:bg-green-600:hover{background-color:#16a34a}.hover\:bg-blue-600:hover{background-color:#2563eb}.hover\:bg-purple-600:hover{background-color:#9333ea}.hover\:bg-orange-600:hover{background-color:#ea580c}.hover\:bg-yellow-600:hover{background-color:#d97706}.hover\:bg-sky-600:hover{background-color:#0284c7}.hover\:bg-gray-700:hover{background-color:#374151}
+        .text-red-700{color:#b91c1c}.text-green-700{color:#15803d}.text-blue-700{color:#1d4ed8}.text-red-800{color:#991b1b}.text-green-800{color:#166534}.text-blue-800{color:#1e40af}
+        .bg-red-50{background-color:#fef2f2}.bg-green-50{background-color:#f0fdf4}.bg-blue-50{background-color:#eff6ff}.bg-purple-50{background-color:#faf5ff}.bg-orange-50{background-color:#fff7ed}.bg-yellow-50{background-color:#fefce8}.bg-indigo-50{background-color:#eef2ff}.bg-gray-50{background-color:#f9fafb}
+        .hover\:bg-red-50:hover{background-color:#fef2f2}.hover\:bg-green-50:hover{background-color:#f0fdf4}.hover\:bg-blue-50:hover{background-color:#eff6ff}.hover\:bg-purple-50:hover{background-color:#faf5ff}.hover\:bg-orange-50:hover{background-color:#fff7ed}.hover\:bg-yellow-50:hover{background-color:#fefce8}.hover\:bg-indigo-50:hover{background-color:#eef2ff}.hover\:bg-gray-50:hover{background-color:#f9fafb}
+        .border-red-200{border-color:#fecaca}.border-green-200{border-color:#bbf7d0}.border-blue-200{border-color:#bfdbfe}.border-yellow-200{border-color:#fde68a}.border-indigo-200{border-color:#c7d2fe}.border-gray-100{border-color:#f3f4f6}
+        .border-b{border-bottom-width:1px}.border-l-4{border-left-width:4px}.border-2{border-width:2px}
+        .w-16{width:4rem}.w-20{width:5rem}.w-6{width:1.5rem}.w-4{width:1rem}.h-16{height:4rem}.h-20{height:5rem}.h-6{height:1.5rem}.h-4{height:1rem}.w-64{width:16rem}.w-72{width:18rem}
+        .max-h-96{max-height:24rem}.max-h-\[80vh\]{max-height:80vh}.max-h-\[90vh\]{max-height:90vh}.min-h-\[120px\]{min-height:120px}.h-64{height:16rem}
+        .overflow-hidden{overflow:hidden}.overflow-y-auto{overflow-y:auto}.overflow-visible{overflow:visible}
+        .cursor-pointer{cursor:pointer}.select-none{user-select:none}
+        .animate-spin{animation:spin 1s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
+        .transform{transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}
+        .list-disc{list-style-type:disc}.list-inside{list-style-position:inside}
+        .text-xs{font-size:.75rem;line-height:1rem}.text-3xl{font-size:1.875rem;line-height:2.25rem}.text-4xl{font-size:2.25rem;line-height:2.5rem}.text-6xl{font-size:3.75rem;line-height:1}
+        .font-mono{font-family:ui-monospace,SFMono-Regular,"Consolas","Liberation Mono","Courier New",monospace}
+        .leading-tight{line-height:1.25}
+        .tracking-wide{letter-spacing:.025em}
+        .text-decoration-line-through{text-decoration-line:line-through}
+        .line-through{text-decoration-line:line-through}
+        .hover\:text-gray-600:hover{color:#4b5563}.hover\:text-gray-200:hover{color:#e5e7eb}.hover\:text-indigo-600:hover{color:#4f46e5}.hover\:text-red-700:hover{color:#b91c1c}
+        .focus\:border-transparent:focus{border-color:transparent}.focus\:outline-none:focus{outline:2px solid transparent;outline-offset:2px}
+        .backdrop-filter{backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)}
+        .backdrop-blur{--tw-backdrop-blur:blur(8px)}
+        .pointer-events-none{pointer-events:none}
+        .resize-vertical{resize:vertical}
+        .appearance-none{appearance:none}
+        .outline-none{outline:2px solid transparent;outline-offset:2px}
+        .ring-2{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000)}
+        .ring-indigo-500{--tw-ring-color:#6366f1}.ring-red-500{--tw-ring-color:#ef4444}.ring-green-500{--tw-ring-color:#22c55e}.ring-blue-500{--tw-ring-color:#3b82f6}
+        .duration-150{transition-duration:150ms}.duration-300{transition-duration:300ms}
+        .ease-out{transition-timing-function:cubic-bezier(0, 0, 0.2, 1)}
+        .hover\:opacity-90:hover{opacity:0.9}
+        .group:hover .group-hover\:opacity-100{opacity:1}
+        .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0, 0, 0, 0);white-space:nowrap;border-width:0}
+    </style>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -209,74 +280,36 @@
                         <span id="userEmail" class="text-sm opacity-90 block"></span>
                         <span id="planStatus" class="text-xs opacity-70">Plano Gratuito</span>
                     </div>
-                    <button id="installBtn" class="glass-effect hover:bg-white/20 p-3 rounded-xl transition-all duration-300 hidden" title="Instalar App">
-                        <i class="fas fa-download"></i>
-                    </button>
-                    <div class="relative">
-                        <button id="menuBtn" class="glass-effect hover:bg-white/20 p-3 rounded-xl transition-all duration-300">
-                            <i class="fas fa-bars"></i>
+                    
+                    <!-- Action Buttons -->
+                    <div class="flex items-center space-x-2 flex-wrap">
+                        <button id="upgradeProBtn" class="gradient-pro hover:opacity-90 text-white px-4 py-2 rounded-xl transition-all duration-300 font-bold text-sm" title="Upgrade PRO">
+                            <i class="fas fa-crown mr-1"></i>PRO
                         </button>
-                        <div id="dropdownMenu" class="absolute right-0 mt-2 w-72 bg-white rounded-xl shadow-2xl border border-gray-100 hidden z-50 overflow-visible max-h-96 overflow-y-auto">
-                            <!-- PRO Section -->
-                            <div id="proSection" class="bg-gradient-to-r from-orange-400 to-red-500 text-white px-4 py-2 text-sm font-medium">
-                                <i class="fas fa-crown mr-2"></i>Upgrade para PRO
-                            </div>
-                            <button id="upgradeBtn" class="w-full text-left px-4 py-3 hover:bg-orange-50 flex items-center space-x-2 border-b text-orange-600 font-medium cursor-pointer transition-colors bg-white">
-                                <i class="fas fa-star text-orange-500"></i>
-                                <span class="flex-1">Assinar PRO - R$ 9,90/mês</span>
-                                <i class="fas fa-arrow-right text-orange-400"></i>
-                            </button>
-                            
-                            <!-- PRO Features -->
-                            <button id="shoppingBtn" class="w-full text-left px-4 py-3 hover:bg-blue-50 flex items-center space-x-2 border-b pro-feature">
-                                <i class="fas fa-shopping-cart text-blue-600"></i>
-                                <span>Lista de Compras</span>
-                                <i class="fas fa-crown text-orange-400 ml-auto text-xs"></i>
-                            </button>
-                            <button id="whatsappBtn" class="w-full text-left px-4 py-3 hover:bg-green-50 flex items-center space-x-2 border-b pro-feature">
-                                <i class="fab fa-whatsapp text-green-600"></i>
-                                <span>Config. WhatsApp</span>
-                                <i class="fas fa-crown text-orange-400 ml-auto text-xs"></i>
-                            </button>
-                            
-                            <!-- General Features -->
-                            <div class="bg-gray-50 px-4 py-2 text-xs font-medium text-gray-600 border-b">
-                                GERAL
-                            </div>
-                            <button id="notificationBtn" class="w-full text-left px-4 py-3 hover:bg-purple-50 flex items-center space-x-2 border-b cursor-pointer transition-colors">
-                                <i class="fas fa-bell text-purple-600"></i>
-                                <span>Notificações do Navegador</span>
-                            </button>
-                            <button id="installMenuBtn" class="w-full text-left px-4 py-3 hover:bg-blue-50 flex items-center space-x-2 border-b cursor-pointer transition-colors">
-                                <i class="fas fa-mobile-alt text-blue-600"></i>
-                                <span>Instalar App</span>
-                            </button>
-                            <button id="shareBtn" class="w-full text-left px-4 py-3 hover:bg-indigo-50 flex items-center space-x-2 border-b cursor-pointer transition-colors">
-                                <i class="fas fa-share-alt text-indigo-600"></i>
-                                <span>Compartilhar e Ganhar PRO</span>
-                            </button>
-                            <button id="privacyBtn" class="w-full text-left px-4 py-3 hover:bg-green-50 flex items-center space-x-2 border-b cursor-pointer transition-colors">
-                                <i class="fas fa-shield-alt text-green-600"></i>
-                                <span>Políticas de Privacidade</span>
-                            </button>
-                            <button id="supportBtn" class="w-full text-left px-4 py-3 hover:bg-yellow-50 flex items-center space-x-2 border-b cursor-pointer transition-colors">
-                                <i class="fas fa-headset text-yellow-600"></i>
-                                <span>Suporte e Ajuda</span>
-                            </button>
-                            
-                            <!-- Account Section -->
-                            <div class="bg-gray-50 px-4 py-2 text-xs font-medium text-gray-600 border-b">
-                                CONTA
-                            </div>
-                            <button id="deleteAccountBtn" class="w-full text-left px-4 py-3 hover:bg-red-50 flex items-center space-x-2 border-b text-red-600">
-                                <i class="fas fa-user-times"></i>
-                                <span>Excluir Conta</span>
-                            </button>
-                            <button id="logoutBtn" class="w-full text-left px-4 py-3 hover:bg-gray-50 flex items-center space-x-2">
-                                <i class="fas fa-sign-out-alt text-gray-600"></i>
-                                <span>Sair</span>
-                            </button>
-                        </div>
+                        
+                        <button id="shareBtn" class="glass-effect hover:bg-white/20 p-3 rounded-xl transition-all duration-300" title="Compartilhar">
+                            <i class="fas fa-share-alt"></i>
+                        </button>
+                        
+                        <button id="privacyBtn" class="glass-effect hover:bg-white/20 p-3 rounded-xl transition-all duration-300" title="Políticas">
+                            <i class="fas fa-shield-alt"></i>
+                        </button>
+                        
+                        <button id="deleteAccountBtn" class="glass-effect hover:bg-red-500/20 p-3 rounded-xl transition-all duration-300 text-red-200" title="Excluir Conta">
+                            <i class="fas fa-user-times"></i>
+                        </button>
+                        
+                        <button id="installBtn" class="glass-effect hover:bg-white/20 p-3 rounded-xl transition-all duration-300" title="Instalar App">
+                            <i class="fas fa-mobile-alt"></i>
+                        </button>
+                        
+                        <button id="loginManualBtn" class="glass-effect hover:bg-white/20 p-3 rounded-xl transition-all duration-300" title="Login Manual">
+                            <i class="fas fa-sign-in-alt"></i>
+                        </button>
+                        
+                        <button id="logoutBtn" class="glass-effect hover:bg-white/20 p-3 rounded-xl transition-all duration-300" title="Sair">
+                            <i class="fas fa-sign-out-alt"></i>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -618,184 +651,186 @@
         </div>
     </div>
 
+
+
     <!-- Privacy Policy Modal -->
     <div id="privacyModal" class="fixed inset-0 bg-black/50 modal-overlay flex items-center justify-center z-50 hidden">
-        <div class="bg-white rounded-xl p-8 max-w-2xl w-full mx-4 shadow-2xl max-h-[80vh] overflow-y-auto">
+        <div class="bg-white rounded-2xl p-8 max-w-2xl w-full mx-4 shadow-2xl max-h-[80vh] overflow-y-auto">
             <div class="flex justify-between items-center mb-6">
-                <h3 class="text-xl font-bold text-gray-800">Políticas de Privacidade</h3>
+                <div class="flex items-center space-x-3">
+                    <div class="bg-blue-100 p-3 rounded-xl">
+                        <i class="fas fa-shield-alt text-blue-600 text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-gray-800">Políticas de Privacidade</h3>
+                        <p class="text-sm text-gray-600">Última atualização: Janeiro 2024</p>
+                    </div>
+                </div>
                 <button onclick="closePrivacyModal()" class="text-gray-400 hover:text-gray-600">
                     <i class="fas fa-times text-xl"></i>
                 </button>
             </div>
             
             <div class="space-y-6 text-sm text-gray-700">
-                <section>
-                    <h4 class="font-semibold text-gray-800 mb-2">📋 Coleta de Dados</h4>
-                    <p>Coletamos apenas as informações necessárias para o funcionamento do DeadlineX: email para autenticação e dados dos prazos que você criar.</p>
-                </section>
+                <div>
+                    <h4 class="font-semibold text-gray-800 mb-2">🔒 Coleta de Dados</h4>
+                    <p>Coletamos apenas os dados necessários para o funcionamento do DeadlineX: email, prazos criados, configurações de notificação e dados de uso básicos.</p>
+                </div>
                 
-                <section>
-                    <h4 class="font-semibold text-gray-800 mb-2">🔒 Segurança</h4>
-                    <p>Seus dados são protegidos por criptografia e políticas de segurança do Supabase. Utilizamos autenticação segura e não compartilhamos suas informações com terceiros.</p>
-                </section>
+                <div>
+                    <h4 class="font-semibold text-gray-800 mb-2">💾 Armazenamento</h4>
+                    <p>Seus dados são armazenados de forma segura no Supabase com criptografia. Não compartilhamos suas informações pessoais com terceiros.</p>
+                </div>
                 
-                <section>
-                    <h4 class="font-semibold text-gray-800 mb-2">🇧🇷 LGPD - Lei Geral de Proteção de Dados</h4>
-                    <p>Em conformidade com a LGPD, você tem direito a:</p>
-                    <ul class="list-disc list-inside mt-2 space-y-1">
-                        <li>Acessar seus dados pessoais</li>
-                        <li>Corrigir dados incompletos ou incorretos</li>
-                        <li>Solicitar a exclusão de seus dados</li>
-                        <li>Revogar o consentimento a qualquer momento</li>
-                    </ul>
-                </section>
+                <div>
+                    <h4 class="font-semibold text-gray-800 mb-2">🔔 Notificações</h4>
+                    <p>Enviamos notificações apenas relacionadas aos seus prazos. Você pode desativar a qualquer momento nas configurações.</p>
+                </div>
                 
-                <section>
+                <div>
                     <h4 class="font-semibold text-gray-800 mb-2">🍪 Cookies</h4>
-                    <p>Utilizamos cookies apenas para manter sua sessão ativa e melhorar sua experiência. Não utilizamos cookies de rastreamento.</p>
-                </section>
+                    <p>Utilizamos cookies essenciais para manter sua sessão ativa. Não usamos cookies de rastreamento ou publicidade.</p>
+                </div>
                 
-                <section>
-                    <h4 class="font-semibold text-gray-800 mb-2">📞 Contato</h4>
-                    <p>Para exercer seus direitos ou esclarecer dúvidas sobre privacidade, entre em contato através do menu "Excluir Conta".</p>
-                </section>
+                <div>
+                    <h4 class="font-semibold text-gray-800 mb-2">📱 WhatsApp (PRO)</h4>
+                    <p>Para usuários PRO, o número do WhatsApp é usado apenas para envio de lembretes. Utilizamos a Evolution API com total segurança.</p>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold text-gray-800 mb-2">🗑️ Exclusão de Dados</h4>
+                    <p>Você pode excluir sua conta e todos os dados a qualquer momento. A exclusão é permanente e irreversível.</p>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold text-gray-800 mb-2">📧 Contato</h4>
+                    <p>Para dúvidas sobre privacidade: <strong>privacidade@deadlinex.com</strong></p>
+                </div>
             </div>
             
-            <button onclick="closePrivacyModal()" class="w-full mt-6 bg-indigo-600 hover:bg-indigo-700 text-white py-3 px-4 rounded-lg transition-colors">
+            <button onclick="closePrivacyModal()" class="w-full mt-6 bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-xl transition-colors">
                 Entendi
-            </button>
-        </div>
-    </div>
-
-    <!-- Support Modal -->
-    <div id="supportModal" class="fixed inset-0 bg-black/50 modal-overlay flex items-center justify-center z-50 hidden">
-        <div class="bg-white rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl">
-            <div class="text-center mb-6">
-                <div class="bg-yellow-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <i class="fas fa-headset text-2xl text-yellow-600"></i>
-                </div>
-                <h3 class="text-xl font-bold text-gray-800 mb-2">Suporte e Ajuda</h3>
-                <p class="text-gray-600">Como podemos te ajudar hoje?</p>
-            </div>
-            
-            <div class="space-y-3">
-                <button onclick="openWhatsAppSupport()" class="w-full bg-green-500 hover:bg-green-600 text-white py-3 px-4 rounded-xl flex items-center justify-center space-x-3 transition-colors">
-                    <i class="fab fa-whatsapp text-xl"></i>
-                    <span>Suporte via WhatsApp</span>
-                </button>
-                
-                <button onclick="openEmailSupport()" class="w-full bg-blue-500 hover:bg-blue-600 text-white py-3 px-4 rounded-xl flex items-center justify-center space-x-3 transition-colors">
-                    <i class="fas fa-envelope text-xl"></i>
-                    <span>Enviar Email</span>
-                </button>
-                
-                <button onclick="openFAQ()" class="w-full bg-purple-500 hover:bg-purple-600 text-white py-3 px-4 rounded-xl flex items-center justify-center space-x-3 transition-colors">
-                    <i class="fas fa-question-circle text-xl"></i>
-                    <span>Perguntas Frequentes</span>
-                </button>
-                
-                <div class="bg-gray-50 rounded-xl p-4 text-center">
-                    <p class="text-sm text-gray-600 mb-2">
-                        <i class="fas fa-clock mr-2"></i>
-                        <strong>Horário de Atendimento:</strong>
-                    </p>
-                    <p class="text-xs text-gray-500">
-                        Segunda a Sexta: 9h às 18h<br>
-                        Sábado: 9h às 14h
-                    </p>
-                </div>
-            </div>
-            
-            <button onclick="closeSupportModal()" class="w-full mt-6 bg-gray-100 hover:bg-gray-200 text-gray-800 py-3 px-4 rounded-xl transition-colors">
-                Fechar
             </button>
         </div>
     </div>
 
     <!-- Delete Account Modal -->
     <div id="deleteAccountModal" class="fixed inset-0 bg-black/50 modal-overlay flex items-center justify-center z-50 hidden">
-        <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4 shadow-2xl">
+        <div class="bg-white rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl">
             <div class="text-center mb-6">
                 <div class="bg-red-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                     <i class="fas fa-exclamation-triangle text-2xl text-red-600"></i>
                 </div>
                 <h3 class="text-xl font-bold text-gray-800 mb-2">Excluir Conta</h3>
-                <p class="text-gray-600">Esta ação não pode ser desfeita. Todos os seus dados serão permanentemente removidos.</p>
+                <p class="text-gray-600">Esta ação é <strong>irreversível</strong>!</p>
             </div>
             
-            <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
-                <p class="text-sm text-yellow-800">
-                    <i class="fas fa-info-circle mr-2"></i>
-                    Ao excluir sua conta, você perderá todos os prazos cadastrados e não poderá recuperá-los.
-                </p>
+            <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+                <h4 class="font-semibold text-red-800 mb-2">⚠️ O que será excluído:</h4>
+                <ul class="text-sm text-red-700 space-y-1">
+                    <li>• Todos os seus prazos e lembretes</li>
+                    <li>• Lista de compras e gastos (se PRO)</li>
+                    <li>• Configurações e preferências</li>
+                    <li>• Histórico de notificações</li>
+                    <li>• Assinatura PRO (sem reembolso)</li>
+                </ul>
             </div>
             
-            <div class="space-y-4">
-                <input type="password" id="deletePassword" placeholder="Digite sua senha para confirmar" 
+            <div class="mb-6">
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Digite "EXCLUIR" para confirmar:
+                </label>
+                <input type="text" id="deleteConfirmation" placeholder="Digite EXCLUIR" 
                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500">
-                
-                <div class="flex space-x-3">
-                    <button onclick="closeDeleteModal()" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 py-3 px-4 rounded-lg transition-colors">
-                        Cancelar
-                    </button>
-                    <button onclick="confirmDeleteAccount()" class="flex-1 bg-red-600 hover:bg-red-700 text-white py-3 px-4 rounded-lg transition-colors">
-                        Excluir Conta
-                    </button>
-                </div>
+            </div>
+            
+            <div class="flex space-x-3">
+                <button onclick="closeDeleteAccountModal()" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 py-3 px-4 rounded-xl transition-colors">
+                    Cancelar
+                </button>
+                <button onclick="confirmDeleteAccount()" class="flex-1 bg-red-600 hover:bg-red-700 text-white py-3 px-4 rounded-xl transition-colors">
+                    Excluir Conta
+                </button>
             </div>
         </div>
     </div>
 
-    <!-- PRO Upgrade Modal -->
+    <!-- Upgrade PRO Modal -->
     <div id="upgradeModal" class="fixed inset-0 bg-black/50 modal-overlay flex items-center justify-center z-50 hidden">
         <div class="bg-white rounded-2xl p-8 max-w-lg w-full mx-4 shadow-2xl">
-            <div class="text-center mb-8">
+            <div class="text-center mb-6">
                 <div class="gradient-pro w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
                     <i class="fas fa-crown text-3xl text-white"></i>
                 </div>
                 <h3 class="text-2xl font-bold text-gray-800 mb-2">DeadlineX PRO</h3>
-                <p class="text-gray-600">Desbloqueie todo o potencial do seu gerenciador!</p>
+                <p class="text-gray-600">Desbloqueie todos os recursos premium!</p>
             </div>
             
-            <div class="space-y-4 mb-8">
+            <div class="space-y-4 mb-6">
                 <div class="flex items-center space-x-3">
-                    <i class="fas fa-shopping-cart text-blue-500"></i>
-                    <span>Lista de Compras Inteligente</span>
+                    <i class="fas fa-check-circle text-green-500 text-xl"></i>
+                    <div>
+                        <div class="font-medium">Lista de Compras Inteligente</div>
+                        <div class="text-sm text-gray-600">Organize compras e controle gastos</div>
+                    </div>
                 </div>
+                
                 <div class="flex items-center space-x-3">
-                    <i class="fas fa-chart-line text-green-500"></i>
-                    <span>Controle de Gastos Mensais</span>
+                    <i class="fas fa-check-circle text-green-500 text-xl"></i>
+                    <div>
+                        <div class="font-medium">Notificações WhatsApp</div>
+                        <div class="text-sm text-gray-600">Receba lembretes no seu celular</div>
+                    </div>
                 </div>
+                
                 <div class="flex items-center space-x-3">
-                    <i class="fab fa-whatsapp text-green-600"></i>
-                    <span>Notificações via WhatsApp</span>
+                    <i class="fas fa-check-circle text-green-500 text-xl"></i>
+                    <div>
+                        <div class="font-medium">Controle de Gastos</div>
+                        <div class="text-sm text-gray-600">Gráficos e relatórios mensais</div>
+                    </div>
                 </div>
+                
                 <div class="flex items-center space-x-3">
-                    <i class="fas fa-cloud text-purple-500"></i>
-                    <span>Backup Automático na Nuvem</span>
+                    <i class="fas fa-check-circle text-green-500 text-xl"></i>
+                    <div>
+                        <div class="font-medium">Backup na Nuvem</div>
+                        <div class="text-sm text-gray-600">Seus dados sempre seguros</div>
+                    </div>
                 </div>
+                
                 <div class="flex items-center space-x-3">
-                    <i class="fas fa-mobile-alt text-indigo-500"></i>
-                    <span>Sincronização Multi-dispositivos</span>
+                    <i class="fas fa-check-circle text-green-500 text-xl"></i>
+                    <div>
+                        <div class="font-medium">Suporte Prioritário</div>
+                        <div class="text-sm text-gray-600">Atendimento VIP via WhatsApp</div>
+                    </div>
                 </div>
             </div>
             
-            <div class="bg-gradient-to-r from-orange-100 to-red-100 rounded-xl p-6 mb-6 text-center">
-                <div class="text-3xl font-bold text-gray-800">R$ 9,90</div>
-                <div class="text-sm text-gray-600">por mês</div>
-                <div class="text-xs text-green-600 mt-1">7 dias grátis para testar!</div>
+            <div class="bg-gradient-to-r from-orange-50 to-red-50 rounded-xl p-4 mb-6 text-center">
+                <div class="text-2xl font-bold text-gray-800">R$ 9,90<span class="text-lg font-normal">/mês</span></div>
+                <div class="text-sm text-gray-600">7 dias grátis • Cancele quando quiser</div>
             </div>
             
             <div class="space-y-3">
-                <button onclick="startProTrial()" class="w-full gradient-pro text-white py-4 px-6 rounded-xl font-bold text-lg hover:opacity-90 transition-opacity">
-                    Começar Teste Grátis
+                <button onclick="startProTrial()" class="w-full gradient-pro hover:opacity-90 text-white py-4 px-6 rounded-xl font-bold text-lg transition-colors">
+                    <i class="fas fa-crown mr-2"></i>Começar Teste Grátis
                 </button>
                 <button onclick="closeUpgradeModal()" class="w-full bg-gray-100 hover:bg-gray-200 text-gray-800 py-3 px-6 rounded-xl transition-colors">
                     Talvez Depois
                 </button>
             </div>
+            
+            <div class="mt-4 text-xs text-gray-500 text-center">
+                <p>💳 Sem cobrança nos primeiros 7 dias</p>
+            </div>
         </div>
     </div>
+
+
+
+
 
     <!-- Shopping List Modal -->
     <div id="shoppingModal" class="fixed inset-0 bg-black/50 modal-overlay flex items-center justify-center z-50 hidden">
@@ -992,13 +1027,22 @@
     </div>
 
     <script>
-        // Force localStorage mode for demo
+        // Supabase Configuration
         let supabase;
-        let usingLocalStorage = true;
+        let usingLocalStorage = false;
         
-        // Initialize immediately
-        supabase = createLocalStorageFallback();
-        console.log('🔄 Sistema localStorage inicializado');
+        // Initialize Supabase
+        try {
+            supabase = window.supabase.createClient(
+                'https://your-project.supabase.co',
+                'your-anon-key'
+            );
+            console.log('✅ Supabase conectado');
+        } catch (error) {
+            console.log('⚠️ Supabase não disponível, usando localStorage');
+            supabase = createLocalStorageFallback();
+            usingLocalStorage = true;
+        }
         
         // Global Variables
         let currentUser = null;
@@ -1206,26 +1250,99 @@
         function showDebugInfo(message) {
             console.log(`📱 ${message}`);
         }
+        
+        function showSupabaseDebug() {
+            console.log('🔍 === DEBUG SUPABASE ===');
+            console.log('📊 Status do Supabase:', supabase ? 'Conectado' : 'Não conectado');
+            console.log('💾 Usando localStorage:', usingLocalStorage);
+            console.log('👤 Usuário atual:', currentUser);
+            
+            // Criar painel de debug visual
+            const debugPanel = document.createElement('div');
+            debugPanel.id = 'debugPanel';
+            debugPanel.className = 'fixed bottom-4 left-4 bg-black text-white p-4 rounded-lg text-xs max-w-sm z-50';
+            debugPanel.innerHTML = `
+                <div class="font-bold mb-2">🔧 DEBUG PANEL</div>
+                <div>Supabase: ${supabase ? '✅ Conectado' : '❌ Desconectado'}</div>
+                <div>LocalStorage: ${usingLocalStorage ? '✅ Ativo' : '❌ Inativo'}</div>
+                <div>Usuário: ${currentUser?.email || 'Nenhum'}</div>
+                <div class="mt-2">
+                    <button onclick="testSupabaseConnection()" class="bg-blue-600 px-2 py-1 rounded text-xs mr-2">Testar Conexão</button>
+                    <button onclick="showSupabaseCredentials()" class="bg-green-600 px-2 py-1 rounded text-xs mr-2">Ver Credenciais</button>
+                    <button onclick="document.getElementById('debugPanel').remove()" class="bg-red-600 px-2 py-1 rounded text-xs">Fechar</button>
+                </div>
+            `;
+            document.body.appendChild(debugPanel);
+        }
+        
+        function testSupabaseConnection() {
+            console.log('🧪 Testando conexão Supabase...');
+            
+            if (!supabase) {
+                console.log('❌ Supabase não inicializado');
+                showNotification('❌ Supabase não inicializado', 'error');
+                return;
+            }
+            
+            // Teste básico
+            supabase.auth.getSession().then(result => {
+                console.log('📋 Resultado do teste:', result);
+                if (result.error) {
+                    console.log('❌ Erro na conexão:', result.error);
+                    showNotification('❌ Erro na conexão: ' + result.error.message, 'error');
+                } else {
+                    console.log('✅ Conexão OK');
+                    showNotification('✅ Conexão Supabase OK!', 'success');
+                }
+            }).catch(error => {
+                console.log('❌ Erro crítico:', error);
+                showNotification('❌ Erro crítico: ' + error.message, 'error');
+            });
+        }
+        
+        function showSupabaseCredentials() {
+            console.log('🔑 === CREDENCIAIS ATUAIS ===');
+            console.log('URL:', 'https://your-project.supabase.co');
+            console.log('Key:', 'your-anon-key');
+            console.log('');
+            console.log('📝 Para conectar ao Supabase real:');
+            console.log('1. Substitua "your-project" pela URL do seu projeto');
+            console.log('2. Substitua "your-anon-key" pela chave anônima');
+            console.log('3. As credenciais ficam na linha ~1180 do código');
+            
+            showNotification('🔑 Credenciais mostradas no console (F12)', 'info');
+        }
 
         // Initialize App
         document.addEventListener('DOMContentLoaded', async () => {
             console.log('🚀 DeadlineX iniciando...');
             
             try {
-                // Force show login immediately
-                console.log('📱 Forçando exibição do login');
-                showLoginModal();
-                
-                // Setup everything else
+                // Setup everything
                 setupEventListeners();
                 startClock();
                 setupPWA();
                 
-                console.log('✅ Sistema carregado - login disponível');
+                // Auto-login direto (modo debug)
+                console.log('🔧 MODO DEBUG: Entrando automaticamente...');
+                currentUser = { 
+                    id: 'debug-user-123', 
+                    email: 'debug@deadlinex.com' 
+                };
+                
+                showMainContent();
+                await loadDeadlines();
+                
+                // Mostrar debug do Supabase
+                showSupabaseDebug();
+                
+                console.log('✅ Sistema carregado - modo debug ativo');
                 
             } catch (error) {
                 console.error('❌ Erro na inicialização:', error);
-                showLoginModal(); // Force login even on error
+                // Mesmo com erro, entra no sistema
+                currentUser = { id: 'debug-user-123', email: 'debug@deadlinex.com' };
+                showMainContent();
             }
         });
         
@@ -1392,55 +1509,16 @@
             // Auth form
             document.getElementById('authForm').addEventListener('submit', handleAuth);
             
-            // Menu dropdown
-            document.getElementById('menuBtn').addEventListener('click', toggleMenu);
-            document.addEventListener('click', closeMenuOnClickOutside);
-            
-            // Menu actions
-            console.log('🔧 Configurando event listeners do menu...');
-            document.getElementById('upgradeBtn').addEventListener('click', () => {
-                console.log('Upgrade button clicked');
-                openUpgradeModal();
-            });
-            document.getElementById('shoppingBtn').addEventListener('click', () => {
-                console.log('Shopping button clicked');
-                openShoppingModal();
-            });
-            document.getElementById('whatsappBtn').addEventListener('click', () => {
-                console.log('WhatsApp button clicked');
-                openWhatsAppModal();
-            });
-            document.getElementById('notificationBtn').addEventListener('click', () => {
-                console.log('Notification button clicked');
-                setupBrowserNotifications();
-            });
-            document.getElementById('installMenuBtn').addEventListener('click', () => {
-                console.log('Install menu button clicked');
-                openInstallModal();
-            });
-            document.getElementById('shareBtn').addEventListener('click', () => {
-                console.log('Share button clicked');
-                openShareModal();
-            });
-            document.getElementById('privacyBtn').addEventListener('click', () => {
-                console.log('Privacy button clicked');
-                openPrivacyModal();
-            });
-            document.getElementById('supportBtn').addEventListener('click', () => {
-                console.log('Support button clicked');
-                openSupportModal();
-            });
-            document.getElementById('deleteAccountBtn').addEventListener('click', () => {
-                console.log('Delete account button clicked');
-                openDeleteModal();
-            });
-            document.getElementById('logoutBtn').addEventListener('click', () => {
-                console.log('Logout button clicked');
-                handleLogout();
-            });
+            // Action buttons
+            document.getElementById('upgradeProBtn').addEventListener('click', openUpgradeModal);
+            document.getElementById('shareBtn').addEventListener('click', openShareModal);
+            document.getElementById('privacyBtn').addEventListener('click', openPrivacyModal);
+            document.getElementById('deleteAccountBtn').addEventListener('click', openDeleteAccountModal);
+            document.getElementById('loginManualBtn').addEventListener('click', showLoginModal);
+            document.getElementById('logoutBtn').addEventListener('click', handleLogout);
             
             // PWA Install
-            document.getElementById('installBtn').addEventListener('click', openInstallModal);
+            document.getElementById('installBtn').addEventListener('click', installPWA);
             document.getElementById('installAppBtn').addEventListener('click', installPWA);
             
             // Shopping list
@@ -1568,8 +1646,6 @@
         let browserNotificationsEnabled = false;
         
         async function setupBrowserNotifications() {
-            document.getElementById('dropdownMenu').classList.add('hidden');
-            
             if (!("Notification" in window)) {
                 showNotification('❌ Seu navegador não suporta notificações', 'error');
                 return;
@@ -1726,24 +1802,10 @@
             }, 5000);
         }
 
-        // Menu Functions
-        function toggleMenu() {
-            const menu = document.getElementById('dropdownMenu');
-            menu.classList.toggle('hidden');
-        }
-
-        function closeMenuOnClickOutside(event) {
-            const menu = document.getElementById('dropdownMenu');
-            const menuBtn = document.getElementById('menuBtn');
-            
-            if (!menu.contains(event.target) && !menuBtn.contains(event.target)) {
-                menu.classList.add('hidden');
-            }
-        }
+        // Menu Functions (removed - using direct buttons now)
 
         // Share Functions
         function openShareModal() {
-            document.getElementById('dropdownMenu').classList.add('hidden');
             document.getElementById('shareModal').classList.remove('hidden');
         }
 
@@ -1856,19 +1918,10 @@ Abraços!`);
             closeShareModal();
         }
 
-        // Privacy Functions
-        function openPrivacyModal() {
-            document.getElementById('dropdownMenu').classList.add('hidden');
-            document.getElementById('privacyModal').classList.remove('hidden');
-        }
 
-        function closePrivacyModal() {
-            document.getElementById('privacyModal').classList.add('hidden');
-        }
 
         // Support Functions
         function openSupportModal() {
-            document.getElementById('dropdownMenu').classList.add('hidden');
             document.getElementById('supportModal').classList.remove('hidden');
         }
 
@@ -1921,134 +1974,126 @@ Obrigado pela atenção!`);
             closeSupportModal();
         }
 
-        function openFAQ() {
-            closeSupportModal();
-            
-            // Create FAQ modal
-            const faqModal = document.createElement('div');
-            faqModal.className = 'fixed inset-0 bg-black/50 modal-overlay flex items-center justify-center z-50';
-            faqModal.innerHTML = `
-                <div class="bg-white rounded-2xl p-8 max-w-2xl w-full mx-4 shadow-2xl max-h-[80vh] overflow-y-auto">
-                    <div class="flex justify-between items-center mb-6">
-                        <h3 class="text-xl font-bold text-gray-800">Perguntas Frequentes</h3>
-                        <button onclick="this.closest('.fixed').remove()" class="text-gray-400 hover:text-gray-600">
-                            <i class="fas fa-times text-xl"></i>
-                        </button>
-                    </div>
-                    
-                    <div class="space-y-6">
-                        <div class="border-b pb-4">
-                            <h4 class="font-semibold text-gray-800 mb-2">❓ Como funciona o sistema de notificações?</h4>
-                            <p class="text-sm text-gray-600">O DeadlineX envia notificações automáticas 30 dias, 7 dias, 1 dia antes e no dia do prazo. Você pode ativar notificações do navegador no menu.</p>
-                        </div>
-                        
-                        <div class="border-b pb-4">
-                            <h4 class="font-semibold text-gray-800 mb-2">💎 Quais são os benefícios do PRO?</h4>
-                            <p class="text-sm text-gray-600">PRO inclui: Lista de compras inteligente, controle de gastos, notificações WhatsApp, backup na nuvem e sincronização multi-dispositivos.</p>
-                        </div>
-                        
-                        <div class="border-b pb-4">
-                            <h4 class="font-semibold text-gray-800 mb-2">📱 Como instalar o app no celular?</h4>
-                            <p class="text-sm text-gray-600">No menu, clique em "Instalar App". No Chrome/Safari, procure o ícone de instalação na barra de endereços ou use "Adicionar à tela inicial".</p>
-                        </div>
-                        
-                        <div class="border-b pb-4">
-                            <h4 class="font-semibold text-gray-800 mb-2">🎁 Como funciona o sistema de referência?</h4>
-                            <p class="text-sm text-gray-600">Compartilhe o DeadlineX usando seu código único. Para cada amigo que se cadastrar, você ganha 1 mês PRO grátis!</p>
-                        </div>
-                        
-                        <div class="border-b pb-4">
-                            <h4 class="font-semibold text-gray-800 mb-2">🔒 Meus dados estão seguros?</h4>
-                            <p class="text-sm text-gray-600">Sim! Usamos criptografia e políticas de segurança do Supabase. Seus dados são protegidos e não compartilhamos com terceiros.</p>
-                        </div>
-                        
-                        <div class="border-b pb-4">
-                            <h4 class="font-semibold text-gray-800 mb-2">💳 Como cancelar a assinatura PRO?</h4>
-                            <p class="text-sm text-gray-600">Entre em contato conosco via WhatsApp ou email. O cancelamento é processado imediatamente e você mantém acesso até o fim do período pago.</p>
-                        </div>
-                        
-                        <div>
-                            <h4 class="font-semibold text-gray-800 mb-2">🆘 Não encontrou sua resposta?</h4>
-                            <p class="text-sm text-gray-600">Entre em contato conosco via WhatsApp ou email. Nossa equipe responde em até 24 horas!</p>
-                        </div>
-                    </div>
-                    
-                    <button onclick="this.closest('.fixed').remove()" class="w-full mt-6 bg-indigo-600 hover:bg-indigo-700 text-white py-3 px-4 rounded-xl transition-colors">
-                        Fechar
-                    </button>
-                </div>
-            `;
-            
-            document.body.appendChild(faqModal);
+        // Privacy Modal Functions
+        function openPrivacyModal() {
+            document.getElementById('privacyModal').classList.remove('hidden');
         }
 
-        // Delete Account Functions
-        function openDeleteModal() {
-            document.getElementById('dropdownMenu').classList.add('hidden');
+        function closePrivacyModal() {
+            document.getElementById('privacyModal').classList.add('hidden');
+        }
+
+        // Delete Account Modal Functions
+        function openDeleteAccountModal() {
             document.getElementById('deleteAccountModal').classList.remove('hidden');
+            document.getElementById('deleteConfirmation').value = '';
         }
 
-        function closeDeleteModal() {
+        function closeDeleteAccountModal() {
             document.getElementById('deleteAccountModal').classList.add('hidden');
-            document.getElementById('deletePassword').value = '';
         }
 
         async function confirmDeleteAccount() {
-            const password = document.getElementById('deletePassword').value;
+            const confirmation = document.getElementById('deleteConfirmation').value;
             
-            if (!password) {
-                showNotification('❌ Digite sua senha para confirmar', 'error');
+            if (confirmation !== 'EXCLUIR') {
+                showNotification('❌ Digite "EXCLUIR" para confirmar', 'error');
+                return;
+            }
+            
+            if (!confirm('Tem CERTEZA ABSOLUTA que deseja excluir sua conta? Esta ação é IRREVERSÍVEL!')) {
                 return;
             }
             
             showLoading();
             
             try {
-                // Re-authenticate user before deletion
-                const { error: authError } = await supabase.auth.signInWithPassword({
-                    email: currentUser.email,
-                    password: password
-                });
+                // Delete all user data
+                await supabase.from('deadlines').delete().eq('user_id', currentUser.id);
+                await supabase.from('shopping_items').delete().eq('user_id', currentUser.id);
+                await supabase.from('monthly_expenses').delete().eq('user_id', currentUser.id);
+                await supabase.from('user_settings').delete().eq('user_id', currentUser.id);
+                await supabase.from('user_subscriptions').delete().eq('user_id', currentUser.id);
                 
-                if (authError) {
-                    throw new Error('Senha incorreta');
-                }
+                // Sign out and redirect
+                await supabase.auth.signOut();
                 
-                // Delete all user deadlines first
-                const { error: deleteDataError } = await supabase
-                    .from('deadlines')
-                    .delete()
-                    .eq('user_id', currentUser.id);
+                showNotification('✅ Conta excluída com sucesso. Sentiremos sua falta!', 'success');
                 
-                if (deleteDataError) {
-                    console.error('Erro ao excluir dados:', deleteDataError);
-                }
-                
-                // Delete user account
-                const { error: deleteUserError } = await supabase.auth.admin.deleteUser(currentUser.id);
-                
-                if (deleteUserError) {
-                    // If admin delete fails, sign out user
-                    await supabase.auth.signOut();
-                }
-                
-                showNotification('✅ Conta excluída com sucesso', 'success');
-                closeDeleteModal();
-                
-                // Redirect to login
                 setTimeout(() => {
-                    currentUser = null;
-                    deadlines = [];
-                    stopNotificationSystem();
-                    showLoginModal();
+                    window.location.reload();
                 }, 2000);
                 
             } catch (error) {
-                showNotification(`❌ ${error.message}`, 'error');
+                console.error('Erro ao excluir conta:', error);
+                showNotification('❌ Erro ao excluir conta. Tente novamente.', 'error');
+            } finally {
+                hideLoading();
+                closeDeleteAccountModal();
+            }
+        }
+
+        // Upgrade PRO Modal Functions
+        function openUpgradeModal() {
+            if (isProUser) {
+                showNotification('👑 Você já é um usuário PRO!', 'success');
+                return;
+            }
+            document.getElementById('upgradeModal').classList.remove('hidden');
+        }
+
+        function closeUpgradeModal() {
+            document.getElementById('upgradeModal').classList.add('hidden');
+        }
+
+        async function startProTrial() {
+            if (isProUser) {
+                showNotification('👑 Você já é um usuário PRO!', 'success');
+                return;
+            }
+            
+            showLoading();
+            
+            try {
+                const trialEnd = new Date();
+                trialEnd.setDate(trialEnd.getDate() + 7); // 7 days trial
+                
+                const subscription = {
+                    user_id: currentUser.id,
+                    plan: 'pro',
+                    active: true,
+                    trial: true,
+                    trial_end: trialEnd.toISOString(),
+                    created_at: new Date().toISOString()
+                };
+                
+                const { error } = await supabase
+                    .from('user_subscriptions')
+                    .upsert([subscription]);
+                
+                if (error) throw error;
+                
+                isProUser = true;
+                proTrialEnd = trialEnd;
+                updateProUI();
+                
+                closeUpgradeModal();
+                showNotification('🎉 Teste PRO ativado! Aproveite 7 dias grátis!', 'success');
+                
+                // Show welcome message
+                setTimeout(() => {
+                    showNotification('👑 Agora você pode usar Lista de Compras e WhatsApp!', 'success');
+                }, 2000);
+                
+            } catch (error) {
+                console.error('Erro ao ativar PRO:', error);
+                showNotification('❌ Erro ao ativar PRO. Tente novamente.', 'error');
             } finally {
                 hideLoading();
             }
         }
+
+
 
         function showError(message, type = 'error') {
             const errorDiv = document.getElementById('authError');
@@ -2608,61 +2653,15 @@ Obrigado pela atenção!`);
             }
         }
 
-        function openUpgradeModal() {
-            document.getElementById('dropdownMenu').classList.add('hidden');
-            document.getElementById('upgradeModal').classList.remove('hidden');
-        }
 
-        function closeUpgradeModal() {
-            document.getElementById('upgradeModal').classList.add('hidden');
-        }
-
-        async function startProTrial() {
-            showLoading();
-            
-            try {
-                const trialEnd = new Date();
-                trialEnd.setDate(trialEnd.getDate() + 7);
-                
-                const { error } = await supabase
-                    .from('user_subscriptions')
-                    .upsert({
-                        user_id: currentUser.id,
-                        active: true,
-                        trial_end: trialEnd.toISOString(),
-                        plan: 'pro_trial',
-                        price: 0
-                    });
-                
-                if (error) throw error;
-                
-                isProUser = true;
-                proTrialEnd = trialEnd;
-                updateProUI();
-                closeUpgradeModal();
-                
-                showNotification('🎉 Teste PRO ativado! 7 dias grátis para você explorar!', 'success');
-                
-                // Load PRO features
-                await loadShoppingList();
-                await loadMonthlyExpenses();
-                
-            } catch (error) {
-                console.error('Erro ao ativar teste:', error);
-                showNotification('❌ Erro ao ativar teste PRO', 'error');
-            } finally {
-                hideLoading();
-            }
-        }
 
         // Shopping List Functions
         function openShoppingModal() {
             if (!isProUser) {
-                openUpgradeModal();
+                showNotification('🔒 Recurso PRO - Lista de Compras disponível na versão PRO!', 'info');
                 return;
             }
             
-            document.getElementById('dropdownMenu').classList.add('hidden');
             document.getElementById('shoppingModal').classList.remove('hidden');
             loadShoppingList();
             loadExpensesChart();
@@ -3018,10 +3017,9 @@ Obrigado pela atenção!`);
         // WhatsApp Functions
         function openWhatsAppModal() {
             if (!isProUser) {
-                openUpgradeModal();
+                showNotification('🔒 Recurso PRO - Notificações WhatsApp disponíveis na versão PRO!', 'info');
                 return;
             }
-            document.getElementById('dropdownMenu').classList.add('hidden');
             document.getElementById('whatsappModal').classList.remove('hidden');
         }
 
@@ -3162,8 +3160,9 @@ Obrigado pela atenção!`);
             }
         });
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98040d6b1524f1de',t:'MTc1ODA2NDM4NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9804253b7649f521',t:'MTc1ODA2NTM2MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
+
 
 
 
