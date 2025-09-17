@@ -111,16 +111,6 @@
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
         
-        /* Debug styles for menu */
-        #dropdownMenu {
-            border: 2px solid red !important;
-            background: white !important;
-        }
-        
-        #dropdownMenu button {
-            border: 1px solid blue !important;
-        }
-        
         .pro-badge {
             background: linear-gradient(45deg, #fbbf24, #f59e0b);
             animation: shimmer 2s infinite;
@@ -265,7 +255,7 @@
                     <div>
                         <div class="flex items-center space-x-2">
                             <h1 class="text-2xl font-bold">DeadlineX</h1>
-                            <span id="proStatus" class="pro-badge text-xs font-bold px-2 py-1 rounded-full text-white hidden">
+                            <span class="pro-badge text-xs font-bold px-2 py-1 rounded-full text-white">
                                 PRO
                             </span>
                         </div>
@@ -278,13 +268,17 @@
                     </div>
                     <div class="text-right">
                         <span id="userEmail" class="text-sm opacity-90 block"></span>
-                        <span id="planStatus" class="text-xs opacity-70">Plano Gratuito</span>
+                        <span class="text-xs opacity-70">Versão PRO Completa</span>
                     </div>
                     
                     <!-- Action Buttons -->
                     <div class="flex items-center space-x-2 flex-wrap">
-                        <button id="upgradeProBtn" class="gradient-pro hover:opacity-90 text-white px-4 py-2 rounded-xl transition-all duration-300 font-bold text-sm" title="Upgrade PRO">
-                            <i class="fas fa-crown mr-1"></i>PRO
+                        <button id="shoppingBtn" class="glass-effect hover:bg-white/20 p-3 rounded-xl transition-all duration-300" title="Lista de Compras" onclick="openShoppingModal()">
+                            <i class="fas fa-shopping-cart"></i>
+                        </button>
+                        
+                        <button id="whatsappBtn" class="glass-effect hover:bg-white/20 p-3 rounded-xl transition-all duration-300" title="WhatsApp" onclick="openWhatsAppModal()">
+                            <i class="fab fa-whatsapp"></i>
                         </button>
                         
                         <button id="shareBtn" class="glass-effect hover:bg-white/20 p-3 rounded-xl transition-all duration-300" title="Compartilhar">
@@ -303,10 +297,6 @@
                             <i class="fas fa-mobile-alt"></i>
                         </button>
                         
-                        <button id="loginManualBtn" class="glass-effect hover:bg-white/20 p-3 rounded-xl transition-all duration-300" title="Login Manual">
-                            <i class="fas fa-sign-in-alt"></i>
-                        </button>
-                        
                         <button id="logoutBtn" class="glass-effect hover:bg-white/20 p-3 rounded-xl transition-all duration-300" title="Sair">
                             <i class="fas fa-sign-out-alt"></i>
                         </button>
@@ -320,19 +310,18 @@
     <div id="loginModal" class="fixed inset-0 bg-black/50 modal-overlay flex items-center justify-center z-50">
         <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4 shadow-2xl">
             <div class="text-center mb-6">
-                <i class="fas fa-clock text-4xl text-indigo-600 mb-4"></i>
-                <h2 class="text-2xl font-bold text-gray-800">DeadlineX</h2>
-                <p class="text-gray-600">Faça login para gerenciar seus prazos</p>
+                <i class="fas fa-crown text-4xl text-yellow-500 mb-4"></i>
+                <h2 class="text-2xl font-bold text-gray-800">DeadlineX PRO</h2>
+                <p class="text-gray-600">Acesso exclusivo para usuários PRO</p>
+                <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mt-3">
+                    <p class="text-sm text-yellow-800">
+                        <i class="fas fa-info-circle mr-1"></i>
+                        Use as credenciais fornecidas após a compra
+                    </p>
+                </div>
             </div>
             
-            <div id="loginTabs" class="flex mb-6 bg-gray-100 rounded-lg p-1">
-                <button id="loginTab" class="flex-1 py-2 px-4 rounded-md bg-white shadow-sm font-medium text-indigo-600">
-                    Login
-                </button>
-                <button id="signupTab" class="flex-1 py-2 px-4 rounded-md font-medium text-gray-600">
-                    Cadastro
-                </button>
-            </div>
+            <!-- Removed signup tabs - only login now -->
             
             <form id="authForm">
                 <div class="space-y-4">
@@ -440,9 +429,9 @@
                 
                 <select id="priorityFilter" class="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500">
                     <option value="">Todas as Prioridades</option>
-                    <option value="high">Alta</option>
+                    <option value="alta">Alta</option>
                     <option value="normal">Normal</option>
-                    <option value="low">Baixa</option>
+                    <option value="baixa">Baixa</option>
                 </select>
                 
                 <select id="statusFilter" class="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500">
@@ -474,7 +463,7 @@
                 <i class="fas fa-calendar-plus text-6xl text-gray-300 mb-4"></i>
                 <h3 class="text-xl font-semibold text-gray-600 mb-2">Nenhum prazo encontrado</h3>
                 <p class="text-gray-500 mb-6">Comece criando seu primeiro prazo!</p>
-                <button class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg font-medium transition-colors">
+                <button class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg font-medium transition-colors" onclick="openAddModal()">
                     <i class="fas fa-plus mr-2"></i>Criar Primeiro Prazo
                 </button>
             </div>
@@ -571,8 +560,8 @@
                             <select id="deadlinePriority" 
                                     class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500">
                                 <option value="normal">Normal</option>
-                                <option value="high">Alta</option>
-                                <option value="low">Baixa</option>
+                                <option value="alta">Alta</option>
+                                <option value="baixa">Baixa</option>
                             </select>
                         </div>
                         
@@ -611,13 +600,6 @@
                 <p class="text-gray-600">Ajude seus amigos a organizarem melhor seus prazos!</p>
             </div>
             
-            <div class="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl p-4 mb-6">
-                <p class="text-sm text-gray-700 text-center">
-                    <i class="fas fa-gift text-indigo-600 mr-2"></i>
-                    <strong>Ganhe 1 mês PRO grátis</strong> para cada amigo que se cadastrar!
-                </p>
-            </div>
-            
             <div class="space-y-3">
                 <button onclick="shareViaWhatsApp()" class="w-full bg-green-500 hover:bg-green-600 text-white py-4 px-4 rounded-xl flex items-center justify-center space-x-3 transition-colors font-medium">
                     <i class="fab fa-whatsapp text-2xl"></i>
@@ -641,7 +623,7 @@
                 
                 <button onclick="copyShareLink()" class="w-full bg-indigo-100 hover:bg-indigo-200 text-indigo-700 py-4 px-4 rounded-xl flex items-center justify-center space-x-3 transition-colors font-medium border border-indigo-200">
                     <i class="fas fa-copy text-xl"></i>
-                    <span>Copiar Link de Convite</span>
+                    <span>Copiar Link</span>
                 </button>
             </div>
             
@@ -650,8 +632,6 @@
             </button>
         </div>
     </div>
-
-
 
     <!-- Privacy Policy Modal -->
     <div id="privacyModal" class="fixed inset-0 bg-black/50 modal-overlay flex items-center justify-center z-50 hidden">
@@ -693,8 +673,8 @@
                 </div>
                 
                 <div>
-                    <h4 class="font-semibold text-gray-800 mb-2">📱 WhatsApp (PRO)</h4>
-                    <p>Para usuários PRO, o número do WhatsApp é usado apenas para envio de lembretes. Utilizamos a Evolution API com total segurança.</p>
+                    <h4 class="font-semibold text-gray-800 mb-2">📱 WhatsApp</h4>
+                    <p>O número do WhatsApp é usado apenas para envio de lembretes. Utilizamos a Evolution API com total segurança.</p>
                 </div>
                 
                 <div>
@@ -729,10 +709,10 @@
                 <h4 class="font-semibold text-red-800 mb-2">⚠️ O que será excluído:</h4>
                 <ul class="text-sm text-red-700 space-y-1">
                     <li>• Todos os seus prazos e lembretes</li>
-                    <li>• Lista de compras e gastos (se PRO)</li>
+                    <li>• Lista de compras e gastos</li>
                     <li>• Configurações e preferências</li>
                     <li>• Histórico de notificações</li>
-                    <li>• Assinatura PRO (sem reembolso)</li>
+                    <li>• Todos os dados da conta</li>
                 </ul>
             </div>
             
@@ -754,83 +734,6 @@
             </div>
         </div>
     </div>
-
-    <!-- Upgrade PRO Modal -->
-    <div id="upgradeModal" class="fixed inset-0 bg-black/50 modal-overlay flex items-center justify-center z-50 hidden">
-        <div class="bg-white rounded-2xl p-8 max-w-lg w-full mx-4 shadow-2xl">
-            <div class="text-center mb-6">
-                <div class="gradient-pro w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <i class="fas fa-crown text-3xl text-white"></i>
-                </div>
-                <h3 class="text-2xl font-bold text-gray-800 mb-2">DeadlineX PRO</h3>
-                <p class="text-gray-600">Desbloqueie todos os recursos premium!</p>
-            </div>
-            
-            <div class="space-y-4 mb-6">
-                <div class="flex items-center space-x-3">
-                    <i class="fas fa-check-circle text-green-500 text-xl"></i>
-                    <div>
-                        <div class="font-medium">Lista de Compras Inteligente</div>
-                        <div class="text-sm text-gray-600">Organize compras e controle gastos</div>
-                    </div>
-                </div>
-                
-                <div class="flex items-center space-x-3">
-                    <i class="fas fa-check-circle text-green-500 text-xl"></i>
-                    <div>
-                        <div class="font-medium">Notificações WhatsApp</div>
-                        <div class="text-sm text-gray-600">Receba lembretes no seu celular</div>
-                    </div>
-                </div>
-                
-                <div class="flex items-center space-x-3">
-                    <i class="fas fa-check-circle text-green-500 text-xl"></i>
-                    <div>
-                        <div class="font-medium">Controle de Gastos</div>
-                        <div class="text-sm text-gray-600">Gráficos e relatórios mensais</div>
-                    </div>
-                </div>
-                
-                <div class="flex items-center space-x-3">
-                    <i class="fas fa-check-circle text-green-500 text-xl"></i>
-                    <div>
-                        <div class="font-medium">Backup na Nuvem</div>
-                        <div class="text-sm text-gray-600">Seus dados sempre seguros</div>
-                    </div>
-                </div>
-                
-                <div class="flex items-center space-x-3">
-                    <i class="fas fa-check-circle text-green-500 text-xl"></i>
-                    <div>
-                        <div class="font-medium">Suporte Prioritário</div>
-                        <div class="text-sm text-gray-600">Atendimento VIP via WhatsApp</div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="bg-gradient-to-r from-orange-50 to-red-50 rounded-xl p-4 mb-6 text-center">
-                <div class="text-2xl font-bold text-gray-800">R$ 9,90<span class="text-lg font-normal">/mês</span></div>
-                <div class="text-sm text-gray-600">7 dias grátis • Cancele quando quiser</div>
-            </div>
-            
-            <div class="space-y-3">
-                <button onclick="startProTrial()" class="w-full gradient-pro hover:opacity-90 text-white py-4 px-6 rounded-xl font-bold text-lg transition-colors">
-                    <i class="fas fa-crown mr-2"></i>Começar Teste Grátis
-                </button>
-                <button onclick="closeUpgradeModal()" class="w-full bg-gray-100 hover:bg-gray-200 text-gray-800 py-3 px-6 rounded-xl transition-colors">
-                    Talvez Depois
-                </button>
-            </div>
-            
-            <div class="mt-4 text-xs text-gray-500 text-center">
-                <p>💳 Sem cobrança nos primeiros 7 dias</p>
-            </div>
-        </div>
-    </div>
-
-
-
-
 
     <!-- Shopping List Modal -->
     <div id="shoppingModal" class="fixed inset-0 bg-black/50 modal-overlay flex items-center justify-center z-50 hidden">
@@ -952,7 +855,7 @@
                     <p class="text-sm text-blue-800">
                         <i class="fas fa-info-circle mr-2"></i>
                         Utilizamos a API da <strong>Evolution API</strong> para envio de mensagens. 
-                        Plano gratuito: 1000 mensagens/mês.
+                        Totalmente seguro e confiável.
                     </p>
                 </div>
                 
@@ -1031,15 +934,24 @@
         let supabase;
         let usingLocalStorage = false;
         
-        // Initialize Supabase
+        // Initialize Supabase - RECONNECTING
         try {
-            supabase = window.supabase.createClient(
-                'https://your-project.supabase.co',
-                'your-anon-key'
-            );
-            console.log('✅ Supabase conectado');
+            // Suas credenciais do Supabase
+            const SUPABASE_URL = 'https://vastjlzaxafpoagptklu.supabase.co';
+            const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZhc3RqbHpheGFmcG9hZ3B0a2x1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTYyNjUzMDEsImV4cCI6MjA3MTg0MTMwMX0.4EnnkdyVDEo1qSp1C2-QgVlklUkL2W3ulqOmXX_DiVY';
+            
+            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            
+            // Test connection
+            console.log('🔄 Testando conexão com Supabase...');
+            console.log('📡 URL:', SUPABASE_URL);
+            console.log('🔑 Key:', SUPABASE_ANON_KEY.substring(0, 20) + '...');
+            
+            usingLocalStorage = false;
+            
         } catch (error) {
-            console.log('⚠️ Supabase não disponível, usando localStorage');
+            console.error('❌ Erro ao conectar Supabase:', error);
+            console.log('⚠️ Usando localStorage como fallback');
             supabase = createLocalStorageFallback();
             usingLocalStorage = true;
         }
@@ -1048,24 +960,19 @@
         let currentUser = null;
         let deadlines = [];
         let editingDeadline = null;
-        let isSignupMode = false;
         let currentView = 'list';
         let currentDate = new Date();
         let notificationInterval = null;
         let clockInterval = null;
-        let isProUser = false;
-        let proTrialEnd = null;
         let shoppingList = [];
         let monthlyExpenses = [];
         let expensesChart = null;
         let deferredPrompt = null;
+        let browserNotificationsEnabled = false;
 
-        
         // LocalStorage Fallback System
         function createLocalStorageFallback() {
             console.log('🔄 Usando sistema de fallback com localStorage');
-            debugLog('🔄 Iniciando sistema localStorage fallback');
-            showDebugInfo('Sistema offline ativo - usando localStorage');
             usingLocalStorage = true;
             
             return {
@@ -1087,35 +994,18 @@
                     },
                     signInWithPassword: async ({ email, password }) => {
                         try {
-                            debugLog('🔐 localStorage: Tentando login', { email });
-                            
-                            // Simple validation for demo
-                            if (!email || !password) {
-                                debugLog('❌ localStorage: Campos obrigatórios vazios');
-                                return { error: { message: 'Email e senha são obrigatórios' } };
-                            }
-                            
                             const users = JSON.parse(localStorage.getItem('deadlinex_users') || '[]');
-                            debugLog('👥 localStorage: Usuários existentes:', users.length);
-                            
                             let user = users.find(u => u.email === email && u.password === password);
                             
-                            // If no user found, create one for demo purposes
                             if (!user) {
-                                debugLog('➕ localStorage: Criando usuário automaticamente');
                                 user = { id: Date.now().toString(), email, password };
                                 users.push(user);
                                 localStorage.setItem('deadlinex_users', JSON.stringify(users));
-                                debugLog('✅ localStorage: Usuário criado', user);
-                            } else {
-                                debugLog('✅ localStorage: Usuário encontrado', user);
                             }
                             
                             localStorage.setItem('deadlinex_current_user', JSON.stringify(user));
-                            debugLog('💾 localStorage: Sessão salva');
                             return { data: { user }, error: null };
                         } catch (error) {
-                            debugLog('❌ localStorage: Erro no login', error);
                             return { error: { message: 'Erro ao fazer login' } };
                         }
                     },
@@ -1129,21 +1019,14 @@
                     },
                     getSession: async () => {
                         try {
-                            debugLog('🔍 localStorage: Verificando sessão...');
                             const user = JSON.parse(localStorage.getItem('deadlinex_current_user') || 'null');
-                            debugLog('👤 localStorage: Usuário na sessão:', user);
-                            
                             const session = user ? { user } : null;
-                            debugLog('📋 localStorage: Sessão retornada:', session);
-                            
                             return { data: { session }, error: null };
                         } catch (error) {
-                            debugLog('❌ localStorage: Erro ao verificar sessão', error);
                             return { data: { session: null }, error };
                         }
                     },
                     onAuthStateChange: (callback) => {
-                        // Simple implementation for demo
                         return { data: { subscription: { unsubscribe: () => {} } } };
                     }
                 },
@@ -1241,81 +1124,10 @@
         const mainContent = document.getElementById('mainContent');
         const deadlineModal = document.getElementById('deadlineModal');
         const loadingOverlay = document.getElementById('loadingOverlay');
-        
-        // Debug System
-        function debugLog(message, data = null) {
-            console.log(`🔧 ${message}`, data || '');
-        }
-        
-        function showDebugInfo(message) {
-            console.log(`📱 ${message}`);
-        }
-        
-        function showSupabaseDebug() {
-            console.log('🔍 === DEBUG SUPABASE ===');
-            console.log('📊 Status do Supabase:', supabase ? 'Conectado' : 'Não conectado');
-            console.log('💾 Usando localStorage:', usingLocalStorage);
-            console.log('👤 Usuário atual:', currentUser);
-            
-            // Criar painel de debug visual
-            const debugPanel = document.createElement('div');
-            debugPanel.id = 'debugPanel';
-            debugPanel.className = 'fixed bottom-4 left-4 bg-black text-white p-4 rounded-lg text-xs max-w-sm z-50';
-            debugPanel.innerHTML = `
-                <div class="font-bold mb-2">🔧 DEBUG PANEL</div>
-                <div>Supabase: ${supabase ? '✅ Conectado' : '❌ Desconectado'}</div>
-                <div>LocalStorage: ${usingLocalStorage ? '✅ Ativo' : '❌ Inativo'}</div>
-                <div>Usuário: ${currentUser?.email || 'Nenhum'}</div>
-                <div class="mt-2">
-                    <button onclick="testSupabaseConnection()" class="bg-blue-600 px-2 py-1 rounded text-xs mr-2">Testar Conexão</button>
-                    <button onclick="showSupabaseCredentials()" class="bg-green-600 px-2 py-1 rounded text-xs mr-2">Ver Credenciais</button>
-                    <button onclick="document.getElementById('debugPanel').remove()" class="bg-red-600 px-2 py-1 rounded text-xs">Fechar</button>
-                </div>
-            `;
-            document.body.appendChild(debugPanel);
-        }
-        
-        function testSupabaseConnection() {
-            console.log('🧪 Testando conexão Supabase...');
-            
-            if (!supabase) {
-                console.log('❌ Supabase não inicializado');
-                showNotification('❌ Supabase não inicializado', 'error');
-                return;
-            }
-            
-            // Teste básico
-            supabase.auth.getSession().then(result => {
-                console.log('📋 Resultado do teste:', result);
-                if (result.error) {
-                    console.log('❌ Erro na conexão:', result.error);
-                    showNotification('❌ Erro na conexão: ' + result.error.message, 'error');
-                } else {
-                    console.log('✅ Conexão OK');
-                    showNotification('✅ Conexão Supabase OK!', 'success');
-                }
-            }).catch(error => {
-                console.log('❌ Erro crítico:', error);
-                showNotification('❌ Erro crítico: ' + error.message, 'error');
-            });
-        }
-        
-        function showSupabaseCredentials() {
-            console.log('🔑 === CREDENCIAIS ATUAIS ===');
-            console.log('URL:', 'https://your-project.supabase.co');
-            console.log('Key:', 'your-anon-key');
-            console.log('');
-            console.log('📝 Para conectar ao Supabase real:');
-            console.log('1. Substitua "your-project" pela URL do seu projeto');
-            console.log('2. Substitua "your-anon-key" pela chave anônima');
-            console.log('3. As credenciais ficam na linha ~1180 do código');
-            
-            showNotification('🔑 Credenciais mostradas no console (F12)', 'info');
-        }
 
         // Initialize App
         document.addEventListener('DOMContentLoaded', async () => {
-            console.log('🚀 DeadlineX iniciando...');
+            console.log('🚀 DeadlineX PRO iniciando...');
             
             try {
                 // Setup everything
@@ -1323,26 +1135,14 @@
                 startClock();
                 setupPWA();
                 
-                // Auto-login direto (modo debug)
-                console.log('🔧 MODO DEBUG: Entrando automaticamente...');
-                currentUser = { 
-                    id: 'debug-user-123', 
-                    email: 'debug@deadlinex.com' 
-                };
+                // Check authentication
+                await checkAuth();
                 
-                showMainContent();
-                await loadDeadlines();
-                
-                // Mostrar debug do Supabase
-                showSupabaseDebug();
-                
-                console.log('✅ Sistema carregado - modo debug ativo');
+                console.log('✅ Sistema carregado');
                 
             } catch (error) {
                 console.error('❌ Erro na inicialização:', error);
-                // Mesmo com erro, entra no sistema
-                currentUser = { id: 'debug-user-123', email: 'debug@deadlinex.com' };
-                showMainContent();
+                showLoginModal();
             }
         });
         
@@ -1369,7 +1169,6 @@
         }
         
         function openInstallModal() {
-            document.getElementById('dropdownMenu').classList.add('hidden');
             document.getElementById('installModal').classList.remove('hidden');
         }
         
@@ -1466,24 +1265,49 @@
             }
         }
 
-        // Authentication Functions - Simplified for demo
+        // Authentication Functions
         async function checkAuth() {
-            // Skip session check for demo - always show login
-            console.log('🔐 Pulando verificação de sessão - modo demo');
-            showLoginModal();
+            try {
+                console.log('🔐 Verificando sessão...');
+                console.log('🔗 Supabase conectado:', !!supabase);
+                console.log('💾 Usando localStorage:', usingLocalStorage);
+                
+                const { data: { session }, error } = await supabase.auth.getSession();
+                
+                console.log('📋 Resultado da sessão:', { session, error });
+                
+                if (error) {
+                    console.error('❌ Erro ao verificar sessão:', error);
+                    showLoginModal();
+                    return;
+                }
+                
+                if (session?.user) {
+                    console.log('✅ Usuário PRO logado:', session.user.email);
+                    currentUser = session.user;
+                    showMainContent();
+                    await loadDeadlines();
+                    await loadShoppingList();
+                    await loadMonthlyExpenses();
+                    startNotificationSystem();
+                    
+                    // Setup browser notifications
+                    setTimeout(setupBrowserNotifications, 2000);
+                } else {
+                    console.log('❌ Nenhuma sessão ativa');
+                    showLoginModal();
+                }
+            } catch (error) {
+                console.error('❌ Erro crítico na autenticação:', error);
+                console.error('Stack trace:', error.stack);
+                showLoginModal();
+            }
         }
 
         function showLoginModal() {
             console.log('📱 Exibindo tela de login');
             loginModal.classList.remove('hidden');
             mainContent.classList.add('hidden');
-            
-            // Auto-fill for demo
-            setTimeout(() => {
-                document.getElementById('email').value = 'teste@deadlinex.com';
-                document.getElementById('password').value = '123456';
-                console.log('✅ Campos preenchidos - clique em ENTRAR');
-            }, 500);
         }
 
         function showMainContent() {
@@ -1502,19 +1326,13 @@
 
         // Event Listeners
         function setupEventListeners() {
-            // Auth tabs
-            document.getElementById('loginTab').addEventListener('click', () => switchAuthMode(false));
-            document.getElementById('signupTab').addEventListener('click', () => switchAuthMode(true));
-            
-            // Auth form
+            // Auth form (login only)
             document.getElementById('authForm').addEventListener('submit', handleAuth);
             
             // Action buttons
-            document.getElementById('upgradeProBtn').addEventListener('click', openUpgradeModal);
             document.getElementById('shareBtn').addEventListener('click', openShareModal);
             document.getElementById('privacyBtn').addEventListener('click', openPrivacyModal);
             document.getElementById('deleteAccountBtn').addEventListener('click', openDeleteAccountModal);
-            document.getElementById('loginManualBtn').addEventListener('click', showLoginModal);
             document.getElementById('logoutBtn').addEventListener('click', handleLogout);
             
             // PWA Install
@@ -1556,62 +1374,66 @@
             document.getElementById('refreshBtn').addEventListener('click', loadDeadlines);
         }
 
-        function switchAuthMode(signup) {
-            isSignupMode = signup;
-            const loginTab = document.getElementById('loginTab');
-            const signupTab = document.getElementById('signupTab');
-            const submitBtn = document.getElementById('authSubmit');
-            
-            if (signup) {
-                loginTab.classList.remove('bg-white', 'shadow-sm', 'text-indigo-600');
-                loginTab.classList.add('text-gray-600');
-                signupTab.classList.add('bg-white', 'shadow-sm', 'text-indigo-600');
-                signupTab.classList.remove('text-gray-600');
-                submitBtn.textContent = 'Cadastrar';
-            } else {
-                signupTab.classList.remove('bg-white', 'shadow-sm', 'text-indigo-600');
-                signupTab.classList.add('text-gray-600');
-                loginTab.classList.add('bg-white', 'shadow-sm', 'text-indigo-600');
-                loginTab.classList.remove('text-gray-600');
-                submitBtn.textContent = 'Entrar';
-            }
-        }
+        // Removed switchAuthMode - only login mode now
 
         async function handleAuth(e) {
             e.preventDefault();
-            console.log('🔑 Processando login...');
+            console.log('🔑 Fazendo login PRO...');
             showLoading();
             
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
             
+            console.log('📧 Email:', email);
+            console.log('🔒 Senha:', password ? '***' : 'vazia');
+            console.log('🔗 Supabase disponível:', !!supabase);
+            console.log('💾 Modo localStorage:', usingLocalStorage);
+            
             try {
-                let result;
-                if (isSignupMode) {
-                    console.log('📝 Criando conta...');
-                    result = await supabase.auth.signUp({ email, password });
-                } else {
-                    console.log('🔐 Fazendo login...');
-                    result = await supabase.auth.signInWithPassword({ email, password });
+                console.log('🔐 Tentando autenticar...');
+                
+                // Test Supabase connection first
+                if (!usingLocalStorage) {
+                    console.log('🧪 Testando conexão Supabase...');
+                    const testResult = await supabase.from('auth.users').select('count').limit(1);
+                    console.log('🧪 Teste de conexão:', testResult);
                 }
                 
-                console.log('📋 Resultado:', result);
+                const result = await supabase.auth.signInWithPassword({ email, password });
+                
+                console.log('📋 Resultado completo:', result);
+                console.log('📋 Data:', result.data);
+                console.log('📋 Error:', result.error);
                 
                 if (result.error) {
-                    console.error('❌ Erro:', result.error.message);
-                    showError(result.error.message);
+                    console.error('❌ Erro de autenticação:', result.error);
+                    console.error('❌ Código do erro:', result.error.status);
+                    console.error('❌ Mensagem:', result.error.message);
+                    showError(getErrorMessage(result.error.message));
                     return;
                 }
                 
-                // Success
-                console.log('✅ Login OK!');
+                // Success - All users have PRO access
+                console.log('✅ Login PRO realizado com sucesso!');
+                console.log('👤 Usuário:', result.data.user);
+                console.log('🎫 Sessão:', result.data.session);
+                
                 currentUser = result.data.user || result.data.session?.user;
                 showMainContent();
                 await loadDeadlines();
+                await loadShoppingList();
+                await loadMonthlyExpenses();
+                startNotificationSystem();
+                
+                // Setup browser notifications
+                setTimeout(setupBrowserNotifications, 2000);
+                
+                showNotification('🚀 Bem-vindo ao DeadlineX PRO!', 'success');
                 
             } catch (error) {
-                console.error('❌ Erro crítico:', error);
-                showError('Erro no sistema. Tente novamente.');
+                console.error('❌ Erro crítico no login:', error);
+                console.error('❌ Stack trace:', error.stack);
+                showError('Erro no sistema. Verifique sua conexão e tente novamente.');
             } finally {
                 hideLoading();
             }
@@ -1621,880 +1443,103 @@
             await supabase.auth.signOut();
             currentUser = null;
             deadlines = [];
+            shoppingList = [];
+            monthlyExpenses = [];
             stopNotificationSystem();
             showLoginModal();
         }
 
-        // Clock Functions
-        function startClock() {
-            updateClock();
-            clockInterval = setInterval(updateClock, 1000);
-        }
-
-        function updateClock() {
-            const now = new Date();
-            const timeString = now.toLocaleTimeString('pt-BR', {
-                hour12: false,
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit'
-            });
-            document.getElementById('liveClock').textContent = timeString;
-        }
-
-        // Browser Notification System
-        let browserNotificationsEnabled = false;
-        
-        async function setupBrowserNotifications() {
-            if (!("Notification" in window)) {
-                showNotification('❌ Seu navegador não suporta notificações', 'error');
-                return;
-            }
-            
-            if (Notification.permission === "granted") {
-                browserNotificationsEnabled = true;
-                showNotification('✅ Notificações já estão ativadas!', 'success');
-                return;
-            }
-            
-            if (Notification.permission !== "denied") {
-                const permission = await Notification.requestPermission();
-                if (permission === "granted") {
-                    browserNotificationsEnabled = true;
-                    showNotification('🔔 Notificações ativadas! Você receberá lembretes mesmo com o navegador fechado.', 'success');
-                    
-                    // Test notification
-                    new Notification("DeadlineX", {
-                        body: "Notificações ativadas com sucesso! 🎉",
-                        icon: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='40' fill='%236366f1'/%3E%3Ctext x='50' y='60' text-anchor='middle' fill='white' font-size='30'%3E🚀%3C/text%3E%3C/svg%3E"
-                    });
-                } else {
-                    showNotification('❌ Permissão negada. Ative nas configurações do navegador.', 'error');
-                }
-            } else {
-                showNotification('❌ Notificações bloqueadas. Ative nas configurações do navegador.', 'error');
-            }
-        }
-        
-        function sendBrowserNotification(title, body, urgent = false) {
-            if (!browserNotificationsEnabled || Notification.permission !== "granted") {
-                return;
-            }
-            
-            const notification = new Notification(title, {
-                body: body,
-                icon: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='40' fill='%236366f1'/%3E%3Ctext x='50' y='60' text-anchor='middle' fill='white' font-size='30'%3E🚀%3C/text%3E%3C/svg%3E",
-                badge: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='40' fill='%23ef4444'/%3E%3Ctext x='50' y='60' text-anchor='middle' fill='white' font-size='20'%3E⚠️%3C/text%3E%3C/svg%3E",
-                requireInteraction: urgent,
-                silent: false
-            });
-            
-            notification.onclick = function() {
-                window.focus();
-                notification.close();
-            };
-            
-            // Auto close after 10 seconds if not urgent
-            if (!urgent) {
-                setTimeout(() => notification.close(), 10000);
-            }
-        }
-
-        // Notification System
-        function startNotificationSystem() {
-            if (notificationInterval) clearInterval(notificationInterval);
-            
-            // Check notifications every minute
-            notificationInterval = setInterval(() => {
-                if (currentUser && deadlines.length > 0) {
-                    checkDeadlineNotifications();
-                }
-            }, 60000); // 1 minute
-            
-            // Initial check
-            if (currentUser && deadlines.length > 0) {
-                setTimeout(checkDeadlineNotifications, 2000);
-            }
-        }
-
-        function stopNotificationSystem() {
-            if (notificationInterval) {
-                clearInterval(notificationInterval);
-                notificationInterval = null;
-            }
-        }
-
-        function checkDeadlineNotifications() {
-            const now = new Date();
-            
-            deadlines.forEach(deadline => {
-                if (deadline.completed || !deadline.notification) return;
-                
-                const deadlineDate = new Date(deadline.date);
-                const timeDiff = deadlineDate - now;
-                const daysDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
-                
-                let message = '';
-                let type = 'info';
-                let urgent = false;
-                
-                // Check for different notification periods
-                if (daysDiff === 30) {
-                    message = `📅 Prazo em 30 dias: ${deadline.title}`;
-                    type = 'info';
-                } else if (daysDiff === 7) {
-                    message = `⚠️ Prazo em 1 semana: ${deadline.title}`;
-                    type = 'warning';
-                } else if (daysDiff === 1) {
-                    message = `🚨 Prazo amanhã: ${deadline.title}`;
-                    type = 'urgent';
-                    urgent = true;
-                } else if (daysDiff === 0) {
-                    message = `⏰ Prazo hoje: ${deadline.title}`;
-                    type = 'urgent';
-                    urgent = true;
-                } else if (daysDiff < 0) {
-                    message = `❌ Prazo vencido: ${deadline.title}`;
-                    type = 'error';
-                    urgent = true;
-                }
-                
-                if (message) {
-                    // Show in-app notification
-                    showNotification(message, type);
-                    
-                    // Send browser notification for all users (free and PRO)
-                    const notificationBody = `${deadline.description || 'Sem descrição'}\nData: ${formatDate(deadline.date)}`;
-                    sendBrowserNotification('DeadlineX - Lembrete', `${message}\n\n${notificationBody}`, urgent);
-                }
-            });
-        }
-
-        function showNotification(message, type = 'info') {
-            const container = document.getElementById('notificationContainer');
-            const notification = document.createElement('div');
-            
-            const typeClasses = {
-                info: 'bg-blue-500 border-blue-600',
-                warning: 'bg-orange-500 border-orange-600',
-                urgent: 'bg-red-500 border-red-600',
-                error: 'bg-red-600 border-red-700',
-                success: 'bg-green-500 border-green-600'
-            };
-            
-            notification.className = `notification-popup ${typeClasses[type]} text-white px-4 py-3 rounded-lg shadow-lg border-l-4 max-w-sm`;
-            notification.innerHTML = `
-                <div class="flex items-center justify-between">
-                    <span class="text-sm font-medium">${message}</span>
-                    <button onclick="this.parentElement.parentElement.remove()" class="ml-3 text-white hover:text-gray-200">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-            `;
-            
-            container.appendChild(notification);
-            
-            // Auto remove after 5 seconds
-            setTimeout(() => {
-                if (notification.parentElement) {
-                    notification.remove();
-                }
-            }, 5000);
-        }
-
-        // Menu Functions (removed - using direct buttons now)
-
-        // Share Functions
-        function openShareModal() {
-            document.getElementById('shareModal').classList.remove('hidden');
-        }
-
-        function closeShareModal() {
-            document.getElementById('shareModal').classList.add('hidden');
-        }
-
-        function shareViaWhatsApp() {
-            const referralCode = currentUser ? btoa(currentUser.id).substring(0, 8) : 'GUEST';
-            const message = encodeURIComponent(`🎯 *DeadlineX* - O melhor organizador de prazos!
-
-✅ Nunca mais perca um prazo importante
-🔔 Notificações inteligentes
-📱 Instale como app no celular
-💼 Versão PRO com lista de compras e controle de gastos
-
-🎁 *Use meu código de convite: ${referralCode}*
-E ganhe 1 mês PRO grátis!
-
-Baixe agora:`);
-            const url = encodeURIComponent(`${window.location.href}?ref=${referralCode}`);
-            window.open(`https://wa.me/?text=${message}%20${url}`, '_blank');
-            closeShareModal();
-        }
-
-        function shareViaFacebook() {
-            const referralCode = currentUser ? btoa(currentUser.id).substring(0, 8) : 'GUEST';
-            const url = encodeURIComponent(`${window.location.href}?ref=${referralCode}`);
-            const text = encodeURIComponent('🎯 DeadlineX - O melhor organizador de prazos! Nunca mais perca um prazo importante. Ganhe 1 mês PRO grátis com meu convite!');
-            window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}&quote=${text}`, '_blank');
-            closeShareModal();
-        }
-
-        function shareViaTwitter() {
-            const referralCode = currentUser ? btoa(currentUser.id).substring(0, 8) : 'GUEST';
-            const text = encodeURIComponent(`🎯 DeadlineX - O melhor organizador de prazos!
-
-✅ Notificações inteligentes
-📱 App para celular
-💼 Lista de compras integrada
-
-🎁 Ganhe 1 mês PRO grátis com meu código: ${referralCode}`);
-            const url = encodeURIComponent(`${window.location.href}?ref=${referralCode}`);
-            window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, '_blank');
-            closeShareModal();
-        }
-
-        function shareViaEmail() {
-            const referralCode = currentUser ? btoa(currentUser.id).substring(0, 8) : 'GUEST';
-            const subject = encodeURIComponent('🎯 DeadlineX - Organizador de Prazos (Convite Especial)');
-            const body = encodeURIComponent(`Olá!
-
-Descobri uma ferramenta INCRÍVEL para organizar prazos e queria compartilhar com você: o DeadlineX!
-
-🎯 O QUE ELE FAZ:
-✅ Organiza todos os seus prazos em um só lugar
-🔔 Notificações automáticas no celular
-📱 Instala como app nativo
-📊 Visualização em lista ou calendário
-🏷️ Categorização inteligente (saúde, trabalho, etc.)
-
-💼 VERSÃO PRO:
-🛒 Lista de compras inteligente
-💰 Controle de gastos mensais
-📱 Notificações via WhatsApp
-☁️ Backup automático na nuvem
-
-🎁 OFERTA ESPECIAL:
-Use meu código de convite: ${referralCode}
-E ganhe 1 MÊS PRO GRÁTIS!
-
-👉 Acesse aqui: ${window.location.href}?ref=${referralCode}
-
-Vale muito a pena experimentar! Eu uso todos os dias e nunca mais perdi um prazo importante.
-
-Abraços!`);
-            
-            window.open(`mailto:?subject=${subject}&body=${body}`, '_blank');
-            closeShareModal();
-        }
-
-        function copyShareLink() {
-            const referralCode = currentUser ? btoa(currentUser.id).substring(0, 8) : 'GUEST';
-            const shareText = `🎯 DeadlineX - O melhor organizador de prazos!
-
-✅ Nunca mais perca um prazo importante
-🔔 Notificações inteligentes
-📱 Instale como app no celular
-💼 Lista de compras e controle de gastos
-
-🎁 Ganhe 1 mês PRO grátis com meu código: ${referralCode}
-
-👉 ${window.location.href}?ref=${referralCode}`;
-            
-            if (navigator.clipboard) {
-                navigator.clipboard.writeText(shareText).then(() => {
-                    showNotification('✅ Link de convite copiado! Cole onde quiser compartilhar.', 'success');
-                });
-            } else {
-                // Fallback for older browsers
-                const textArea = document.createElement('textarea');
-                textArea.value = shareText;
-                document.body.appendChild(textArea);
-                textArea.select();
-                document.execCommand('copy');
-                document.body.removeChild(textArea);
-                showNotification('✅ Link de convite copiado! Cole onde quiser compartilhar.', 'success');
-            }
-            
-            closeShareModal();
-        }
-
-
-
-        // Support Functions
-        function openSupportModal() {
-            document.getElementById('supportModal').classList.remove('hidden');
-        }
-
-        function closeSupportModal() {
-            document.getElementById('supportModal').classList.add('hidden');
-        }
-
-        function openWhatsAppSupport() {
-            const message = encodeURIComponent(`🎯 *DeadlineX - Suporte*
-
-Olá! Preciso de ajuda com:
-
-📧 Email da conta: ${currentUser?.email || 'Não logado'}
-📱 Navegador: ${navigator.userAgent.split(' ')[0]}
-🔧 Problema: [Descreva seu problema aqui]
-
-Obrigado!`);
-            window.open(`https://wa.me/5511999999999?text=${message}`, '_blank');
-            closeSupportModal();
-        }
-
-        function openEmailSupport() {
-            const subject = encodeURIComponent('DeadlineX - Solicitação de Suporte');
-            const body = encodeURIComponent(`Olá equipe DeadlineX!
-
-Preciso de ajuda com o sistema.
-
-INFORMAÇÕES DA CONTA:
-📧 Email: ${currentUser?.email || 'Não logado'}
-📱 Navegador: ${navigator.userAgent}
-🕐 Data/Hora: ${new Date().toLocaleString('pt-BR')}
-
-DESCRIÇÃO DO PROBLEMA:
-[Descreva detalhadamente seu problema aqui]
-
-PASSOS PARA REPRODUZIR:
-1. [Primeiro passo]
-2. [Segundo passo]
-3. [Terceiro passo]
-
-RESULTADO ESPERADO:
-[O que deveria acontecer]
-
-RESULTADO ATUAL:
-[O que está acontecendo]
-
-Obrigado pela atenção!`);
-            
-            window.open(`mailto:suporte@deadlinex.com?subject=${subject}&body=${body}`, '_blank');
-            closeSupportModal();
-        }
-
-        // Privacy Modal Functions
-        function openPrivacyModal() {
-            document.getElementById('privacyModal').classList.remove('hidden');
-        }
-
-        function closePrivacyModal() {
-            document.getElementById('privacyModal').classList.add('hidden');
-        }
-
-        // Delete Account Modal Functions
-        function openDeleteAccountModal() {
-            document.getElementById('deleteAccountModal').classList.remove('hidden');
-            document.getElementById('deleteConfirmation').value = '';
-        }
-
-        function closeDeleteAccountModal() {
-            document.getElementById('deleteAccountModal').classList.add('hidden');
-        }
-
-        async function confirmDeleteAccount() {
-            const confirmation = document.getElementById('deleteConfirmation').value;
-            
-            if (confirmation !== 'EXCLUIR') {
-                showNotification('❌ Digite "EXCLUIR" para confirmar', 'error');
-                return;
-            }
-            
-            if (!confirm('Tem CERTEZA ABSOLUTA que deseja excluir sua conta? Esta ação é IRREVERSÍVEL!')) {
-                return;
-            }
-            
-            showLoading();
-            
-            try {
-                // Delete all user data
-                await supabase.from('deadlines').delete().eq('user_id', currentUser.id);
-                await supabase.from('shopping_items').delete().eq('user_id', currentUser.id);
-                await supabase.from('monthly_expenses').delete().eq('user_id', currentUser.id);
-                await supabase.from('user_settings').delete().eq('user_id', currentUser.id);
-                await supabase.from('user_subscriptions').delete().eq('user_id', currentUser.id);
-                
-                // Sign out and redirect
-                await supabase.auth.signOut();
-                
-                showNotification('✅ Conta excluída com sucesso. Sentiremos sua falta!', 'success');
-                
-                setTimeout(() => {
-                    window.location.reload();
-                }, 2000);
-                
-            } catch (error) {
-                console.error('Erro ao excluir conta:', error);
-                showNotification('❌ Erro ao excluir conta. Tente novamente.', 'error');
-            } finally {
-                hideLoading();
-                closeDeleteAccountModal();
-            }
-        }
-
-        // Upgrade PRO Modal Functions
-        function openUpgradeModal() {
-            if (isProUser) {
-                showNotification('👑 Você já é um usuário PRO!', 'success');
-                return;
-            }
-            document.getElementById('upgradeModal').classList.remove('hidden');
-        }
-
-        function closeUpgradeModal() {
-            document.getElementById('upgradeModal').classList.add('hidden');
-        }
-
-        async function startProTrial() {
-            if (isProUser) {
-                showNotification('👑 Você já é um usuário PRO!', 'success');
-                return;
-            }
-            
-            showLoading();
-            
-            try {
-                const trialEnd = new Date();
-                trialEnd.setDate(trialEnd.getDate() + 7); // 7 days trial
-                
-                const subscription = {
-                    user_id: currentUser.id,
-                    plan: 'pro',
-                    active: true,
-                    trial: true,
-                    trial_end: trialEnd.toISOString(),
-                    created_at: new Date().toISOString()
-                };
-                
-                const { error } = await supabase
-                    .from('user_subscriptions')
-                    .upsert([subscription]);
-                
-                if (error) throw error;
-                
-                isProUser = true;
-                proTrialEnd = trialEnd;
-                updateProUI();
-                
-                closeUpgradeModal();
-                showNotification('🎉 Teste PRO ativado! Aproveite 7 dias grátis!', 'success');
-                
-                // Show welcome message
-                setTimeout(() => {
-                    showNotification('👑 Agora você pode usar Lista de Compras e WhatsApp!', 'success');
-                }, 2000);
-                
-            } catch (error) {
-                console.error('Erro ao ativar PRO:', error);
-                showNotification('❌ Erro ao ativar PRO. Tente novamente.', 'error');
-            } finally {
-                hideLoading();
-            }
-        }
-
-
-
-        function showError(message, type = 'error') {
-            const errorDiv = document.getElementById('authError');
-            errorDiv.textContent = message;
-            errorDiv.className = `mt-4 p-3 border rounded-lg ${
-                type === 'success' 
-                    ? 'bg-green-100 border-green-400 text-green-700' 
-                    : 'bg-red-100 border-red-400 text-red-700'
-            }`;
-            errorDiv.classList.remove('hidden');
-            
-            setTimeout(() => {
-                errorDiv.classList.add('hidden');
-            }, 5000);
-        }
-
-        function getErrorMessage(error) {
-            const messages = {
-                'Invalid login credentials': 'Email ou senha incorretos',
-                'User already registered': 'Este email já está cadastrado',
-                'Password should be at least 6 characters': 'A senha deve ter pelo menos 6 caracteres'
-            };
-            return messages[error] || 'Erro ao processar solicitação';
-        }
-
-        // Deadline Functions
+        // Deadline Functions - Updated for Supabase tables
         async function loadDeadlines() {
             if (!currentUser) return;
             
             showLoading();
-            
             try {
+                console.log('📋 Carregando prazos...');
                 const { data, error } = await supabase
-                    .from('deadlines')
+                    .from('prazos')
                     .select('*')
-                    .order('date', { ascending: true });
+                    .eq('user_id', currentUser.id)
+                    .order('data_prazo', { ascending: true });
                 
-                if (error) throw error;
+                if (error) {
+                    console.error('Erro ao carregar prazos:', error);
+                    showNotification('❌ Erro ao carregar prazos', 'error');
+                    return;
+                }
                 
-                deadlines = data || [];
+                // Convert database format to app format
+                deadlines = (data || []).map(item => ({
+                    id: item.id,
+                    title: item.titulo,
+                    description: item.descricao,
+                    date: item.data_prazo,
+                    category: item.categoria,
+                    priority: item.prioridade,
+                    completed: item.concluido,
+                    notification: item.notificacao_ativa,
+                    user_id: item.user_id,
+                    created_at: item.created_at,
+                    updated_at: item.updated_at
+                }));
+                
+                console.log(`✅ ${deadlines.length} prazos carregados`);
+                
                 renderDeadlines();
                 updateStats();
                 
-                // Restart notification system with new data
-                startNotificationSystem();
+                if (currentView === 'calendar') {
+                    renderCalendar();
+                }
                 
             } catch (error) {
-                console.error('Erro ao carregar prazos:', error);
+                console.error('Erro crítico:', error);
+                showNotification('❌ Erro no sistema', 'error');
             } finally {
                 hideLoading();
             }
-        }
-
-        function renderDeadlines() {
-            if (currentView === 'list') {
-                renderListView();
-            } else {
-                renderCalendarView();
-            }
-        }
-
-        function renderListView() {
-            const container = document.getElementById('deadlinesList');
-            const emptyState = document.getElementById('emptyState');
-            
-            if (deadlines.length === 0) {
-                container.innerHTML = '';
-                emptyState.classList.remove('hidden');
-                return;
-            }
-            
-            emptyState.classList.add('hidden');
-            
-            const filteredDeadlines = getFilteredDeadlines();
-            
-            if (filteredDeadlines.length === 0) {
-                container.innerHTML = `
-                    <div class="text-center py-8">
-                        <i class="fas fa-search text-4xl text-gray-300 mb-4"></i>
-                        <p class="text-gray-500">Nenhum prazo encontrado com os filtros aplicados</p>
-                    </div>
-                `;
-                return;
-            }
-            
-            container.innerHTML = filteredDeadlines.map(deadline => createDeadlineCard(deadline)).join('');
-        }
-
-        function renderCalendarView() {
-            const calendarGrid = document.getElementById('calendarGrid');
-            const monthElement = document.getElementById('calendarMonth');
-            
-            // Update month header
-            const monthNames = [
-                'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
-                'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
-            ];
-            monthElement.textContent = `${monthNames[currentDate.getMonth()]} ${currentDate.getFullYear()}`;
-            
-            // Generate calendar days
-            const firstDay = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
-            const lastDay = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
-            const startDate = new Date(firstDay);
-            startDate.setDate(startDate.getDate() - firstDay.getDay());
-            
-            const days = [];
-            const today = new Date();
-            
-            for (let i = 0; i < 42; i++) {
-                const date = new Date(startDate);
-                date.setDate(startDate.getDate() + i);
-                
-                const isCurrentMonth = date.getMonth() === currentDate.getMonth();
-                const isToday = date.toDateString() === today.toDateString();
-                const dateString = date.toISOString().split('T')[0];
-                
-                const dayDeadlines = getFilteredDeadlines().filter(d => d.date === dateString);
-                
-                days.push({
-                    date: date,
-                    day: date.getDate(),
-                    isCurrentMonth,
-                    isToday,
-                    deadlines: dayDeadlines
-                });
-            }
-            
-            calendarGrid.innerHTML = days.map(day => createCalendarDay(day)).join('');
-        }
-
-        function getFilteredDeadlines() {
-            const categoryFilter = document.getElementById('categoryFilter').value;
-            const priorityFilter = document.getElementById('priorityFilter').value;
-            const statusFilter = document.getElementById('statusFilter').value;
-            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-            
-            return deadlines.filter(deadline => {
-                const matchesCategory = !categoryFilter || deadline.category === categoryFilter;
-                const matchesPriority = !priorityFilter || deadline.priority === priorityFilter;
-                const matchesSearch = !searchTerm || 
-                    deadline.title.toLowerCase().includes(searchTerm) ||
-                    (deadline.description && deadline.description.toLowerCase().includes(searchTerm));
-                
-                let matchesStatus = true;
-                if (statusFilter) {
-                    const daysUntil = getDaysUntilDeadline(deadline.date);
-                    switch (statusFilter) {
-                        case 'pending':
-                            matchesStatus = !deadline.completed;
-                            break;
-                        case 'completed':
-                            matchesStatus = deadline.completed;
-                            break;
-                        case 'overdue':
-                            matchesStatus = !deadline.completed && daysUntil < 0;
-                            break;
-                    }
-                }
-                
-                return matchesCategory && matchesPriority && matchesSearch && matchesStatus;
-            });
-        }
-
-        function createDeadlineCard(deadline) {
-            const daysUntil = getDaysUntilDeadline(deadline.date);
-            const isUrgent = daysUntil <= 7 && daysUntil >= 0;
-            const isOverdue = daysUntil < 0;
-            
-            const priorityClass = `priority-${deadline.priority}`;
-            const categoryClass = `category-${deadline.category}`;
-            const urgentClass = isUrgent ? 'deadline-urgent' : '';
-            
-            return `
-                <div class="bg-white rounded-xl p-6 shadow-sm card-hover ${priorityClass} ${urgentClass}">
-                    <div class="flex justify-between items-start mb-4">
-                        <div class="flex-1">
-                            <div class="flex items-center space-x-3 mb-2">
-                                <h3 class="text-lg font-semibold text-gray-800 ${deadline.completed ? 'line-through opacity-60' : ''}">
-                                    ${deadline.title}
-                                </h3>
-                                <span class="px-2 py-1 text-xs font-medium text-white rounded-full ${categoryClass}">
-                                    ${getCategoryLabel(deadline.category)}
-                                </span>
-                                <span class="px-2 py-1 text-xs font-medium rounded-full ${getPriorityBadge(deadline.priority)}">
-                                    ${getPriorityLabel(deadline.priority)}
-                                </span>
-                            </div>
-                            
-                            ${deadline.description ? `
-                                <p class="text-gray-600 text-sm mb-3 ${deadline.completed ? 'opacity-60' : ''}">
-                                    ${deadline.description}
-                                </p>
-                            ` : ''}
-                            
-                            <div class="flex items-center space-x-4 text-sm text-gray-500">
-                                <div class="flex items-center space-x-1">
-                                    <i class="fas fa-calendar"></i>
-                                    <span>${formatDate(deadline.date)}</span>
-                                </div>
-                                
-                                <div class="flex items-center space-x-1">
-                                    <i class="fas fa-clock"></i>
-                                    <span class="${isOverdue ? 'text-red-600 font-medium' : isUrgent ? 'text-orange-600 font-medium' : ''}">
-                                        ${getTimeUntilText(daysUntil)}
-                                    </span>
-                                </div>
-                                
-                                ${deadline.notification ? '<i class="fas fa-bell text-blue-500" title="Notificações ativas"></i>' : ''}
-                            </div>
-                        </div>
-                        
-                        <div class="flex items-center space-x-2 ml-4">
-                            <button onclick="toggleComplete(${deadline.id})" 
-                                    class="p-2 rounded-lg transition-colors ${
-                                        deadline.completed 
-                                            ? 'bg-green-100 text-green-600 hover:bg-green-200' 
-                                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                                    }" 
-                                    title="${deadline.completed ? 'Marcar como pendente' : 'Marcar como concluído'}">
-                                <i class="fas ${deadline.completed ? 'fa-check-circle' : 'fa-circle'}"></i>
-                            </button>
-                            
-                            <button onclick="editDeadline(${deadline.id})" 
-                                    class="p-2 bg-blue-100 text-blue-600 rounded-lg hover:bg-blue-200 transition-colors"
-                                    title="Editar">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                            
-                            <button onclick="deleteDeadline(${deadline.id})" 
-                                    class="p-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition-colors"
-                                    title="Excluir">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-
-        // Utility Functions
-        function getDaysUntilDeadline(dateString) {
-            const today = new Date();
-            const deadline = new Date(dateString);
-            const diffTime = deadline - today;
-            return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-        }
-
-        function getTimeUntilText(days) {
-            if (days < 0) return `${Math.abs(days)} dias em atraso`;
-            if (days === 0) return 'Hoje';
-            if (days === 1) return 'Amanhã';
-            if (days <= 7) return `${days} dias`;
-            if (days <= 30) return `${Math.ceil(days / 7)} semanas`;
-            return `${Math.ceil(days / 30)} meses`;
-        }
-
-        function formatDate(dateString) {
-            return new Date(dateString).toLocaleDateString('pt-BR');
-        }
-
-        function getCategoryLabel(category) {
-            const labels = {
-                'saude': 'Saúde',
-                'trabalho': 'Trabalho',
-                'aniversarios': 'Aniversários',
-                'outros': 'Outros'
-            };
-            return labels[category] || category;
-        }
-
-        function getPriorityLabel(priority) {
-            const labels = {
-                'high': 'Alta',
-                'normal': 'Normal',
-                'low': 'Baixa'
-            };
-            return labels[priority] || priority;
-        }
-
-        function getPriorityBadge(priority) {
-            const badges = {
-                'high': 'bg-red-100 text-red-800',
-                'normal': 'bg-blue-100 text-blue-800',
-                'low': 'bg-green-100 text-green-800'
-            };
-            return badges[priority] || badges.normal;
-        }
-
-        function updateStats() {
-            const total = deadlines.length;
-            const completed = deadlines.filter(d => d.completed).length;
-            const urgent = deadlines.filter(d => {
-                const days = getDaysUntilDeadline(d.date);
-                return days <= 7 && days >= 0 && !d.completed;
-            }).length;
-            
-            const weekStart = new Date();
-            const weekEnd = new Date();
-            weekEnd.setDate(weekEnd.getDate() + 7);
-            
-            const thisWeek = deadlines.filter(d => {
-                const deadlineDate = new Date(d.date);
-                return deadlineDate >= weekStart && deadlineDate <= weekEnd && !d.completed;
-            }).length;
-            
-            document.getElementById('totalDeadlines').textContent = total;
-            document.getElementById('completedDeadlines').textContent = completed;
-            document.getElementById('urgentDeadlines').textContent = urgent;
-            document.getElementById('weekDeadlines').textContent = thisWeek;
-        }
-
-        // Modal Functions
-        function openAddModal() {
-            editingDeadline = null;
-            document.getElementById('modalTitle').textContent = 'Novo Prazo';
-            document.getElementById('deadlineForm').reset();
-            document.getElementById('deadlinePriority').value = 'normal';
-            document.getElementById('deadlineNotification').checked = true;
-            deadlineModal.classList.remove('hidden');
-        }
-
-        function editDeadline(id) {
-            const deadline = deadlines.find(d => d.id === id);
-            if (!deadline) return;
-            
-            editingDeadline = deadline;
-            document.getElementById('modalTitle').textContent = 'Editar Prazo';
-            
-            document.getElementById('deadlineTitle').value = deadline.title;
-            document.getElementById('deadlineDescription').value = deadline.description || '';
-            document.getElementById('deadlineDate').value = deadline.date;
-            document.getElementById('deadlineCategory').value = deadline.category;
-            document.getElementById('deadlinePriority').value = deadline.priority;
-            document.getElementById('deadlineNotification').checked = deadline.notification;
-            
-            deadlineModal.classList.remove('hidden');
-        }
-
-        function closeModal() {
-            deadlineModal.classList.add('hidden');
-            editingDeadline = null;
         }
 
         async function handleSaveDeadline(e) {
             e.preventDefault();
             showLoading();
             
-            const formData = {
-                title: document.getElementById('deadlineTitle').value,
-                description: document.getElementById('deadlineDescription').value || null,
-                date: document.getElementById('deadlineDate').value,
-                category: document.getElementById('deadlineCategory').value,
-                priority: document.getElementById('deadlinePriority').value,
-                notification: document.getElementById('deadlineNotification').checked,
-                user_id: currentUser.id
-            };
-            
             try {
-                let result;
+                const formData = {
+                    titulo: document.getElementById('deadlineTitle').value,
+                    descricao: document.getElementById('deadlineDescription').value,
+                    data_prazo: document.getElementById('deadlineDate').value,
+                    categoria: document.getElementById('deadlineCategory').value,
+                    prioridade: document.getElementById('deadlinePriority').value,
+                    notificacao_ativa: document.getElementById('deadlineNotification').checked,
+                    user_id: currentUser.id
+                };
+                
                 if (editingDeadline) {
-                    result = await supabase
-                        .from('deadlines')
+                    // Update existing
+                    const { error } = await supabase
+                        .from('prazos')
                         .update(formData)
                         .eq('id', editingDeadline.id);
+                    
+                    if (error) throw error;
+                    showNotification('✅ Prazo atualizado!', 'success');
                 } else {
-                    result = await supabase
-                        .from('deadlines')
+                    // Create new
+                    const { error } = await supabase
+                        .from('prazos')
                         .insert([formData]);
+                    
+                    if (error) throw error;
+                    showNotification('✅ Prazo criado!', 'success');
                 }
-                
-                if (result.error) throw result.error;
                 
                 closeModal();
                 await loadDeadlines();
                 
             } catch (error) {
-                console.error('Erro ao salvar prazo:', error);
-                alert('Erro ao salvar prazo. Tente novamente.');
-            } finally {
-                hideLoading();
-            }
-        }
-
-        async function toggleComplete(id) {
-            const deadline = deadlines.find(d => d.id === id);
-            if (!deadline) return;
-            
-            showLoading();
-            
-            try {
-                const { error } = await supabase
-                    .from('deadlines')
-                    .update({ completed: !deadline.completed })
-                    .eq('id', id);
-                
-                if (error) throw error;
-                
-                await loadDeadlines();
-                
-            } catch (error) {
-                console.error('Erro ao atualizar prazo:', error);
+                console.error('Erro ao salvar:', error);
+                showNotification('❌ Erro ao salvar prazo', 'error');
             } finally {
                 hideLoading();
             }
@@ -2504,222 +1549,58 @@ Obrigado pela atenção!`);
             if (!confirm('Tem certeza que deseja excluir este prazo?')) return;
             
             showLoading();
-            
             try {
                 const { error } = await supabase
-                    .from('deadlines')
+                    .from('prazos')
                     .delete()
                     .eq('id', id);
                 
                 if (error) throw error;
                 
+                showNotification('✅ Prazo excluído!', 'success');
                 await loadDeadlines();
                 
             } catch (error) {
-                console.error('Erro ao excluir prazo:', error);
+                console.error('Erro ao excluir:', error);
+                showNotification('❌ Erro ao excluir prazo', 'error');
             } finally {
                 hideLoading();
             }
         }
 
-        function createCalendarDay(day) {
-            const dayClasses = [
-                'calendar-day',
-                'p-2',
-                'cursor-pointer'
-            ];
+        async function toggleComplete(id) {
+            const deadline = deadlines.find(d => d.id === id);
+            if (!deadline) return;
             
-            if (!day.isCurrentMonth) dayClasses.push('other-month');
-            if (day.isToday) dayClasses.push('today');
-            
-            const eventsHtml = day.deadlines.slice(0, 3).map(deadline => {
-                const priorityClass = deadline.priority;
-                const completedClass = deadline.completed ? 'completed' : '';
-                return `
-                    <div class="calendar-event ${priorityClass} ${completedClass}" 
-                         onclick="editDeadline(${deadline.id})" 
-                         title="${deadline.title}${deadline.description ? ' - ' + deadline.description : ''}">
-                        ${deadline.title.length > 15 ? deadline.title.substring(0, 15) + '...' : deadline.title}
-                    </div>
-                `;
-            }).join('');
-            
-            const moreEvents = day.deadlines.length > 3 ? 
-                `<div class="text-xs text-gray-500 mt-1">+${day.deadlines.length - 3} mais</div>` : '';
-            
-            return `
-                <div class="${dayClasses.join(' ')}" onclick="selectCalendarDate('${day.date.toISOString().split('T')[0]}')">
-                    <div class="font-medium text-sm mb-1">${day.day}</div>
-                    ${eventsHtml}
-                    ${moreEvents}
-                </div>
-            `;
-        }
-
-        function switchView(view) {
-            currentView = view;
-            
-            const listViewBtn = document.getElementById('listViewBtn');
-            const calendarViewBtn = document.getElementById('calendarViewBtn');
-            const listView = document.getElementById('listView');
-            const calendarView = document.getElementById('calendarView');
-            
-            if (view === 'list') {
-                listViewBtn.classList.add('bg-indigo-600', 'text-white');
-                listViewBtn.classList.remove('text-gray-600');
-                calendarViewBtn.classList.remove('bg-indigo-600', 'text-white');
-                calendarViewBtn.classList.add('text-gray-600');
+            try {
+                const { error } = await supabase
+                    .from('prazos')
+                    .update({ concluido: !deadline.completed })
+                    .eq('id', id);
                 
-                listView.classList.remove('hidden');
-                calendarView.classList.add('hidden');
-            } else {
-                calendarViewBtn.classList.add('bg-indigo-600', 'text-white');
-                calendarViewBtn.classList.remove('text-gray-600');
-                listViewBtn.classList.remove('bg-indigo-600', 'text-white');
-                listViewBtn.classList.add('text-gray-600');
+                if (error) throw error;
                 
-                listView.classList.add('hidden');
-                calendarView.classList.remove('hidden');
+                showNotification(
+                    deadline.completed ? '📝 Prazo reaberto!' : '✅ Prazo concluído!', 
+                    'success'
+                );
+                await loadDeadlines();
+                
+            } catch (error) {
+                console.error('Erro ao atualizar:', error);
+                showNotification('❌ Erro ao atualizar prazo', 'error');
             }
-            
-            renderDeadlines();
         }
 
-        function navigateMonth(direction) {
-            currentDate.setMonth(currentDate.getMonth() + direction);
-            renderCalendarView();
-        }
-
-        function goToToday() {
-            currentDate = new Date();
-            renderCalendarView();
-        }
-
-        function selectCalendarDate(dateString) {
-            // Open modal with pre-filled date
-            openAddModal();
-            document.getElementById('deadlineDate').value = dateString;
-        }
-
-        function filterDeadlines() {
-            renderDeadlines();
-        }
-
-        // PRO Functions
-        async function checkProStatus() {
+        // Shopping List Functions - Updated for Supabase
+        async function loadShoppingList() {
             if (!currentUser) return;
             
             try {
                 const { data, error } = await supabase
-                    .from('user_subscriptions')
+                    .from('lista_compras')
                     .select('*')
                     .eq('user_id', currentUser.id)
-                    .single();
-                
-                if (data && data.active) {
-                    isProUser = true;
-                    proTrialEnd = new Date(data.trial_end);
-                    updateProUI();
-                }
-            } catch (error) {
-                console.log('No PRO subscription found');
-            }
-        }
-
-        function updateProUI() {
-            const proStatus = document.getElementById('proStatus');
-            const planStatus = document.getElementById('planStatus');
-            const proFeatures = document.querySelectorAll('.pro-feature');
-            const proSection = document.getElementById('proSection');
-            
-            if (isProUser) {
-                proStatus.classList.remove('hidden');
-                planStatus.textContent = 'Plano PRO';
-                proSection.innerHTML = '<i class="fas fa-crown mr-2"></i>Usuário PRO Ativo';
-                proSection.className = 'bg-gradient-to-r from-green-400 to-blue-500 text-white px-4 py-2 text-sm font-medium';
-                proFeatures.forEach(feature => {
-                    feature.classList.remove('opacity-50');
-                    feature.style.pointerEvents = 'auto';
-                });
-            } else {
-                proStatus.classList.add('hidden');
-                planStatus.textContent = 'Plano Gratuito';
-                proSection.innerHTML = '<i class="fas fa-crown mr-2"></i>Upgrade para PRO';
-                proSection.className = 'bg-gradient-to-r from-orange-400 to-red-500 text-white px-4 py-2 text-sm font-medium';
-                proFeatures.forEach(feature => {
-                    feature.classList.add('opacity-50');
-                    feature.style.pointerEvents = 'none';
-                });
-            }
-        }
-
-
-
-        // Shopping List Functions
-        function openShoppingModal() {
-            if (!isProUser) {
-                showNotification('🔒 Recurso PRO - Lista de Compras disponível na versão PRO!', 'info');
-                return;
-            }
-            
-            document.getElementById('shoppingModal').classList.remove('hidden');
-            loadShoppingList();
-            loadExpensesChart();
-        }
-
-        function closeShoppingModal() {
-            document.getElementById('shoppingModal').classList.add('hidden');
-        }
-
-        async function addShoppingItem(e) {
-            e.preventDefault();
-            
-            const name = document.getElementById('itemName').value;
-            const price = parseFloat(document.getElementById('itemPrice').value);
-            const quantity = parseInt(document.getElementById('itemQuantity').value);
-            const category = document.getElementById('itemCategory').value;
-            
-            const item = {
-                id: Date.now(),
-                name,
-                price,
-                quantity,
-                category,
-                total: price * quantity,
-                inCart: false,
-                purchased: false,
-                user_id: currentUser.id,
-                created_at: new Date().toISOString()
-            };
-            
-            try {
-                const { error } = await supabase
-                    .from('shopping_items')
-                    .insert([item]);
-                
-                if (error) throw error;
-                
-                document.getElementById('addItemForm').reset();
-                document.getElementById('itemQuantity').value = '1';
-                
-                await loadShoppingList();
-                showNotification('✅ Item adicionado à lista!', 'success');
-                
-            } catch (error) {
-                console.error('Erro ao adicionar item:', error);
-                showNotification('❌ Erro ao adicionar item', 'error');
-            }
-        }
-
-        async function loadShoppingList() {
-            if (!currentUser || !isProUser) return;
-            
-            try {
-                const { data, error } = await supabase
-                    .from('shopping_items')
-                    .select('*')
-                    .eq('user_id', currentUser.id)
-                    .eq('purchased', false)
                     .order('created_at', { ascending: false });
                 
                 if (error) throw error;
@@ -2729,60 +1610,51 @@ Obrigado pela atenção!`);
                 updateShoppingSummary();
                 
             } catch (error) {
-                console.error('Erro ao carregar lista:', error);
+                console.error('Erro ao carregar lista de compras:', error);
             }
         }
 
-        function renderShoppingList() {
-            const container = document.getElementById('shoppingList');
+        async function addShoppingItem(e) {
+            e.preventDefault();
             
-            if (shoppingList.length === 0) {
-                container.innerHTML = `
-                    <div class="text-center py-8 text-gray-500">
-                        <i class="fas fa-shopping-cart text-4xl mb-4"></i>
-                        <p>Sua lista está vazia</p>
-                        <p class="text-sm">Adicione itens para começar!</p>
-                    </div>
-                `;
-                return;
+            try {
+                const itemData = {
+                    user_id: currentUser.id,
+                    nome: document.getElementById('itemName').value,
+                    preco: parseFloat(document.getElementById('itemPrice').value),
+                    quantidade: parseInt(document.getElementById('itemQuantity').value),
+                    categoria: document.getElementById('itemCategory').value,
+                    comprado: false
+                };
+                
+                const { error } = await supabase
+                    .from('lista_compras')
+                    .insert([itemData]);
+                
+                if (error) throw error;
+                
+                // Reset form
+                document.getElementById('addItemForm').reset();
+                document.getElementById('itemQuantity').value = '1';
+                
+                showNotification('✅ Item adicionado!', 'success');
+                await loadShoppingList();
+                
+            } catch (error) {
+                console.error('Erro ao adicionar item:', error);
+                showNotification('❌ Erro ao adicionar item', 'error');
             }
-            
-            container.innerHTML = shoppingList.map(item => `
-                <div class="bg-white border rounded-lg p-4 flex items-center justify-between ${item.inCart ? 'bg-green-50 border-green-200' : ''}">
-                    <div class="flex items-center space-x-3">
-                        <button onclick="toggleCart(${item.id})" 
-                                class="w-6 h-6 rounded border-2 flex items-center justify-center transition-colors ${
-                                    item.inCart ? 'bg-green-500 border-green-500 text-white' : 'border-gray-300 hover:border-green-500'
-                                }">
-                            ${item.inCart ? '<i class="fas fa-check text-xs"></i>' : ''}
-                        </button>
-                        <div class="${item.inCart ? 'opacity-60' : ''}">
-                            <div class="font-medium">${item.name}</div>
-                            <div class="text-sm text-gray-500">
-                                ${item.quantity}x R$ ${item.price.toFixed(2)} = R$ ${item.total.toFixed(2)}
-                            </div>
-                            <span class="inline-block px-2 py-1 text-xs bg-gray-100 text-gray-600 rounded-full">
-                                ${getCategoryLabel(item.category)}
-                            </span>
-                        </div>
-                    </div>
-                    <button onclick="removeShoppingItem(${item.id})" 
-                            class="text-red-500 hover:text-red-700 p-2">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                </div>
-            `).join('');
         }
 
-        async function toggleCart(itemId) {
-            const item = shoppingList.find(i => i.id === itemId);
+        async function toggleShoppingItem(id) {
+            const item = shoppingList.find(i => i.id === id);
             if (!item) return;
             
             try {
                 const { error } = await supabase
-                    .from('shopping_items')
-                    .update({ inCart: !item.inCart })
-                    .eq('id', itemId);
+                    .from('lista_compras')
+                    .update({ comprado: !item.comprado })
+                    .eq('id', id);
                 
                 if (error) throw error;
                 
@@ -2793,233 +1665,281 @@ Obrigado pela atenção!`);
             }
         }
 
-        async function removeShoppingItem(itemId) {
-            if (!confirm('Remover este item da lista?')) return;
-            
+        async function deleteShoppingItem(id) {
             try {
                 const { error } = await supabase
-                    .from('shopping_items')
+                    .from('lista_compras')
                     .delete()
-                    .eq('id', itemId);
+                    .eq('id', id);
                 
                 if (error) throw error;
                 
                 await loadShoppingList();
-                showNotification('✅ Item removido!', 'success');
                 
             } catch (error) {
-                console.error('Erro ao remover item:', error);
+                console.error('Erro ao excluir item:', error);
             }
-        }
-
-        function updateShoppingSummary() {
-            const totalItems = shoppingList.length;
-            const cartItems = shoppingList.filter(item => item.inCart).length;
-            const totalPrice = shoppingList.reduce((sum, item) => sum + (item.inCart ? item.total : 0), 0);
-            
-            document.getElementById('totalItems').textContent = totalItems;
-            document.getElementById('cartItems').textContent = cartItems;
-            document.getElementById('totalPrice').textContent = `R$ ${totalPrice.toFixed(2)}`;
         }
 
         async function finalizePurchase() {
-            const cartItems = shoppingList.filter(item => item.inCart);
-            
-            if (cartItems.length === 0) {
-                showNotification('❌ Adicione itens ao carrinho primeiro!', 'error');
+            const purchasedItems = shoppingList.filter(item => item.comprado);
+            if (purchasedItems.length === 0) {
+                showNotification('❌ Nenhum item selecionado para compra', 'error');
                 return;
             }
-            
-            if (!confirm(`Finalizar compra de ${cartItems.length} itens por R$ ${cartItems.reduce((sum, item) => sum + item.total, 0).toFixed(2)}?`)) {
-                return;
-            }
-            
-            showLoading();
             
             try {
-                // Mark items as purchased
-                const itemIds = cartItems.map(item => item.id);
-                const { error: updateError } = await supabase
-                    .from('shopping_items')
-                    .update({ purchased: true, purchased_at: new Date().toISOString() })
-                    .in('id', itemIds);
-                
-                if (updateError) throw updateError;
-                
                 // Add to monthly expenses
-                const totalAmount = cartItems.reduce((sum, item) => sum + item.total, 0);
-                const expense = {
+                const totalAmount = purchasedItems.reduce((sum, item) => sum + (item.preco * item.quantidade), 0);
+                
+                const expenseData = {
                     user_id: currentUser.id,
-                    amount: totalAmount,
-                    date: new Date().toISOString().split('T')[0],
-                    items_count: cartItems.length,
-                    categories: [...new Set(cartItems.map(item => item.category))]
+                    categoria: 'compras',
+                    valor: totalAmount,
+                    descricao: `Compra de ${purchasedItems.length} itens`,
+                    data_gasto: new Date().toISOString().split('T')[0]
                 };
                 
                 const { error: expenseError } = await supabase
-                    .from('monthly_expenses')
-                    .insert([expense]);
+                    .from('gastos_mensais')
+                    .insert([expenseData]);
                 
                 if (expenseError) throw expenseError;
                 
+                // Remove purchased items
+                const purchasedIds = purchasedItems.map(item => item.id);
+                const { error: deleteError } = await supabase
+                    .from('lista_compras')
+                    .delete()
+                    .in('id', purchasedIds);
+                
+                if (deleteError) throw deleteError;
+                
+                showNotification(`✅ Compra finalizada! Total: R$ ${totalAmount.toFixed(2)}`, 'success');
+                
                 await loadShoppingList();
                 await loadMonthlyExpenses();
-                loadExpensesChart();
-                
-                showNotification(`🎉 Compra finalizada! Total: R$ ${totalAmount.toFixed(2)}`, 'success');
-                
-                // Send WhatsApp notification if configured
-                await sendWhatsAppNotification(`🛒 Compra finalizada!\n\n💰 Total: R$ ${totalAmount.toFixed(2)}\n📦 ${cartItems.length} itens comprados\n\n✅ Registrado no seu controle de gastos!`);
                 
             } catch (error) {
                 console.error('Erro ao finalizar compra:', error);
                 showNotification('❌ Erro ao finalizar compra', 'error');
-            } finally {
-                hideLoading();
             }
         }
 
-        async function clearShoppingList() {
-            if (!confirm('Limpar toda a lista de compras?')) return;
-            
-            try {
-                const { error } = await supabase
-                    .from('shopping_items')
-                    .delete()
-                    .eq('user_id', currentUser.id)
-                    .eq('purchased', false);
-                
-                if (error) throw error;
-                
-                await loadShoppingList();
-                showNotification('✅ Lista limpa!', 'success');
-                
-            } catch (error) {
-                console.error('Erro ao limpar lista:', error);
-            }
-        }
-
-        // Monthly Expenses Functions
+        // Monthly Expenses Functions - Updated for Supabase
         async function loadMonthlyExpenses() {
-            if (!currentUser || !isProUser) return;
+            if (!currentUser) return;
             
             try {
                 const currentMonth = new Date().toISOString().slice(0, 7); // YYYY-MM
                 
                 const { data, error } = await supabase
-                    .from('monthly_expenses')
+                    .from('gastos_mensais')
                     .select('*')
                     .eq('user_id', currentUser.id)
-                    .gte('date', currentMonth + '-01')
-                    .lt('date', getNextMonth(currentMonth) + '-01')
-                    .order('date', { ascending: true });
+                    .gte('data_gasto', `${currentMonth}-01`)
+                    .lt('data_gasto', `${currentMonth}-32`)
+                    .order('data_gasto', { ascending: true });
                 
                 if (error) throw error;
                 
                 monthlyExpenses = data || [];
+                renderExpensesChart();
                 updateMonthlyTotal();
                 
             } catch (error) {
-                console.error('Erro ao carregar gastos:', error);
+                console.error('Erro ao carregar gastos mensais:', error);
             }
         }
 
-        function updateMonthlyTotal() {
-            const total = monthlyExpenses.reduce((sum, expense) => sum + expense.amount, 0);
-            document.getElementById('monthlyTotal').textContent = `R$ ${total.toFixed(2)}`;
+        async function saveWhatsAppNumber(e) {
+            e.preventDefault();
+            
+            try {
+                const whatsappNumber = document.getElementById('whatsappNumber').value;
+                
+                const { error } = await supabase
+                    .from('usuarios_pro')
+                    .upsert([{
+                        user_id: currentUser.id,
+                        whatsapp_numero: whatsappNumber,
+                        plano: 'pro',
+                        expires_at: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString() // 1 year
+                    }]);
+                
+                if (error) throw error;
+                
+                showNotification('✅ Número do WhatsApp salvo!', 'success');
+                closeWhatsAppModal();
+                
+            } catch (error) {
+                console.error('Erro ao salvar WhatsApp:', error);
+                showNotification('❌ Erro ao salvar número', 'error');
+            }
         }
 
-        function loadExpensesChart() {
-            const ctx = document.getElementById('expensesChart').getContext('2d');
+        // Utility Functions
+        function showNotification(message, type = 'info') {
+            const container = document.getElementById('notificationContainer');
+            const notification = document.createElement('div');
             
-            if (expensesChart) {
-                expensesChart.destroy();
+            const colors = {
+                success: 'bg-green-500',
+                error: 'bg-red-500',
+                warning: 'bg-yellow-500',
+                info: 'bg-blue-500'
+            };
+            
+            notification.className = `${colors[type]} text-white px-6 py-4 rounded-lg shadow-lg notification-popup`;
+            notification.textContent = message;
+            
+            container.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 5000);
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('authError');
+            errorDiv.textContent = message;
+            errorDiv.classList.remove('hidden');
+            
+            setTimeout(() => {
+                errorDiv.classList.add('hidden');
+            }, 5000);
+        }
+
+        function getErrorMessage(error) {
+            const errorMessages = {
+                'Invalid login credentials': 'Email ou senha incorretos. Verifique suas credenciais PRO.',
+                'Email not confirmed': 'Email não confirmado. Entre em contato com o suporte.',
+                'Too many requests': 'Muitas tentativas. Aguarde alguns minutos.',
+                'User not found': 'Usuário não encontrado. Verifique se você possui acesso PRO.'
+            };
+            
+            return errorMessages[error] || 'Erro de autenticação. Entre em contato com o suporte.';
+        }
+
+        function startClock() {
+            function updateClock() {
+                const now = new Date();
+                const timeString = now.toLocaleTimeString('pt-BR');
+                document.getElementById('liveClock').textContent = timeString;
             }
             
-            const dailyExpenses = {};
-            const currentMonth = new Date().toISOString().slice(0, 7);
-            const daysInMonth = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate();
-            
-            // Initialize all days with 0
-            for (let i = 1; i <= daysInMonth; i++) {
-                const day = i.toString().padStart(2, '0');
-                dailyExpenses[`${currentMonth}-${day}`] = 0;
+            updateClock();
+            clockInterval = setInterval(updateClock, 1000);
+        }
+
+        function startNotificationSystem() {
+            // Check for upcoming deadlines every minute
+            notificationInterval = setInterval(checkUpcomingDeadlines, 60000);
+        }
+
+        function stopNotificationSystem() {
+            if (notificationInterval) {
+                clearInterval(notificationInterval);
+                notificationInterval = null;
             }
+        }
+
+        function checkUpcomingDeadlines() {
+            const now = new Date();
+            const tomorrow = new Date(now.getTime() + 24 * 60 * 60 * 1000);
             
-            // Fill with actual expenses
-            monthlyExpenses.forEach(expense => {
-                dailyExpenses[expense.date] = (dailyExpenses[expense.date] || 0) + expense.amount;
-            });
-            
-            const labels = Object.keys(dailyExpenses).map(date => date.split('-')[2]);
-            const data = Object.values(dailyExpenses);
-            
-            expensesChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Gastos Diários (R$)',
-                        data: data,
-                        borderColor: '#3b82f6',
-                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                        borderWidth: 2,
-                        fill: true,
-                        tension: 0.4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                callback: function(value) {
-                                    return 'R$ ' + value.toFixed(2);
-                                }
-                            }
-                        }
-                    },
-                    plugins: {
-                        legend: {
-                            display: false
-                        }
+            deadlines.forEach(deadline => {
+                if (!deadline.completed && deadline.notification) {
+                    const deadlineDate = new Date(deadline.date);
+                    
+                    // Notify 1 day before
+                    if (deadlineDate.toDateString() === tomorrow.toDateString()) {
+                        showNotification(`⏰ Lembrete: ${deadline.title} vence amanhã!`, 'warning');
+                    }
+                    
+                    // Notify on the day
+                    if (deadlineDate.toDateString() === now.toDateString()) {
+                        showNotification(`🚨 URGENTE: ${deadline.title} vence hoje!`, 'error');
                     }
                 }
             });
         }
 
-        async function clearMonthlyData() {
-            if (!confirm('Limpar todos os dados de gastos do mês atual?')) return;
-            
-            try {
-                const currentMonth = new Date().toISOString().slice(0, 7);
-                
-                const { error } = await supabase
-                    .from('monthly_expenses')
-                    .delete()
-                    .eq('user_id', currentUser.id)
-                    .gte('date', currentMonth + '-01')
-                    .lt('date', getNextMonth(currentMonth) + '-01');
-                
-                if (error) throw error;
-                
-                await loadMonthlyExpenses();
-                loadExpensesChart();
-                showNotification('✅ Dados do mês limpos!', 'success');
-                
-            } catch (error) {
-                console.error('Erro ao limpar dados:', error);
+        async function setupBrowserNotifications() {
+            if ("Notification" in window) {
+                if (Notification.permission === "default") {
+                    const permission = await Notification.requestPermission();
+                    if (permission === "granted") {
+                        browserNotificationsEnabled = true;
+                        showNotification('🔔 Notificações ativadas!', 'success');
+                    }
+                } else if (Notification.permission === "granted") {
+                    browserNotificationsEnabled = true;
+                }
             }
         }
 
-        // WhatsApp Functions
+        // Modal Functions
+        function openAddModal() {
+            editingDeadline = null;
+            document.getElementById('modalTitle').textContent = 'Novo Prazo';
+            document.getElementById('deadlineForm').reset();
+            document.getElementById('deadlineModal').classList.remove('hidden');
+        }
+
+        function openEditModal(deadline) {
+            editingDeadline = deadline;
+            document.getElementById('modalTitle').textContent = 'Editar Prazo';
+            
+            document.getElementById('deadlineTitle').value = deadline.title;
+            document.getElementById('deadlineDescription').value = deadline.description || '';
+            document.getElementById('deadlineDate').value = deadline.date;
+            document.getElementById('deadlineCategory').value = deadline.category;
+            document.getElementById('deadlinePriority').value = deadline.priority;
+            document.getElementById('deadlineNotification').checked = deadline.notification;
+            
+            document.getElementById('deadlineModal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('deadlineModal').classList.add('hidden');
+            editingDeadline = null;
+        }
+
+        function openShareModal() {
+            document.getElementById('shareModal').classList.remove('hidden');
+        }
+
+        function closeShareModal() {
+            document.getElementById('shareModal').classList.add('hidden');
+        }
+
+        function openPrivacyModal() {
+            document.getElementById('privacyModal').classList.remove('hidden');
+        }
+
+        function closePrivacyModal() {
+            document.getElementById('privacyModal').classList.add('hidden');
+        }
+
+        function openDeleteAccountModal() {
+            document.getElementById('deleteAccountModal').classList.remove('hidden');
+        }
+
+        function closeDeleteAccountModal() {
+            document.getElementById('deleteAccountModal').classList.add('hidden');
+            document.getElementById('deleteConfirmation').value = '';
+        }
+
+        function openShoppingModal() {
+            document.getElementById('shoppingModal').classList.remove('hidden');
+        }
+
+        function closeShoppingModal() {
+            document.getElementById('shoppingModal').classList.add('hidden');
+        }
+
         function openWhatsAppModal() {
-            if (!isProUser) {
-                showNotification('🔒 Recurso PRO - Notificações WhatsApp disponíveis na versão PRO!', 'info');
-                return;
-            }
             document.getElementById('whatsappModal').classList.remove('hidden');
         }
 
@@ -3027,144 +1947,41 @@ Obrigado pela atenção!`);
             document.getElementById('whatsappModal').classList.add('hidden');
         }
 
-        async function saveWhatsAppNumber(e) {
-            e.preventDefault();
+        async function confirmDeleteAccount() {
+            const confirmation = document.getElementById('deleteConfirmation').value;
+            if (confirmation !== 'EXCLUIR') {
+                showNotification('❌ Digite "EXCLUIR" para confirmar', 'error');
+                return;
+            }
             
-            const number = document.getElementById('whatsappNumber').value;
-            
+            showLoading();
             try {
-                const { error } = await supabase
-                    .from('user_settings')
-                    .upsert({
-                        user_id: currentUser.id,
-                        whatsapp_number: number,
-                        whatsapp_enabled: true
-                    });
+                // Delete all user data
+                await supabase.from('prazos').delete().eq('user_id', currentUser.id);
+                await supabase.from('lista_compras').delete().eq('user_id', currentUser.id);
+                await supabase.from('gastos_mensais').delete().eq('user_id', currentUser.id);
+                await supabase.from('usuarios_pro').delete().eq('user_id', currentUser.id);
                 
-                if (error) throw error;
+                // Delete user account
+                await supabase.auth.admin.deleteUser(currentUser.id);
                 
-                closeWhatsAppModal();
-                showNotification('✅ Número do WhatsApp salvo!', 'success');
+                showNotification('✅ Conta excluída com sucesso', 'success');
+                
+                setTimeout(() => {
+                    window.location.reload();
+                }, 2000);
                 
             } catch (error) {
-                console.error('Erro ao salvar número:', error);
-                showNotification('❌ Erro ao salvar número', 'error');
+                console.error('Erro ao excluir conta:', error);
+                showNotification('❌ Erro ao excluir conta', 'error');
+            } finally {
+                hideLoading();
             }
         }
 
-        async function sendWhatsAppNotification(message) {
-            if (!isProUser) return;
-            
-            try {
-                const { data: settings } = await supabase
-                    .from('user_settings')
-                    .select('whatsapp_number, whatsapp_enabled')
-                    .eq('user_id', currentUser.id)
-                    .single();
-                
-                if (!settings || !settings.whatsapp_enabled || !settings.whatsapp_number) {
-                    return;
-                }
-                
-                // Demo implementation - replace with real Evolution API call
-                console.log('WhatsApp notification would be sent:', {
-                    number: settings.whatsapp_number,
-                    message: message
-                });
-                
-                // Real implementation would be:
-                /*
-                const response = await fetch(`${EVOLUTION_API_URL}/message/sendText`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${EVOLUTION_API_KEY}`
-                    },
-                    body: JSON.stringify({
-                        number: settings.whatsapp_number,
-                        text: message
-                    })
-                });
-                */
-                
-            } catch (error) {
-                console.error('Erro ao enviar WhatsApp:', error);
-            }
-        }
-
-        // Utility Functions
-        function getNextMonth(monthString) {
-            const date = new Date(monthString + '-01');
-            date.setMonth(date.getMonth() + 1);
-            return date.toISOString().slice(0, 7);
-        }
-
-        // Enhanced notification system for PRO users
-        async function checkDeadlineNotifications() {
-            const now = new Date();
-            
-            deadlines.forEach(async (deadline) => {
-                if (deadline.completed || !deadline.notification) return;
-                
-                const deadlineDate = new Date(deadline.date);
-                const timeDiff = deadlineDate - now;
-                const daysDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
-                
-                let message = '';
-                let type = 'info';
-                
-                if (daysDiff === 30) {
-                    message = `📅 Prazo em 30 dias: ${deadline.title}`;
-                    type = 'info';
-                } else if (daysDiff === 7) {
-                    message = `⚠️ Prazo em 1 semana: ${deadline.title}`;
-                    type = 'warning';
-                } else if (daysDiff === 1) {
-                    message = `🚨 Prazo amanhã: ${deadline.title}`;
-                    type = 'urgent';
-                } else if (daysDiff === 0) {
-                    message = `⏰ Prazo hoje: ${deadline.title}`;
-                    type = 'urgent';
-                } else if (daysDiff < 0) {
-                    message = `❌ Prazo vencido: ${deadline.title}`;
-                    type = 'error';
-                }
-                
-                if (message) {
-                    showNotification(message, type);
-                    
-                    // Send WhatsApp notification for PRO users
-                    if (isProUser && (daysDiff <= 1 || daysDiff === 7)) {
-                        await sendWhatsAppNotification(`🎯 DeadlineX - Lembrete de Prazo\n\n${message}\n\n📝 ${deadline.description || 'Sem descrição'}\n📅 Data: ${formatDate(deadline.date)}`);
-                    }
-                }
-            });
-        }
-
-        // Listen for auth changes
-        supabase.auth.onAuthStateChange(async (event, session) => {
-            if (event === 'SIGNED_IN') {
-                currentUser = session.user;
-                showMainContent();
-                await loadDeadlines();
-                await checkProStatus();
-                if (isProUser) {
-                    await loadShoppingList();
-                    await loadMonthlyExpenses();
-                }
-            } else if (event === 'SIGNED_OUT') {
-                currentUser = null;
-                deadlines = [];
-                isProUser = false;
-                showLoginModal();
-            }
-        });
-    </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9804253b7649f521',t:'MTc1ODA2NTM2MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
-</html>
-
-
-
+        // Share Functions
+        function shareViaWhats
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'980486a4874bc4da',t:'MTc1ODA2OTM1MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
 
 
 
