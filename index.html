@@ -3,122 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DeadlineX PRO - Gerenciador Completo</title>
-    
-    <!-- PWA Meta Tags -->
-    <meta name="theme-color" content="#6366f1">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="DeadlineX">
-    <meta name="description" content="Gerenciador completo de prazos e tarefas com notificações inteligentes">
-    
-    <!-- PWA Icons -->
-    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' fill='%236366f1' rx='20'/%3E%3Ctext x='96' y='120' text-anchor='middle' fill='white' font-size='80' font-family='Arial'%3E🚀%3C/text%3E%3C/svg%3E">
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%236366f1' rx='4'/%3E%3Ctext x='16' y='22' text-anchor='middle' fill='white' font-size='16'%3E🚀%3C/text%3E%3C/svg%3E">
-    
-    <!-- PWA Manifest -->
-    <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIkRlYWRsaW5lWCBQUk8iLAogICJzaG9ydF9uYW1lIjogIkRlYWRsaW5lWCIsCiAgImRlc2NyaXB0aW9uIjogIkdlcmVuY2lhZG9yIGNvbXBsZXRvIGRlIHByYXpvcyBlIHRhcmVmYXMgY29tIG5vdGlmaWNhw6fDtWVzIGludGVsaWdlbnRlcyIsCiAgInN0YXJ0X3VybCI6ICIuLyIsCiAgImRpc3BsYXkiOiAic3RhbmRhbG9uZSIsCiAgImJhY2tncm91bmRfY29sb3IiOiAiI2Y5ZmFmYiIsCiAgInRoZW1lX2NvbG9yIjogIiM2MzY2ZjEiLAogICJpY29ucyI6IFsKICAgIHsKICAgICAgInNyYyI6ICJkYXRhOmltYWdlL3N2Zyt4bWwsJTNDc3ZnIHhtbG5zPSdodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2Zycgdmlld0JveD0nMCAwIDE5MiAxOTInJTNFJTNDcmVjdCB3aWR0aD0nMTkyJyBoZWlnaHQ9JzE5MicgZmlsbD0nJTIzNjM2NmYxJyByeD0nMjAnLyUzRSUzQ3RleHQgeD0nOTYnIHk9JzEyMCcgdGV4dC1hbmNob3I9J21pZGRsZScgZmlsbD0nd2hpdGUnIGZvbnQtc2l6ZT0nODAnIGZvbnQtZmFtaWx5PSdBcmlhbCclM0UlRjAlOUYlOUElODAlM0MvdGV4dCUzRSUzQy9zdmclM0UiLAogICAgICAic2l6ZXMiOiAiMTkyeDE5MiIsCiAgICAgICJ0eXBlIjogImltYWdlL3N2Zyt4bWwiCiAgICB9LAogICAgewogICAgICAic3JjIjogImRhdGE6aW1hZ2Uvc3ZnK3htbCwlM0NzdmcgeG1sbnM9J2h0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnJyB2aWV3Qm94PScwIDAgNTEyIDUxMiclM0UlM0NyZWN0IHdpZHRoPSc1MTInIGhlaWdodD0nNTEyJyBmaWxsPSclMjM2MzY2ZjEnIHJ4PSc1MCcvJTNFJTNDdGV4dCB4PScyNTYnIHk9JzMyMCcgdGV4dC1hbmNob3I9J21pZGRsZScgZmlsbD0nd2hpdGUnIGZvbnQtc2l6ZT0nMjAwJyBmb250LWZhbWlseT0nQXJpYWwnJTNFJUYwJTlGJTlBJTgwJTNDL3RleHQlM0UlM0Mvc3ZnJTNFIiwKICAgICAgInNpemVzIjogIjUxMng1MTIiLAogICAgICAidHlwZSI6ICJpbWFnZS9zdmcreG1sIgogICAgfQogIF0KfQ==">
+    <title>DeadlineX - Gerenciador de Prazos</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <style>
-        /* Tailwind CSS v3.4.0 - Essentials for Production */
-        *,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";font-feature-settings:normal;font-variation-settings:normal}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace,SFMono-Regular,"Consolas","Liberation Mono","Courier New",monospace;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}[type=button],[type=reset],[type=submit],button{-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]{display:none}
-        
-        /* Essential Tailwind Utilities */
-        .container{width:100%}@media (min-width:640px){.container{max-width:640px}}@media (min-width:768px){.container{max-width:768px}}@media (min-width:1024px){.container{max-width:1024px}}@media (min-width:1280px){.container{max-width:1280px}}@media (min-width:1536px){.container{max-width:1536px}}
-        .mx-auto{margin-left:auto;margin-right:auto}.px-4{padding-left:1rem;padding-right:1rem}.py-6{padding-top:1.5rem;padding-bottom:1.5rem}.py-8{padding-top:2rem;padding-bottom:2rem}
-        .flex{display:flex}.grid{display:grid}.hidden{display:none}.items-center{align-items:center}.justify-between{justify-content:space-between}.justify-center{justify-content:center}.space-x-4>:not([hidden])~:not([hidden]){--tw-space-x-reverse:0;margin-right:calc(1rem * var(--tw-space-x-reverse));margin-left:calc(1rem * calc(1 - var(--tw-space-x-reverse)))}
-        .bg-gray-50{background-color:#f9fafb}.bg-white{background-color:#fff}.bg-indigo-600{background-color:#4f46e5}.bg-red-600{background-color:#dc2626}.bg-green-600{background-color:#16a34a}.bg-blue-600{background-color:#2563eb}
-        .text-white{color:#fff}.text-gray-800{color:#1f2937}.text-gray-600{color:#4b5563}.text-sm{font-size:.875rem;line-height:1.25rem}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-2xl{font-size:1.5rem;line-height:2rem}
-        .font-bold{font-weight:700}.font-medium{font-weight:500}.font-semibold{font-weight:600}
-        .rounded-xl{border-radius:.75rem}.rounded-lg{border-radius:.5rem}.rounded-full{border-radius:9999px}
-        .p-3{padding:.75rem}.p-4{padding:1rem}.p-6{padding:1.5rem}.p-8{padding:2rem}.px-6{padding-left:1.5rem;padding-right:1.5rem}.py-3{padding-top:.75rem;padding-bottom:.75rem}
-        .shadow-2xl{box-shadow:0 25px 50px -12px rgb(0 0 0 / 0.25)}.shadow-sm{box-shadow:0 1px 2px 0 rgb(0 0 0 / 0.05)}
-        .min-h-screen{min-height:100vh}.w-full{width:100%}.max-w-md{max-width:28rem}.max-w-lg{max-width:32rem}.max-w-2xl{max-width:42rem}.max-w-4xl{max-width:56rem}
-        .fixed{position:fixed}.relative{position:relative}.absolute{position:absolute}.inset-0{inset:0}.top-4{top:1rem}.right-4{right:1rem}.z-50{z-index:50}.z-40{z-index:40}.z-10{z-index:10}
-        .mb-4{margin-bottom:1rem}.mb-6{margin-bottom:1.5rem}.mb-8{margin-bottom:2rem}.mr-2{margin-right:.5rem}.ml-2{margin-left:.5rem}.mt-4{margin-top:1rem}.mt-6{margin-top:1.5rem}
-        .border{border-width:1px}.border-gray-300{border-color:#d1d5db}.border-red-400{border-color:#f87171}.border-green-400{border-color:#4ade80}
-        .focus\:ring-2:focus{box-shadow:var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color)}.focus\:ring-indigo-500:focus{--tw-ring-color:#6366f1}
-        .hover\:bg-indigo-700:hover{background-color:#3730a3}.hover\:bg-gray-200:hover{background-color:#e5e7eb}
-        .transition-colors{transition-property:color,background-color,border-color,text-decoration-color,fill,stroke;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}
-        .grid-cols-1{grid-template-columns:repeat(1, minmax(0, 1fr))}.grid-cols-7{grid-template-columns:repeat(7, minmax(0, 1fr))}
-        @media (min-width: 768px){.md\:grid-cols-4{grid-template-columns:repeat(4, minmax(0, 1fr))}.md\:flex-row{flex-direction:row}.md\:space-y-0>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0px * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0px * var(--tw-space-y-reverse))}}
-        @media (min-width: 1024px){.lg\:col-span-1{grid-column:span 1 / span 1}.lg\:col-span-2{grid-column:span 2 / span 2}.lg\:grid-cols-3{grid-template-columns:repeat(3, minmax(0, 1fr))}}
-        .gap-6{gap:1.5rem}.gap-4{gap:1rem}.gap-3{gap:.75rem}.gap-2{gap:.5rem}.gap-1{gap:.25rem}
-        .space-y-4>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1rem * var(--tw-space-y-reverse))}
-        .space-y-6>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1.5rem * var(--tw-space-y-reverse))}
-        .space-y-3>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(.75rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(.75rem * var(--tw-space-y-reverse))}
-        .space-y-2>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(.5rem * var(--tw-space-y-reverse))}
-        .space-x-3>:not([hidden])~:not([hidden]){--tw-space-x-reverse:0;margin-right:calc(.75rem * var(--tw-space-x-reverse));margin-left:calc(.75rem * calc(1 - var(--tw-space-x-reverse)))}
-        .space-x-2>:not([hidden])~:not([hidden]){--tw-space-x-reverse:0;margin-right:calc(.5rem * var(--tw-space-x-reverse));margin-left:calc(.5rem * calc(1 - var(--tw-space-x-reverse)))}
-        .flex-1{flex:1 1 0%}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}
-        .text-center{text-align:center}.text-left{text-align:left}.text-right{text-align:right}
-        .opacity-80{opacity:0.8}.opacity-90{opacity:0.9}.opacity-70{opacity:0.7}.opacity-60{opacity:0.6}.opacity-50{opacity:0.5}
-        .bg-gray-100{background-color:#f3f4f6}.bg-red-100{background-color:#fee2e2}.bg-green-100{background-color:#dcfce7}.bg-blue-100{background-color:#dbeafe}.bg-purple-100{background-color:#f3e8ff}.bg-orange-100{background-color:#fed7aa}.bg-yellow-100{background-color:#fef3c7}.bg-indigo-100{background-color:#e0e7ff}
-        .text-red-600{color:#dc2626}.text-green-600{color:#16a34a}.text-blue-600{color:#2563eb}.text-purple-600{color:#9333ea}.text-orange-600{color:#ea580c}.text-yellow-600{color:#d97706}.text-indigo-600{color:#4f46e5}.text-gray-500{color:#6b7280}.text-gray-400{color:#9ca3af}
-        .bg-red-500{background-color:#ef4444}.bg-green-500{background-color:#22c55e}.bg-blue-500{background-color:#3b82f6}.bg-purple-500{background-color:#a855f7}.bg-orange-500{background-color:#f97316}.bg-yellow-500{background-color:#eab308}.bg-sky-500{background-color:#0ea5e9}
-        .hover\:bg-red-600:hover{background-color:#dc2626}.hover\:bg-green-600:hover{background-color:#16a34a}.hover\:bg-blue-600:hover{background-color:#2563eb}.hover\:bg-purple-600:hover{background-color:#9333ea}.hover\:bg-orange-600:hover{background-color:#ea580c}.hover\:bg-yellow-600:hover{background-color:#d97706}.hover\:bg-sky-600:hover{background-color:#0284c7}.hover\:bg-gray-700:hover{background-color:#374151}
-        .text-red-700{color:#b91c1c}.text-green-700{color:#15803d}.text-blue-700{color:#1d4ed8}.text-red-800{color:#991b1b}.text-green-800{color:#166534}.text-blue-800{color:#1e40af}
-        .bg-red-50{background-color:#fef2f2}.bg-green-50{background-color:#f0fdf4}.bg-blue-50{background-color:#eff6ff}.bg-purple-50{background-color:#faf5ff}.bg-orange-50{background-color:#fff7ed}.bg-yellow-50{background-color:#fefce8}.bg-indigo-50{background-color:#eef2ff}.bg-gray-50{background-color:#f9fafb}
-        .hover\:bg-red-50:hover{background-color:#fef2f2}.hover\:bg-green-50:hover{background-color:#f0fdf4}.hover\:bg-blue-50:hover{background-color:#eff6ff}.hover\:bg-purple-50:hover{background-color:#faf5ff}.hover\:bg-orange-50:hover{background-color:#fff7ed}.hover\:bg-yellow-50:hover{background-color:#fefce8}.hover\:bg-indigo-50:hover{background-color:#eef2ff}.hover\:bg-gray-50:hover{background-color:#f9fafb}
-        .border-red-200{border-color:#fecaca}.border-green-200{border-color:#bbf7d0}.border-blue-200{border-color:#bfdbfe}.border-yellow-200{border-color:#fde68a}.border-indigo-200{border-color:#c7d2fe}.border-gray-100{border-color:#f3f4f6}
-        .border-b{border-bottom-width:1px}.border-l-4{border-left-width:4px}.border-2{border-width:2px}
-        .w-16{width:4rem}.w-20{width:5rem}.w-6{width:1.5rem}.w-4{width:1rem}.h-16{height:4rem}.h-20{height:5rem}.h-6{height:1.5rem}.h-4{height:1rem}.w-64{width:16rem}.w-72{width:18rem}
-        .max-h-96{max-height:24rem}.max-h-\[80vh\]{max-height:80vh}.max-h-\[90vh\]{max-height:90vh}.min-h-\[120px\]{min-height:120px}.h-64{height:16rem}
-        .overflow-hidden{overflow:hidden}.overflow-y-auto{overflow-y:auto}.overflow-visible{overflow:visible}
-        .cursor-pointer{cursor:pointer}.select-none{user-select:none}
-        .animate-spin{animation:spin 1s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
-        .transform{transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}
-        .list-disc{list-style-type:disc}.list-inside{list-style-position:inside}
-        .text-xs{font-size:.75rem;line-height:1rem}.text-3xl{font-size:1.875rem;line-height:2.25rem}.text-4xl{font-size:2.25rem;line-height:2.5rem}.text-6xl{font-size:3.75rem;line-height:1}
-        .font-mono{font-family:ui-monospace,SFMono-Regular,"Consolas","Liberation Mono","Courier New",monospace}
-        .leading-tight{line-height:1.25}
-        .tracking-wide{letter-spacing:.025em}
-        .text-decoration-line-through{text-decoration-line:line-through}
-        .line-through{text-decoration-line:line-through}
-        .hover\:text-gray-600:hover{color:#4b5563}.hover\:text-gray-200:hover{color:#e5e7eb}.hover\:text-indigo-600:hover{color:#4f46e5}.hover\:text-red-700:hover{color:#b91c1c}
-        .focus\:border-transparent:focus{border-color:transparent}.focus\:outline-none:focus{outline:2px solid transparent;outline-offset:2px}
-        .backdrop-filter{backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)}
-        .backdrop-blur{--tw-backdrop-blur:blur(8px)}
-        .pointer-events-none{pointer-events:none}
-        .resize-vertical{resize:vertical}
-        .appearance-none{appearance:none}
-        .outline-none{outline:2px solid transparent;outline-offset:2px}
-        .ring-2{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000)}
-        .ring-indigo-500{--tw-ring-color:#6366f1}.ring-red-500{--tw-ring-color:#ef4444}.ring-green-500{--tw-ring-color:#22c55e}.ring-blue-500{--tw-ring-color:#3b82f6}
-        .duration-150{transition-duration:150ms}.duration-300{transition-duration:300ms}
-        .ease-out{transition-timing-function:cubic-bezier(0, 0, 0.2, 1)}
-        .hover\:opacity-90:hover{opacity:0.9}
-        .group:hover .group-hover\:opacity-100{opacity:1}
-        .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0, 0, 0, 0);white-space:nowrap;border-width:0}
-    </style>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         body { font-family: 'Inter', sans-serif; }
         
         .gradient-bg {
-            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);
-        }
-        
-        .gradient-pro {
-            background: linear-gradient(135deg, #f59e0b 0%, #f97316 50%, #dc2626 100%);
-        }
-        
-        .glass-effect {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        
-        .pro-badge {
-            background: linear-gradient(45deg, #fbbf24, #f59e0b);
-            animation: shimmer 2s infinite;
-        }
-        
-        @keyframes shimmer {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.8; }
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
         
         .card-hover {
@@ -244,62 +138,40 @@
 </head>
 <body class="bg-gray-50 min-h-screen">
     <!-- Header -->
-    <header class="gradient-bg text-white shadow-2xl relative overflow-hidden">
-        <div class="absolute inset-0 bg-black/10"></div>
-        <div class="container mx-auto px-4 py-6 relative z-10">
+    <header class="gradient-bg text-white shadow-lg">
+        <div class="container mx-auto px-4 py-6">
             <div class="flex justify-between items-center">
-                <div class="flex items-center space-x-4">
-                    <div class="bg-white/20 p-3 rounded-xl glass-effect">
-                        <i class="fas fa-rocket text-2xl"></i>
-                    </div>
-                    <div>
-                        <div class="flex items-center space-x-2">
-                            <h1 class="text-2xl font-bold">DeadlineX</h1>
-                            <span class="pro-badge text-xs font-bold px-2 py-1 rounded-full text-white">
-                                PRO
-                            </span>
-                        </div>
-                        <p class="text-sm opacity-80">Gerenciador Completo de Vida</p>
-                    </div>
+                <div class="flex items-center space-x-3">
+                    <i class="fas fa-clock text-2xl"></i>
+                    <h1 class="text-2xl font-bold">DeadlineX</h1>
                 </div>
                 <div class="flex items-center space-x-4">
-                    <div id="liveClock" class="clock-display text-lg glass-effect px-4 py-2 rounded-xl font-mono">
+                    <div id="liveClock" class="clock-display text-lg bg-white/20 px-3 py-1 rounded-lg">
                         00:00:00
                     </div>
-                    <div class="text-right">
-                        <span id="userEmail" class="text-sm opacity-90 block"></span>
-                        <span class="text-xs opacity-70">Versão PRO Completa</span>
-                    </div>
-                    
-                    <!-- Action Buttons -->
-                    <div class="flex items-center space-x-2 flex-wrap">
-                        <button id="shoppingBtn" class="glass-effect hover:bg-white/20 p-3 rounded-xl transition-all duration-300" title="Lista de Compras" onclick="openShoppingModal()">
-                            <i class="fas fa-shopping-cart"></i>
+                    <span id="userEmail" class="text-sm opacity-90"></span>
+                    <div class="relative">
+                        <button id="menuBtn" class="bg-white/20 hover:bg-white/30 p-2 rounded-lg transition-colors">
+                            <i class="fas fa-bars"></i>
                         </button>
-                        
-                        <button id="whatsappBtn" class="glass-effect hover:bg-white/20 p-3 rounded-xl transition-all duration-300" title="WhatsApp" onclick="openWhatsAppModal()">
-                            <i class="fab fa-whatsapp"></i>
-                        </button>
-                        
-                        <button id="shareBtn" class="glass-effect hover:bg-white/20 p-3 rounded-xl transition-all duration-300" title="Compartilhar">
-                            <i class="fas fa-share-alt"></i>
-                        </button>
-                        
-                        <button id="privacyBtn" class="glass-effect hover:bg-white/20 p-3 rounded-xl transition-all duration-300" title="Políticas">
-                            <i class="fas fa-shield-alt"></i>
-                        </button>
-                        
-                        <button id="deleteAccountBtn" class="glass-effect hover:bg-red-500/20 p-3 rounded-xl transition-all duration-300 text-red-200" title="Excluir Conta">
-                            <i class="fas fa-user-times"></i>
-                        </button>
-                        
-                        <button id="installBtn" class="glass-effect hover:bg-white/20 p-3 rounded-xl transition-all duration-300" title="Instalar App">
-                            <i class="fas fa-mobile-alt"></i>
-                        </button>
-                        
-                        <button id="logoutBtn" class="glass-effect hover:bg-white/20 p-3 rounded-xl transition-all duration-300" title="Sair">
-                            <i class="fas fa-sign-out-alt"></i>
-                        </button>
+                        <div id="dropdownMenu" class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border hidden z-50">
+                            <button id="shareBtn" class="w-full text-left px-4 py-3 hover:bg-gray-50 flex items-center space-x-2 border-b">
+                                <i class="fas fa-share-alt text-indigo-600"></i>
+                                <span>Compartilhar</span>
+                            </button>
+                            <button id="privacyBtn" class="w-full text-left px-4 py-3 hover:bg-gray-50 flex items-center space-x-2 border-b">
+                                <i class="fas fa-shield-alt text-green-600"></i>
+                                <span>Políticas de Privacidade</span>
+                            </button>
+                            <button id="deleteAccountBtn" class="w-full text-left px-4 py-3 hover:bg-red-50 flex items-center space-x-2 border-b text-red-600">
+                                <i class="fas fa-user-times"></i>
+                                <span>Excluir Conta</span>
+                            </button>
+                            <button id="logoutBtn" class="w-full text-left px-4 py-3 hover:bg-gray-50 flex items-center space-x-2">
+                                <i class="fas fa-sign-out-alt text-gray-600"></i>
+                                <span>Sair</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -310,18 +182,19 @@
     <div id="loginModal" class="fixed inset-0 bg-black/50 modal-overlay flex items-center justify-center z-50">
         <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4 shadow-2xl">
             <div class="text-center mb-6">
-                <i class="fas fa-crown text-4xl text-yellow-500 mb-4"></i>
-                <h2 class="text-2xl font-bold text-gray-800">DeadlineX PRO</h2>
-                <p class="text-gray-600">Acesso exclusivo para usuários PRO</p>
-                <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mt-3">
-                    <p class="text-sm text-yellow-800">
-                        <i class="fas fa-info-circle mr-1"></i>
-                        Use as credenciais fornecidas após a compra
-                    </p>
-                </div>
+                <i class="fas fa-clock text-4xl text-indigo-600 mb-4"></i>
+                <h2 class="text-2xl font-bold text-gray-800">DeadlineX</h2>
+                <p class="text-gray-600">Faça login para gerenciar seus prazos</p>
             </div>
             
-            <!-- Removed signup tabs - only login now -->
+            <div id="loginTabs" class="flex mb-6 bg-gray-100 rounded-lg p-1">
+                <button id="loginTab" class="flex-1 py-2 px-4 rounded-md bg-white shadow-sm font-medium text-indigo-600">
+                    Login
+                </button>
+                <button id="signupTab" class="flex-1 py-2 px-4 rounded-md font-medium text-gray-600">
+                    Cadastro
+                </button>
+            </div>
             
             <form id="authForm">
                 <div class="space-y-4">
@@ -429,9 +302,9 @@
                 
                 <select id="priorityFilter" class="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500">
                     <option value="">Todas as Prioridades</option>
-                    <option value="alta">Alta</option>
+                    <option value="high">Alta</option>
                     <option value="normal">Normal</option>
-                    <option value="baixa">Baixa</option>
+                    <option value="low">Baixa</option>
                 </select>
                 
                 <select id="statusFilter" class="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500">
@@ -463,7 +336,7 @@
                 <i class="fas fa-calendar-plus text-6xl text-gray-300 mb-4"></i>
                 <h3 class="text-xl font-semibold text-gray-600 mb-2">Nenhum prazo encontrado</h3>
                 <p class="text-gray-500 mb-6">Comece criando seu primeiro prazo!</p>
-                <button class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg font-medium transition-colors" onclick="openAddModal()">
+                <button class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg font-medium transition-colors">
                     <i class="fas fa-plus mr-2"></i>Criar Primeiro Prazo
                 </button>
             </div>
@@ -560,8 +433,8 @@
                             <select id="deadlinePriority" 
                                     class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500">
                                 <option value="normal">Normal</option>
-                                <option value="alta">Alta</option>
-                                <option value="baixa">Baixa</option>
+                                <option value="high">Alta</option>
+                                <option value="low">Baixa</option>
                             </select>
                         </div>
                         
@@ -591,43 +464,33 @@
 
     <!-- Share Modal -->
     <div id="shareModal" class="fixed inset-0 bg-black/50 modal-overlay flex items-center justify-center z-50 hidden">
-        <div class="bg-white rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl share-popup">
+        <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4 shadow-2xl share-popup">
             <div class="text-center mb-6">
-                <div class="bg-indigo-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <i class="fas fa-share-alt text-3xl text-indigo-600"></i>
+                <div class="bg-indigo-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-share-alt text-2xl text-indigo-600"></i>
                 </div>
-                <h3 class="text-2xl font-bold text-gray-800 mb-2">Compartilhar DeadlineX</h3>
+                <h3 class="text-xl font-bold text-gray-800 mb-2">Compartilhar DeadlineX</h3>
                 <p class="text-gray-600">Ajude seus amigos a organizarem melhor seus prazos!</p>
             </div>
             
-            <div class="space-y-3">
-                <button onclick="shareViaWhatsApp()" class="w-full bg-green-500 hover:bg-green-600 text-white py-4 px-4 rounded-xl flex items-center justify-center space-x-3 transition-colors font-medium">
-                    <i class="fab fa-whatsapp text-2xl"></i>
+            <div class="space-y-4">
+                <button onclick="shareViaWhatsApp()" class="w-full bg-green-500 hover:bg-green-600 text-white py-3 px-4 rounded-lg flex items-center justify-center space-x-2 transition-colors">
+                    <i class="fab fa-whatsapp text-xl"></i>
                     <span>Compartilhar no WhatsApp</span>
                 </button>
                 
-                <button onclick="shareViaFacebook()" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-4 px-4 rounded-xl flex items-center justify-center space-x-3 transition-colors font-medium">
-                    <i class="fab fa-facebook text-2xl"></i>
-                    <span>Compartilhar no Facebook</span>
-                </button>
-                
-                <button onclick="shareViaTwitter()" class="w-full bg-sky-500 hover:bg-sky-600 text-white py-4 px-4 rounded-xl flex items-center justify-center space-x-3 transition-colors font-medium">
-                    <i class="fab fa-twitter text-2xl"></i>
-                    <span>Compartilhar no Twitter</span>
-                </button>
-                
-                <button onclick="shareViaEmail()" class="w-full bg-gray-600 hover:bg-gray-700 text-white py-4 px-4 rounded-xl flex items-center justify-center space-x-3 transition-colors font-medium">
-                    <i class="fas fa-envelope text-2xl"></i>
+                <button onclick="shareViaEmail()" class="w-full bg-blue-500 hover:bg-blue-600 text-white py-3 px-4 rounded-lg flex items-center justify-center space-x-2 transition-colors">
+                    <i class="fas fa-envelope text-xl"></i>
                     <span>Compartilhar por Email</span>
                 </button>
                 
-                <button onclick="copyShareLink()" class="w-full bg-indigo-100 hover:bg-indigo-200 text-indigo-700 py-4 px-4 rounded-xl flex items-center justify-center space-x-3 transition-colors font-medium border border-indigo-200">
+                <button onclick="copyShareLink()" class="w-full bg-gray-500 hover:bg-gray-600 text-white py-3 px-4 rounded-lg flex items-center justify-center space-x-2 transition-colors">
                     <i class="fas fa-copy text-xl"></i>
                     <span>Copiar Link</span>
                 </button>
             </div>
             
-            <button onclick="closeShareModal()" class="w-full mt-6 bg-gray-100 hover:bg-gray-200 text-gray-800 py-3 px-4 rounded-xl transition-colors">
+            <button onclick="closeShareModal()" class="w-full mt-6 bg-gray-100 hover:bg-gray-200 text-gray-800 py-3 px-4 rounded-lg transition-colors">
                 Fechar
             </button>
         </div>
@@ -635,60 +498,48 @@
 
     <!-- Privacy Policy Modal -->
     <div id="privacyModal" class="fixed inset-0 bg-black/50 modal-overlay flex items-center justify-center z-50 hidden">
-        <div class="bg-white rounded-2xl p-8 max-w-2xl w-full mx-4 shadow-2xl max-h-[80vh] overflow-y-auto">
+        <div class="bg-white rounded-xl p-8 max-w-2xl w-full mx-4 shadow-2xl max-h-[80vh] overflow-y-auto">
             <div class="flex justify-between items-center mb-6">
-                <div class="flex items-center space-x-3">
-                    <div class="bg-blue-100 p-3 rounded-xl">
-                        <i class="fas fa-shield-alt text-blue-600 text-xl"></i>
-                    </div>
-                    <div>
-                        <h3 class="text-xl font-bold text-gray-800">Políticas de Privacidade</h3>
-                        <p class="text-sm text-gray-600">Última atualização: Janeiro 2024</p>
-                    </div>
-                </div>
+                <h3 class="text-xl font-bold text-gray-800">Políticas de Privacidade</h3>
                 <button onclick="closePrivacyModal()" class="text-gray-400 hover:text-gray-600">
                     <i class="fas fa-times text-xl"></i>
                 </button>
             </div>
             
             <div class="space-y-6 text-sm text-gray-700">
-                <div>
-                    <h4 class="font-semibold text-gray-800 mb-2">🔒 Coleta de Dados</h4>
-                    <p>Coletamos apenas os dados necessários para o funcionamento do DeadlineX: email, prazos criados, configurações de notificação e dados de uso básicos.</p>
-                </div>
+                <section>
+                    <h4 class="font-semibold text-gray-800 mb-2">📋 Coleta de Dados</h4>
+                    <p>Coletamos apenas as informações necessárias para o funcionamento do DeadlineX: email para autenticação e dados dos prazos que você criar.</p>
+                </section>
                 
-                <div>
-                    <h4 class="font-semibold text-gray-800 mb-2">💾 Armazenamento</h4>
-                    <p>Seus dados são armazenados de forma segura no Supabase com criptografia. Não compartilhamos suas informações pessoais com terceiros.</p>
-                </div>
+                <section>
+                    <h4 class="font-semibold text-gray-800 mb-2">🔒 Segurança</h4>
+                    <p>Seus dados são protegidos por criptografia e políticas de segurança do Supabase. Utilizamos autenticação segura e não compartilhamos suas informações com terceiros.</p>
+                </section>
                 
-                <div>
-                    <h4 class="font-semibold text-gray-800 mb-2">🔔 Notificações</h4>
-                    <p>Enviamos notificações apenas relacionadas aos seus prazos. Você pode desativar a qualquer momento nas configurações.</p>
-                </div>
+                <section>
+                    <h4 class="font-semibold text-gray-800 mb-2">🇧🇷 LGPD - Lei Geral de Proteção de Dados</h4>
+                    <p>Em conformidade com a LGPD, você tem direito a:</p>
+                    <ul class="list-disc list-inside mt-2 space-y-1">
+                        <li>Acessar seus dados pessoais</li>
+                        <li>Corrigir dados incompletos ou incorretos</li>
+                        <li>Solicitar a exclusão de seus dados</li>
+                        <li>Revogar o consentimento a qualquer momento</li>
+                    </ul>
+                </section>
                 
-                <div>
+                <section>
                     <h4 class="font-semibold text-gray-800 mb-2">🍪 Cookies</h4>
-                    <p>Utilizamos cookies essenciais para manter sua sessão ativa. Não usamos cookies de rastreamento ou publicidade.</p>
-                </div>
+                    <p>Utilizamos cookies apenas para manter sua sessão ativa e melhorar sua experiência. Não utilizamos cookies de rastreamento.</p>
+                </section>
                 
-                <div>
-                    <h4 class="font-semibold text-gray-800 mb-2">📱 WhatsApp</h4>
-                    <p>O número do WhatsApp é usado apenas para envio de lembretes. Utilizamos a Evolution API com total segurança.</p>
-                </div>
-                
-                <div>
-                    <h4 class="font-semibold text-gray-800 mb-2">🗑️ Exclusão de Dados</h4>
-                    <p>Você pode excluir sua conta e todos os dados a qualquer momento. A exclusão é permanente e irreversível.</p>
-                </div>
-                
-                <div>
-                    <h4 class="font-semibold text-gray-800 mb-2">📧 Contato</h4>
-                    <p>Para dúvidas sobre privacidade: <strong>privacidade@deadlinex.com</strong></p>
-                </div>
+                <section>
+                    <h4 class="font-semibold text-gray-800 mb-2">📞 Contato</h4>
+                    <p>Para exercer seus direitos ou esclarecer dúvidas sobre privacidade, entre em contato através do menu "Excluir Conta".</p>
+                </section>
             </div>
             
-            <button onclick="closePrivacyModal()" class="w-full mt-6 bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-xl transition-colors">
+            <button onclick="closePrivacyModal()" class="w-full mt-6 bg-indigo-600 hover:bg-indigo-700 text-white py-3 px-4 rounded-lg transition-colors">
                 Entendi
             </button>
         </div>
@@ -696,222 +547,34 @@
 
     <!-- Delete Account Modal -->
     <div id="deleteAccountModal" class="fixed inset-0 bg-black/50 modal-overlay flex items-center justify-center z-50 hidden">
-        <div class="bg-white rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl">
+        <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4 shadow-2xl">
             <div class="text-center mb-6">
                 <div class="bg-red-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                     <i class="fas fa-exclamation-triangle text-2xl text-red-600"></i>
                 </div>
                 <h3 class="text-xl font-bold text-gray-800 mb-2">Excluir Conta</h3>
-                <p class="text-gray-600">Esta ação é <strong>irreversível</strong>!</p>
+                <p class="text-gray-600">Esta ação não pode ser desfeita. Todos os seus dados serão permanentemente removidos.</p>
             </div>
             
-            <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
-                <h4 class="font-semibold text-red-800 mb-2">⚠️ O que será excluído:</h4>
-                <ul class="text-sm text-red-700 space-y-1">
-                    <li>• Todos os seus prazos e lembretes</li>
-                    <li>• Lista de compras e gastos</li>
-                    <li>• Configurações e preferências</li>
-                    <li>• Histórico de notificações</li>
-                    <li>• Todos os dados da conta</li>
-                </ul>
+            <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
+                <p class="text-sm text-yellow-800">
+                    <i class="fas fa-info-circle mr-2"></i>
+                    Ao excluir sua conta, você perderá todos os prazos cadastrados e não poderá recuperá-los.
+                </p>
             </div>
             
-            <div class="mb-6">
-                <label class="block text-sm font-medium text-gray-700 mb-2">
-                    Digite "EXCLUIR" para confirmar:
-                </label>
-                <input type="text" id="deleteConfirmation" placeholder="Digite EXCLUIR" 
+            <div class="space-y-4">
+                <input type="password" id="deletePassword" placeholder="Digite sua senha para confirmar" 
                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500">
-            </div>
-            
-            <div class="flex space-x-3">
-                <button onclick="closeDeleteAccountModal()" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 py-3 px-4 rounded-xl transition-colors">
-                    Cancelar
-                </button>
-                <button onclick="confirmDeleteAccount()" class="flex-1 bg-red-600 hover:bg-red-700 text-white py-3 px-4 rounded-xl transition-colors">
-                    Excluir Conta
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Shopping List Modal -->
-    <div id="shoppingModal" class="fixed inset-0 bg-black/50 modal-overlay flex items-center justify-center z-50 hidden">
-        <div class="bg-white rounded-2xl p-6 max-w-4xl w-full mx-4 shadow-2xl max-h-[90vh] overflow-y-auto">
-            <div class="flex justify-between items-center mb-6">
-                <div class="flex items-center space-x-3">
-                    <div class="bg-blue-100 p-3 rounded-xl">
-                        <i class="fas fa-shopping-cart text-blue-600 text-xl"></i>
-                    </div>
-                    <div>
-                        <h3 class="text-xl font-bold text-gray-800">Lista de Compras</h3>
-                        <p class="text-sm text-gray-600">Organize suas compras e controle gastos</p>
-                    </div>
-                </div>
-                <button onclick="closeShoppingModal()" class="text-gray-400 hover:text-gray-600">
-                    <i class="fas fa-times text-xl"></i>
-                </button>
-            </div>
-            
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <!-- Add Item Form -->
-                <div class="lg:col-span-1">
-                    <div class="bg-gray-50 rounded-xl p-4 mb-4">
-                        <h4 class="font-semibold mb-3">Adicionar Item</h4>
-                        <form id="addItemForm" class="space-y-3">
-                            <input type="text" id="itemName" placeholder="Nome do produto" required
-                                   class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
-                            <input type="number" id="itemPrice" placeholder="Preço (R$)" step="0.01" required
-                                   class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
-                            <input type="number" id="itemQuantity" placeholder="Quantidade" value="1" min="1" required
-                                   class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
-                            <select id="itemCategory" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
-                                <option value="alimentacao">Alimentação</option>
-                                <option value="limpeza">Limpeza</option>
-                                <option value="higiene">Higiene</option>
-                                <option value="outros">Outros</option>
-                            </select>
-                            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg transition-colors">
-                                <i class="fas fa-plus mr-2"></i>Adicionar
-                            </button>
-                        </form>
-                    </div>
-                    
-                    <!-- Shopping Summary -->
-                    <div class="bg-green-50 rounded-xl p-4">
-                        <h4 class="font-semibold mb-3 text-green-800">Resumo da Compra</h4>
-                        <div class="space-y-2 text-sm">
-                            <div class="flex justify-between">
-                                <span>Total de Itens:</span>
-                                <span id="totalItems">0</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span>No Carrinho:</span>
-                                <span id="cartItems">0</span>
-                            </div>
-                            <div class="flex justify-between font-bold text-lg border-t pt-2">
-                                <span>Total:</span>
-                                <span id="totalPrice">R$ 0,00</span>
-                            </div>
-                        </div>
-                        <button onclick="finalizePurchase()" class="w-full bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-lg mt-4 transition-colors">
-                            <i class="fas fa-check mr-2"></i>Finalizar Compra
-                        </button>
-                    </div>
-                </div>
-                
-                <!-- Shopping List -->
-                <div class="lg:col-span-2">
-                    <div class="flex justify-between items-center mb-4">
-                        <h4 class="font-semibold">Itens da Lista</h4>
-                        <button onclick="clearShoppingList()" class="text-red-600 hover:text-red-700 text-sm">
-                            <i class="fas fa-trash mr-1"></i>Limpar Lista
-                        </button>
-                    </div>
-                    <div id="shoppingList" class="space-y-2 max-h-96 overflow-y-auto">
-                        <!-- Shopping items will be loaded here -->
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Monthly Expenses Chart -->
-            <div class="mt-8 bg-gray-50 rounded-xl p-6">
-                <h4 class="font-semibold mb-4">Gastos do Mês</h4>
-                <div class="h-64">
-                    <canvas id="expensesChart"></canvas>
-                </div>
-                <div class="flex justify-between items-center mt-4">
-                    <div class="text-sm text-gray-600">
-                        Total do mês: <span id="monthlyTotal" class="font-bold">R$ 0,00</span>
-                    </div>
-                    <button onclick="clearMonthlyData()" class="text-red-600 hover:text-red-700 text-sm">
-                        <i class="fas fa-refresh mr-1"></i>Limpar Dados do Mês
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- WhatsApp Setup Modal -->
-    <div id="whatsappModal" class="fixed inset-0 bg-black/50 modal-overlay flex items-center justify-center z-50 hidden">
-        <div class="bg-white rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl">
-            <div class="text-center mb-6">
-                <div class="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <i class="fab fa-whatsapp text-2xl text-green-600"></i>
-                </div>
-                <h3 class="text-xl font-bold text-gray-800 mb-2">Notificações WhatsApp</h3>
-                <p class="text-gray-600">Configure seu número para receber lembretes</p>
-            </div>
-            
-            <form id="whatsappForm" class="space-y-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Número do WhatsApp</label>
-                    <input type="tel" id="whatsappNumber" placeholder="(11) 99999-9999" required
-                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500">
-                    <p class="text-xs text-gray-500 mt-1">Formato: (DD) 9XXXX-XXXX</p>
-                </div>
-                
-                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                    <p class="text-sm text-blue-800">
-                        <i class="fas fa-info-circle mr-2"></i>
-                        Utilizamos a API da <strong>Evolution API</strong> para envio de mensagens. 
-                        Totalmente seguro e confiável.
-                    </p>
-                </div>
                 
                 <div class="flex space-x-3">
-                    <button type="button" onclick="closeWhatsAppModal()" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 py-3 px-4 rounded-lg transition-colors">
+                    <button onclick="closeDeleteModal()" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 py-3 px-4 rounded-lg transition-colors">
                         Cancelar
                     </button>
-                    <button type="submit" class="flex-1 bg-green-600 hover:bg-green-700 text-white py-3 px-4 rounded-lg transition-colors">
-                        Salvar
+                    <button onclick="confirmDeleteAccount()" class="flex-1 bg-red-600 hover:bg-red-700 text-white py-3 px-4 rounded-lg transition-colors">
+                        Excluir Conta
                     </button>
                 </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Install PWA Modal -->
-    <div id="installModal" class="fixed inset-0 bg-black/50 modal-overlay flex items-center justify-center z-50 hidden">
-        <div class="bg-white rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl">
-            <div class="text-center mb-6">
-                <div class="bg-indigo-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <i class="fas fa-mobile-alt text-3xl text-indigo-600"></i>
-                </div>
-                <h3 class="text-2xl font-bold text-gray-800 mb-2">Instalar DeadlineX</h3>
-                <p class="text-gray-600">Instale o app no seu dispositivo para acesso rápido e notificações!</p>
-            </div>
-            
-            <div class="space-y-4 mb-6">
-                <div class="flex items-center space-x-3 text-sm text-gray-700">
-                    <i class="fas fa-check-circle text-green-500"></i>
-                    <span>Acesso offline aos seus prazos</span>
-                </div>
-                <div class="flex items-center space-x-3 text-sm text-gray-700">
-                    <i class="fas fa-check-circle text-green-500"></i>
-                    <span>Notificações push nativas</span>
-                </div>
-                <div class="flex items-center space-x-3 text-sm text-gray-700">
-                    <i class="fas fa-check-circle text-green-500"></i>
-                    <span>Ícone na tela inicial</span>
-                </div>
-                <div class="flex items-center space-x-3 text-sm text-gray-700">
-                    <i class="fas fa-check-circle text-green-500"></i>
-                    <span>Experiência como app nativo</span>
-                </div>
-            </div>
-            
-            <div class="space-y-3">
-                <button id="installAppBtn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-4 px-6 rounded-xl font-bold text-lg transition-colors">
-                    <i class="fas fa-download mr-2"></i>Instalar Agora
-                </button>
-                <button onclick="closeInstallModal()" class="w-full bg-gray-100 hover:bg-gray-200 text-gray-800 py-3 px-6 rounded-xl transition-colors">
-                    Talvez Depois
-                </button>
-            </div>
-            
-            <div class="mt-4 text-xs text-gray-500 text-center">
-                <p>💡 <strong>Dica:</strong> No Chrome/Safari, procure por "Instalar" ou "Adicionar à tela inicial" no menu do navegador</p>
             </div>
         </div>
     </div>
@@ -931,381 +594,49 @@
 
     <script>
         // Supabase Configuration
-        let supabase;
-        let usingLocalStorage = false;
+        const SUPABASE_URL = 'https://vastjlzaxafpoagptklu.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZhc3RqbHpheGFmcG9hZ3B0a2x1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTYyNjUzMDEsImV4cCI6MjA3MTg0MTMwMX0.4EnnkdyVDEo1qSp1C2-QgVlklUkL2W3ulqOmXX_DiVY';
         
-        // Initialize Supabase - RECONNECTING
-        try {
-            // Suas credenciais do Supabase
-            const SUPABASE_URL = 'https://vastjlzaxafpoagptklu.supabase.co';
-            const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZhc3RqbHpheGFmcG9hZ3B0a2x1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTYyNjUzMDEsImV4cCI6MjA3MTg0MTMwMX0.4EnnkdyVDEo1qSp1C2-QgVlklUkL2W3ulqOmXX_DiVY';
-            
-            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-            
-            // Test connection
-            console.log('🔄 Testando conexão com Supabase...');
-            console.log('📡 URL:', SUPABASE_URL);
-            console.log('🔑 Key:', SUPABASE_ANON_KEY.substring(0, 20) + '...');
-            
-            usingLocalStorage = false;
-            
-        } catch (error) {
-            console.error('❌ Erro ao conectar Supabase:', error);
-            console.log('⚠️ Usando localStorage como fallback');
-            supabase = createLocalStorageFallback();
-            usingLocalStorage = true;
-        }
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         
         // Global Variables
         let currentUser = null;
         let deadlines = [];
         let editingDeadline = null;
+        let isSignupMode = false;
         let currentView = 'list';
         let currentDate = new Date();
         let notificationInterval = null;
         let clockInterval = null;
-        let shoppingList = [];
-        let monthlyExpenses = [];
-        let expensesChart = null;
-        let deferredPrompt = null;
-        let browserNotificationsEnabled = false;
-
-        // LocalStorage Fallback System
-        function createLocalStorageFallback() {
-            console.log('🔄 Usando sistema de fallback com localStorage');
-            usingLocalStorage = true;
-            
-            return {
-                auth: {
-                    signUp: async ({ email, password }) => {
-                        try {
-                            const users = JSON.parse(localStorage.getItem('deadlinex_users') || '[]');
-                            if (users.find(u => u.email === email)) {
-                                return { error: { message: 'User already registered' } };
-                            }
-                            const user = { id: Date.now().toString(), email, password };
-                            users.push(user);
-                            localStorage.setItem('deadlinex_users', JSON.stringify(users));
-                            localStorage.setItem('deadlinex_current_user', JSON.stringify(user));
-                            return { data: { user }, error: null };
-                        } catch (error) {
-                            return { error: { message: 'Erro ao criar conta' } };
-                        }
-                    },
-                    signInWithPassword: async ({ email, password }) => {
-                        try {
-                            const users = JSON.parse(localStorage.getItem('deadlinex_users') || '[]');
-                            let user = users.find(u => u.email === email && u.password === password);
-                            
-                            if (!user) {
-                                user = { id: Date.now().toString(), email, password };
-                                users.push(user);
-                                localStorage.setItem('deadlinex_users', JSON.stringify(users));
-                            }
-                            
-                            localStorage.setItem('deadlinex_current_user', JSON.stringify(user));
-                            return { data: { user }, error: null };
-                        } catch (error) {
-                            return { error: { message: 'Erro ao fazer login' } };
-                        }
-                    },
-                    signOut: async () => {
-                        try {
-                            localStorage.removeItem('deadlinex_current_user');
-                            return { error: null };
-                        } catch (error) {
-                            return { error: { message: 'Erro ao sair' } };
-                        }
-                    },
-                    getSession: async () => {
-                        try {
-                            const user = JSON.parse(localStorage.getItem('deadlinex_current_user') || 'null');
-                            const session = user ? { user } : null;
-                            return { data: { session }, error: null };
-                        } catch (error) {
-                            return { data: { session: null }, error };
-                        }
-                    },
-                    onAuthStateChange: (callback) => {
-                        return { data: { subscription: { unsubscribe: () => {} } } };
-                    }
-                },
-                from: (table) => ({
-                    select: (columns = '*') => ({
-                        eq: (column, value) => ({
-                            order: (orderColumn, options = {}) => ({
-                                then: async (resolve) => {
-                                    const data = JSON.parse(localStorage.getItem(`deadlinex_${table}`) || '[]');
-                                    const filtered = data.filter(item => item[column] === value);
-                                    const sorted = options.ascending === false 
-                                        ? filtered.sort((a, b) => new Date(b[orderColumn]) - new Date(a[orderColumn]))
-                                        : filtered.sort((a, b) => new Date(a[orderColumn]) - new Date(b[orderColumn]));
-                                    resolve({ data: sorted, error: null });
-                                }
-                            })
-                        }),
-                        order: (column, options = {}) => ({
-                            then: async (resolve) => {
-                                const data = JSON.parse(localStorage.getItem(`deadlinex_${table}`) || '[]');
-                                const sorted = options.ascending === false 
-                                    ? data.sort((a, b) => new Date(b[column]) - new Date(a[column]))
-                                    : data.sort((a, b) => new Date(a[column]) - new Date(b[column]));
-                                resolve({ data: sorted, error: null });
-                            }
-                        }),
-                        single: () => ({
-                            then: async (resolve) => {
-                                const data = JSON.parse(localStorage.getItem(`deadlinex_${table}`) || '[]');
-                                resolve({ data: data[0] || null, error: null });
-                            }
-                        }),
-                        then: async (resolve) => {
-                            const data = JSON.parse(localStorage.getItem(`deadlinex_${table}`) || '[]');
-                            resolve({ data, error: null });
-                        }
-                    }),
-                    insert: (items) => ({
-                        then: async (resolve) => {
-                            const data = JSON.parse(localStorage.getItem(`deadlinex_${table}`) || '[]');
-                            const newItems = items.map(item => ({ ...item, id: Date.now() + Math.random() }));
-                            data.push(...newItems);
-                            localStorage.setItem(`deadlinex_${table}`, JSON.stringify(data));
-                            resolve({ data: newItems, error: null });
-                        }
-                    }),
-                    update: (updates) => ({
-                        eq: (column, value) => ({
-                            then: async (resolve) => {
-                                const data = JSON.parse(localStorage.getItem(`deadlinex_${table}`) || '[]');
-                                const index = data.findIndex(item => item[column] === value);
-                                if (index !== -1) {
-                                    data[index] = { ...data[index], ...updates };
-                                    localStorage.setItem(`deadlinex_${table}`, JSON.stringify(data));
-                                }
-                                resolve({ data: null, error: null });
-                            }
-                        })
-                    }),
-                    delete: () => ({
-                        eq: (column, value) => ({
-                            then: async (resolve) => {
-                                const data = JSON.parse(localStorage.getItem(`deadlinex_${table}`) || '[]');
-                                const filtered = data.filter(item => item[column] !== value);
-                                localStorage.setItem(`deadlinex_${table}`, JSON.stringify(filtered));
-                                resolve({ data: null, error: null });
-                            }
-                        })
-                    }),
-                    upsert: (items) => ({
-                        then: async (resolve) => {
-                            const data = JSON.parse(localStorage.getItem(`deadlinex_${table}`) || '[]');
-                            items.forEach(item => {
-                                const index = data.findIndex(d => d.user_id === item.user_id);
-                                if (index !== -1) {
-                                    data[index] = { ...data[index], ...item };
-                                } else {
-                                    data.push({ ...item, id: Date.now() + Math.random() });
-                                }
-                            });
-                            localStorage.setItem(`deadlinex_${table}`, JSON.stringify(data));
-                            resolve({ data: null, error: null });
-                        }
-                    })
-                })
-            };
-        }
-        
-        // Evolution API Configuration (Demo - replace with real credentials)
-        const EVOLUTION_API_URL = 'https://api.evolution-api.com/v1';
-        const EVOLUTION_API_KEY = 'demo-key-replace-with-real';
 
         // DOM Elements
         const loginModal = document.getElementById('loginModal');
         const mainContent = document.getElementById('mainContent');
         const deadlineModal = document.getElementById('deadlineModal');
         const loadingOverlay = document.getElementById('loadingOverlay');
-
+        
         // Initialize App
         document.addEventListener('DOMContentLoaded', async () => {
-            console.log('🚀 DeadlineX PRO iniciando...');
-            
-            try {
-                // Setup everything
-                setupEventListeners();
-                startClock();
-                setupPWA();
-                
-                // Check authentication
-                await checkAuth();
-                
-                console.log('✅ Sistema carregado');
-                
-            } catch (error) {
-                console.error('❌ Erro na inicialização:', error);
-                showLoginModal();
-            }
+            await checkAuth();
+            setupEventListeners();
+            startClock();
+            startNotificationSystem();
         });
-        
-        // PWA Setup
-        function setupPWA() {
-            // Listen for beforeinstallprompt event
-            window.addEventListener('beforeinstallprompt', (e) => {
-                e.preventDefault();
-                deferredPrompt = e;
-                document.getElementById('installBtn').classList.remove('hidden');
-            });
-            
-            // Listen for app installed event
-            window.addEventListener('appinstalled', () => {
-                showNotification('🎉 DeadlineX instalado com sucesso!', 'success');
-                document.getElementById('installBtn').classList.add('hidden');
-                deferredPrompt = null;
-            });
-            
-            // Check if already installed
-            if (window.matchMedia('(display-mode: standalone)').matches) {
-                document.getElementById('installBtn').classList.add('hidden');
-            }
-        }
-        
-        function openInstallModal() {
-            document.getElementById('installModal').classList.remove('hidden');
-        }
-        
-        function closeInstallModal() {
-            document.getElementById('installModal').classList.add('hidden');
-        }
-        
-        async function installPWA() {
-            if (!deferredPrompt) {
-                // Fallback for browsers that don't support beforeinstallprompt
-                showInstallInstructions();
-                return;
-            }
-            
-            try {
-                deferredPrompt.prompt();
-                const { outcome } = await deferredPrompt.userChoice;
-                
-                if (outcome === 'accepted') {
-                    showNotification('🎉 Instalação iniciada!', 'success');
-                } else {
-                    showNotification('ℹ️ Instalação cancelada', 'info');
-                }
-                
-                deferredPrompt = null;
-                closeInstallModal();
-                
-            } catch (error) {
-                console.error('Erro na instalação:', error);
-                showInstallInstructions();
-            }
-        }
-        
-        function showInstallInstructions() {
-            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-            const isAndroid = /Android/.test(navigator.userAgent);
-            
-            let instructions = '';
-            
-            if (isIOS) {
-                instructions = `
-                    <div class="text-center">
-                        <h4 class="font-bold mb-3">Como instalar no iOS:</h4>
-                        <div class="space-y-2 text-sm text-left">
-                            <p>1. Toque no botão <i class="fas fa-share"></i> (compartilhar)</p>
-                            <p>2. Role para baixo e toque em "Adicionar à Tela de Início"</p>
-                            <p>3. Toque em "Adicionar" no canto superior direito</p>
-                        </div>
-                    </div>
-                `;
-            } else if (isAndroid) {
-                instructions = `
-                    <div class="text-center">
-                        <h4 class="font-bold mb-3">Como instalar no Android:</h4>
-                        <div class="space-y-2 text-sm text-left">
-                            <p>1. Toque no menu <i class="fas fa-ellipsis-v"></i> do navegador</p>
-                            <p>2. Procure por "Instalar app" ou "Adicionar à tela inicial"</p>
-                            <p>3. Toque em "Instalar"</p>
-                        </div>
-                    </div>
-                `;
-            } else {
-                instructions = `
-                    <div class="text-center">
-                        <h4 class="font-bold mb-3">Como instalar:</h4>
-                        <div class="space-y-2 text-sm text-left">
-                            <p>1. Procure pelo ícone <i class="fas fa-download"></i> na barra de endereços</p>
-                            <p>2. Ou vá no menu do navegador</p>
-                            <p>3. Procure por "Instalar DeadlineX" ou "Adicionar à área de trabalho"</p>
-                        </div>
-                    </div>
-                `;
-            }
-            
-            document.querySelector('#installModal .bg-white').innerHTML = `
-                <div class="text-center mb-6">
-                    <div class="bg-indigo-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-mobile-alt text-3xl text-indigo-600"></i>
-                    </div>
-                    <h3 class="text-2xl font-bold text-gray-800 mb-2">Instalar DeadlineX</h3>
-                </div>
-                
-                ${instructions}
-                
-                <button onclick="closeInstallModal()" class="w-full mt-6 bg-indigo-600 hover:bg-indigo-700 text-white py-3 px-6 rounded-xl transition-colors">
-                    Entendi
-                </button>
-            `;
-        }
-        
-        function checkBrowserNotificationPermission() {
-            if ("Notification" in window && Notification.permission === "granted") {
-                browserNotificationsEnabled = true;
-            }
-        }
 
         // Authentication Functions
         async function checkAuth() {
-            try {
-                console.log('🔐 Verificando sessão...');
-                console.log('🔗 Supabase conectado:', !!supabase);
-                console.log('💾 Usando localStorage:', usingLocalStorage);
-                
-                const { data: { session }, error } = await supabase.auth.getSession();
-                
-                console.log('📋 Resultado da sessão:', { session, error });
-                
-                if (error) {
-                    console.error('❌ Erro ao verificar sessão:', error);
-                    showLoginModal();
-                    return;
-                }
-                
-                if (session?.user) {
-                    console.log('✅ Usuário PRO logado:', session.user.email);
-                    currentUser = session.user;
-                    showMainContent();
-                    await loadDeadlines();
-                    await loadShoppingList();
-                    await loadMonthlyExpenses();
-                    startNotificationSystem();
-                    
-                    // Setup browser notifications
-                    setTimeout(setupBrowserNotifications, 2000);
-                } else {
-                    console.log('❌ Nenhuma sessão ativa');
-                    showLoginModal();
-                }
-            } catch (error) {
-                console.error('❌ Erro crítico na autenticação:', error);
-                console.error('Stack trace:', error.stack);
+            const { data: { session } } = await supabase.auth.getSession();
+            
+            if (session) {
+                currentUser = session.user;
+                showMainContent();
+                await loadDeadlines();
+            } else {
                 showLoginModal();
             }
         }
 
         function showLoginModal() {
-            console.log('📱 Exibindo tela de login');
             loginModal.classList.remove('hidden');
             mainContent.classList.add('hidden');
         }
@@ -1326,24 +657,22 @@
 
         // Event Listeners
         function setupEventListeners() {
-            // Auth form (login only)
+            // Auth tabs
+            document.getElementById('loginTab').addEventListener('click', () => switchAuthMode(false));
+            document.getElementById('signupTab').addEventListener('click', () => switchAuthMode(true));
+            
+            // Auth form
             document.getElementById('authForm').addEventListener('submit', handleAuth);
             
-            // Action buttons
+            // Menu dropdown
+            document.getElementById('menuBtn').addEventListener('click', toggleMenu);
+            document.addEventListener('click', closeMenuOnClickOutside);
+            
+            // Menu actions
             document.getElementById('shareBtn').addEventListener('click', openShareModal);
             document.getElementById('privacyBtn').addEventListener('click', openPrivacyModal);
-            document.getElementById('deleteAccountBtn').addEventListener('click', openDeleteAccountModal);
+            document.getElementById('deleteAccountBtn').addEventListener('click', openDeleteModal);
             document.getElementById('logoutBtn').addEventListener('click', handleLogout);
-            
-            // PWA Install
-            document.getElementById('installBtn').addEventListener('click', installPWA);
-            document.getElementById('installAppBtn').addEventListener('click', installPWA);
-            
-            // Shopping list
-            document.getElementById('addItemForm').addEventListener('submit', addShoppingItem);
-            
-            // WhatsApp form
-            document.getElementById('whatsappForm').addEventListener('submit', saveWhatsAppNumber);
             
             // Add deadline
             document.getElementById('addDeadlineBtn').addEventListener('click', openAddModal);
@@ -1374,66 +703,57 @@
             document.getElementById('refreshBtn').addEventListener('click', loadDeadlines);
         }
 
-        // Removed switchAuthMode - only login mode now
+        function switchAuthMode(signup) {
+            isSignupMode = signup;
+            const loginTab = document.getElementById('loginTab');
+            const signupTab = document.getElementById('signupTab');
+            const submitBtn = document.getElementById('authSubmit');
+            
+            if (signup) {
+                loginTab.classList.remove('bg-white', 'shadow-sm', 'text-indigo-600');
+                loginTab.classList.add('text-gray-600');
+                signupTab.classList.add('bg-white', 'shadow-sm', 'text-indigo-600');
+                signupTab.classList.remove('text-gray-600');
+                submitBtn.textContent = 'Cadastrar';
+            } else {
+                signupTab.classList.remove('bg-white', 'shadow-sm', 'text-indigo-600');
+                signupTab.classList.add('text-gray-600');
+                loginTab.classList.add('bg-white', 'shadow-sm', 'text-indigo-600');
+                loginTab.classList.remove('text-gray-600');
+                submitBtn.textContent = 'Entrar';
+            }
+        }
 
         async function handleAuth(e) {
             e.preventDefault();
-            console.log('🔑 Fazendo login PRO...');
             showLoading();
             
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
-            
-            console.log('📧 Email:', email);
-            console.log('🔒 Senha:', password ? '***' : 'vazia');
-            console.log('🔗 Supabase disponível:', !!supabase);
-            console.log('💾 Modo localStorage:', usingLocalStorage);
+            const errorDiv = document.getElementById('authError');
             
             try {
-                console.log('🔐 Tentando autenticar...');
-                
-                // Test Supabase connection first
-                if (!usingLocalStorage) {
-                    console.log('🧪 Testando conexão Supabase...');
-                    const testResult = await supabase.from('auth.users').select('count').limit(1);
-                    console.log('🧪 Teste de conexão:', testResult);
+                let result;
+                if (isSignupMode) {
+                    result = await supabase.auth.signUp({ email, password });
+                } else {
+                    result = await supabase.auth.signInWithPassword({ email, password });
                 }
-                
-                const result = await supabase.auth.signInWithPassword({ email, password });
-                
-                console.log('📋 Resultado completo:', result);
-                console.log('📋 Data:', result.data);
-                console.log('📋 Error:', result.error);
                 
                 if (result.error) {
-                    console.error('❌ Erro de autenticação:', result.error);
-                    console.error('❌ Código do erro:', result.error.status);
-                    console.error('❌ Mensagem:', result.error.message);
-                    showError(getErrorMessage(result.error.message));
-                    return;
+                    throw result.error;
                 }
                 
-                // Success - All users have PRO access
-                console.log('✅ Login PRO realizado com sucesso!');
-                console.log('👤 Usuário:', result.data.user);
-                console.log('🎫 Sessão:', result.data.session);
-                
-                currentUser = result.data.user || result.data.session?.user;
-                showMainContent();
-                await loadDeadlines();
-                await loadShoppingList();
-                await loadMonthlyExpenses();
-                startNotificationSystem();
-                
-                // Setup browser notifications
-                setTimeout(setupBrowserNotifications, 2000);
-                
-                showNotification('🚀 Bem-vindo ao DeadlineX PRO!', 'success');
+                if (isSignupMode && !result.data.session) {
+                    showError('Verifique seu email para confirmar o cadastro!', 'success');
+                } else {
+                    currentUser = result.data.user;
+                    showMainContent();
+                    await loadDeadlines();
+                }
                 
             } catch (error) {
-                console.error('❌ Erro crítico no login:', error);
-                console.error('❌ Stack trace:', error.stack);
-                showError('Erro no sistema. Verifique sua conexão e tente novamente.');
+                showError(getErrorMessage(error.message));
             } finally {
                 hideLoading();
             }
@@ -1443,398 +763,42 @@
             await supabase.auth.signOut();
             currentUser = null;
             deadlines = [];
-            shoppingList = [];
-            monthlyExpenses = [];
             stopNotificationSystem();
             showLoginModal();
         }
 
-        // Deadline Functions - Updated for Supabase tables
-        async function loadDeadlines() {
-            if (!currentUser) return;
-            
-            showLoading();
-            try {
-                console.log('📋 Carregando prazos...');
-                const { data, error } = await supabase
-                    .from('prazos')
-                    .select('*')
-                    .eq('user_id', currentUser.id)
-                    .order('data_prazo', { ascending: true });
-                
-                if (error) {
-                    console.error('Erro ao carregar prazos:', error);
-                    showNotification('❌ Erro ao carregar prazos', 'error');
-                    return;
-                }
-                
-                // Convert database format to app format
-                deadlines = (data || []).map(item => ({
-                    id: item.id,
-                    title: item.titulo,
-                    description: item.descricao,
-                    date: item.data_prazo,
-                    category: item.categoria,
-                    priority: item.prioridade,
-                    completed: item.concluido,
-                    notification: item.notificacao_ativa,
-                    user_id: item.user_id,
-                    created_at: item.created_at,
-                    updated_at: item.updated_at
-                }));
-                
-                console.log(`✅ ${deadlines.length} prazos carregados`);
-                
-                renderDeadlines();
-                updateStats();
-                
-                if (currentView === 'calendar') {
-                    renderCalendar();
-                }
-                
-            } catch (error) {
-                console.error('Erro crítico:', error);
-                showNotification('❌ Erro no sistema', 'error');
-            } finally {
-                hideLoading();
-            }
-        }
-
-        async function handleSaveDeadline(e) {
-            e.preventDefault();
-            showLoading();
-            
-            try {
-                const formData = {
-                    titulo: document.getElementById('deadlineTitle').value,
-                    descricao: document.getElementById('deadlineDescription').value,
-                    data_prazo: document.getElementById('deadlineDate').value,
-                    categoria: document.getElementById('deadlineCategory').value,
-                    prioridade: document.getElementById('deadlinePriority').value,
-                    notificacao_ativa: document.getElementById('deadlineNotification').checked,
-                    user_id: currentUser.id
-                };
-                
-                if (editingDeadline) {
-                    // Update existing
-                    const { error } = await supabase
-                        .from('prazos')
-                        .update(formData)
-                        .eq('id', editingDeadline.id);
-                    
-                    if (error) throw error;
-                    showNotification('✅ Prazo atualizado!', 'success');
-                } else {
-                    // Create new
-                    const { error } = await supabase
-                        .from('prazos')
-                        .insert([formData]);
-                    
-                    if (error) throw error;
-                    showNotification('✅ Prazo criado!', 'success');
-                }
-                
-                closeModal();
-                await loadDeadlines();
-                
-            } catch (error) {
-                console.error('Erro ao salvar:', error);
-                showNotification('❌ Erro ao salvar prazo', 'error');
-            } finally {
-                hideLoading();
-            }
-        }
-
-        async function deleteDeadline(id) {
-            if (!confirm('Tem certeza que deseja excluir este prazo?')) return;
-            
-            showLoading();
-            try {
-                const { error } = await supabase
-                    .from('prazos')
-                    .delete()
-                    .eq('id', id);
-                
-                if (error) throw error;
-                
-                showNotification('✅ Prazo excluído!', 'success');
-                await loadDeadlines();
-                
-            } catch (error) {
-                console.error('Erro ao excluir:', error);
-                showNotification('❌ Erro ao excluir prazo', 'error');
-            } finally {
-                hideLoading();
-            }
-        }
-
-        async function toggleComplete(id) {
-            const deadline = deadlines.find(d => d.id === id);
-            if (!deadline) return;
-            
-            try {
-                const { error } = await supabase
-                    .from('prazos')
-                    .update({ concluido: !deadline.completed })
-                    .eq('id', id);
-                
-                if (error) throw error;
-                
-                showNotification(
-                    deadline.completed ? '📝 Prazo reaberto!' : '✅ Prazo concluído!', 
-                    'success'
-                );
-                await loadDeadlines();
-                
-            } catch (error) {
-                console.error('Erro ao atualizar:', error);
-                showNotification('❌ Erro ao atualizar prazo', 'error');
-            }
-        }
-
-        // Shopping List Functions - Updated for Supabase
-        async function loadShoppingList() {
-            if (!currentUser) return;
-            
-            try {
-                const { data, error } = await supabase
-                    .from('lista_compras')
-                    .select('*')
-                    .eq('user_id', currentUser.id)
-                    .order('created_at', { ascending: false });
-                
-                if (error) throw error;
-                
-                shoppingList = data || [];
-                renderShoppingList();
-                updateShoppingSummary();
-                
-            } catch (error) {
-                console.error('Erro ao carregar lista de compras:', error);
-            }
-        }
-
-        async function addShoppingItem(e) {
-            e.preventDefault();
-            
-            try {
-                const itemData = {
-                    user_id: currentUser.id,
-                    nome: document.getElementById('itemName').value,
-                    preco: parseFloat(document.getElementById('itemPrice').value),
-                    quantidade: parseInt(document.getElementById('itemQuantity').value),
-                    categoria: document.getElementById('itemCategory').value,
-                    comprado: false
-                };
-                
-                const { error } = await supabase
-                    .from('lista_compras')
-                    .insert([itemData]);
-                
-                if (error) throw error;
-                
-                // Reset form
-                document.getElementById('addItemForm').reset();
-                document.getElementById('itemQuantity').value = '1';
-                
-                showNotification('✅ Item adicionado!', 'success');
-                await loadShoppingList();
-                
-            } catch (error) {
-                console.error('Erro ao adicionar item:', error);
-                showNotification('❌ Erro ao adicionar item', 'error');
-            }
-        }
-
-        async function toggleShoppingItem(id) {
-            const item = shoppingList.find(i => i.id === id);
-            if (!item) return;
-            
-            try {
-                const { error } = await supabase
-                    .from('lista_compras')
-                    .update({ comprado: !item.comprado })
-                    .eq('id', id);
-                
-                if (error) throw error;
-                
-                await loadShoppingList();
-                
-            } catch (error) {
-                console.error('Erro ao atualizar item:', error);
-            }
-        }
-
-        async function deleteShoppingItem(id) {
-            try {
-                const { error } = await supabase
-                    .from('lista_compras')
-                    .delete()
-                    .eq('id', id);
-                
-                if (error) throw error;
-                
-                await loadShoppingList();
-                
-            } catch (error) {
-                console.error('Erro ao excluir item:', error);
-            }
-        }
-
-        async function finalizePurchase() {
-            const purchasedItems = shoppingList.filter(item => item.comprado);
-            if (purchasedItems.length === 0) {
-                showNotification('❌ Nenhum item selecionado para compra', 'error');
-                return;
-            }
-            
-            try {
-                // Add to monthly expenses
-                const totalAmount = purchasedItems.reduce((sum, item) => sum + (item.preco * item.quantidade), 0);
-                
-                const expenseData = {
-                    user_id: currentUser.id,
-                    categoria: 'compras',
-                    valor: totalAmount,
-                    descricao: `Compra de ${purchasedItems.length} itens`,
-                    data_gasto: new Date().toISOString().split('T')[0]
-                };
-                
-                const { error: expenseError } = await supabase
-                    .from('gastos_mensais')
-                    .insert([expenseData]);
-                
-                if (expenseError) throw expenseError;
-                
-                // Remove purchased items
-                const purchasedIds = purchasedItems.map(item => item.id);
-                const { error: deleteError } = await supabase
-                    .from('lista_compras')
-                    .delete()
-                    .in('id', purchasedIds);
-                
-                if (deleteError) throw deleteError;
-                
-                showNotification(`✅ Compra finalizada! Total: R$ ${totalAmount.toFixed(2)}`, 'success');
-                
-                await loadShoppingList();
-                await loadMonthlyExpenses();
-                
-            } catch (error) {
-                console.error('Erro ao finalizar compra:', error);
-                showNotification('❌ Erro ao finalizar compra', 'error');
-            }
-        }
-
-        // Monthly Expenses Functions - Updated for Supabase
-        async function loadMonthlyExpenses() {
-            if (!currentUser) return;
-            
-            try {
-                const currentMonth = new Date().toISOString().slice(0, 7); // YYYY-MM
-                
-                const { data, error } = await supabase
-                    .from('gastos_mensais')
-                    .select('*')
-                    .eq('user_id', currentUser.id)
-                    .gte('data_gasto', `${currentMonth}-01`)
-                    .lt('data_gasto', `${currentMonth}-32`)
-                    .order('data_gasto', { ascending: true });
-                
-                if (error) throw error;
-                
-                monthlyExpenses = data || [];
-                renderExpensesChart();
-                updateMonthlyTotal();
-                
-            } catch (error) {
-                console.error('Erro ao carregar gastos mensais:', error);
-            }
-        }
-
-        async function saveWhatsAppNumber(e) {
-            e.preventDefault();
-            
-            try {
-                const whatsappNumber = document.getElementById('whatsappNumber').value;
-                
-                const { error } = await supabase
-                    .from('usuarios_pro')
-                    .upsert([{
-                        user_id: currentUser.id,
-                        whatsapp_numero: whatsappNumber,
-                        plano: 'pro',
-                        expires_at: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString() // 1 year
-                    }]);
-                
-                if (error) throw error;
-                
-                showNotification('✅ Número do WhatsApp salvo!', 'success');
-                closeWhatsAppModal();
-                
-            } catch (error) {
-                console.error('Erro ao salvar WhatsApp:', error);
-                showNotification('❌ Erro ao salvar número', 'error');
-            }
-        }
-
-        // Utility Functions
-        function showNotification(message, type = 'info') {
-            const container = document.getElementById('notificationContainer');
-            const notification = document.createElement('div');
-            
-            const colors = {
-                success: 'bg-green-500',
-                error: 'bg-red-500',
-                warning: 'bg-yellow-500',
-                info: 'bg-blue-500'
-            };
-            
-            notification.className = `${colors[type]} text-white px-6 py-4 rounded-lg shadow-lg notification-popup`;
-            notification.textContent = message;
-            
-            container.appendChild(notification);
-            
-            setTimeout(() => {
-                notification.remove();
-            }, 5000);
-        }
-
-        function showError(message) {
-            const errorDiv = document.getElementById('authError');
-            errorDiv.textContent = message;
-            errorDiv.classList.remove('hidden');
-            
-            setTimeout(() => {
-                errorDiv.classList.add('hidden');
-            }, 5000);
-        }
-
-        function getErrorMessage(error) {
-            const errorMessages = {
-                'Invalid login credentials': 'Email ou senha incorretos. Verifique suas credenciais PRO.',
-                'Email not confirmed': 'Email não confirmado. Entre em contato com o suporte.',
-                'Too many requests': 'Muitas tentativas. Aguarde alguns minutos.',
-                'User not found': 'Usuário não encontrado. Verifique se você possui acesso PRO.'
-            };
-            
-            return errorMessages[error] || 'Erro de autenticação. Entre em contato com o suporte.';
-        }
-
+        // Clock Functions
         function startClock() {
-            function updateClock() {
-                const now = new Date();
-                const timeString = now.toLocaleTimeString('pt-BR');
-                document.getElementById('liveClock').textContent = timeString;
-            }
-            
             updateClock();
             clockInterval = setInterval(updateClock, 1000);
         }
 
+        function updateClock() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('pt-BR', {
+                hour12: false,
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+            document.getElementById('liveClock').textContent = timeString;
+        }
+
+        // Notification System
         function startNotificationSystem() {
-            // Check for upcoming deadlines every minute
-            notificationInterval = setInterval(checkUpcomingDeadlines, 60000);
+            if (notificationInterval) clearInterval(notificationInterval);
+            
+            // Check notifications every minute
+            notificationInterval = setInterval(() => {
+                if (currentUser && deadlines.length > 0) {
+                    checkDeadlineNotifications();
+                }
+            }, 60000); // 1 minute
+            
+            // Initial check
+            if (currentUser && deadlines.length > 0) {
+                setTimeout(checkDeadlineNotifications, 2000);
+            }
         }
 
         function stopNotificationSystem() {
@@ -1844,39 +808,520 @@
             }
         }
 
-        function checkUpcomingDeadlines() {
+        function checkDeadlineNotifications() {
             const now = new Date();
-            const tomorrow = new Date(now.getTime() + 24 * 60 * 60 * 1000);
             
             deadlines.forEach(deadline => {
-                if (!deadline.completed && deadline.notification) {
-                    const deadlineDate = new Date(deadline.date);
-                    
-                    // Notify 1 day before
-                    if (deadlineDate.toDateString() === tomorrow.toDateString()) {
-                        showNotification(`⏰ Lembrete: ${deadline.title} vence amanhã!`, 'warning');
-                    }
-                    
-                    // Notify on the day
-                    if (deadlineDate.toDateString() === now.toDateString()) {
-                        showNotification(`🚨 URGENTE: ${deadline.title} vence hoje!`, 'error');
-                    }
+                if (deadline.completed || !deadline.notification) return;
+                
+                const deadlineDate = new Date(deadline.date);
+                const timeDiff = deadlineDate - now;
+                const daysDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+                
+                // Check for 30 days, 7 days, and 1 day notifications
+                if (daysDiff === 30) {
+                    showNotification(`📅 Prazo em 30 dias: ${deadline.title}`, 'info');
+                } else if (daysDiff === 7) {
+                    showNotification(`⚠️ Prazo em 1 semana: ${deadline.title}`, 'warning');
+                } else if (daysDiff === 1) {
+                    showNotification(`🚨 Prazo amanhã: ${deadline.title}`, 'urgent');
+                } else if (daysDiff === 0) {
+                    showNotification(`⏰ Prazo hoje: ${deadline.title}`, 'urgent');
+                } else if (daysDiff < 0) {
+                    showNotification(`❌ Prazo vencido: ${deadline.title}`, 'error');
                 }
             });
         }
 
-        async function setupBrowserNotifications() {
-            if ("Notification" in window) {
-                if (Notification.permission === "default") {
-                    const permission = await Notification.requestPermission();
-                    if (permission === "granted") {
-                        browserNotificationsEnabled = true;
-                        showNotification('🔔 Notificações ativadas!', 'success');
-                    }
-                } else if (Notification.permission === "granted") {
-                    browserNotificationsEnabled = true;
+        function showNotification(message, type = 'info') {
+            const container = document.getElementById('notificationContainer');
+            const notification = document.createElement('div');
+            
+            const typeClasses = {
+                info: 'bg-blue-500 border-blue-600',
+                warning: 'bg-orange-500 border-orange-600',
+                urgent: 'bg-red-500 border-red-600',
+                error: 'bg-red-600 border-red-700',
+                success: 'bg-green-500 border-green-600'
+            };
+            
+            notification.className = `notification-popup ${typeClasses[type]} text-white px-4 py-3 rounded-lg shadow-lg border-l-4 max-w-sm`;
+            notification.innerHTML = `
+                <div class="flex items-center justify-between">
+                    <span class="text-sm font-medium">${message}</span>
+                    <button onclick="this.parentElement.parentElement.remove()" class="ml-3 text-white hover:text-gray-200">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `;
+            
+            container.appendChild(notification);
+            
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                if (notification.parentElement) {
+                    notification.remove();
                 }
+            }, 5000);
+        }
+
+        // Menu Functions
+        function toggleMenu() {
+            const menu = document.getElementById('dropdownMenu');
+            menu.classList.toggle('hidden');
+        }
+
+        function closeMenuOnClickOutside(event) {
+            const menu = document.getElementById('dropdownMenu');
+            const menuBtn = document.getElementById('menuBtn');
+            
+            if (!menu.contains(event.target) && !menuBtn.contains(event.target)) {
+                menu.classList.add('hidden');
             }
+        }
+
+        // Share Functions
+        function openShareModal() {
+            document.getElementById('dropdownMenu').classList.add('hidden');
+            document.getElementById('shareModal').classList.remove('hidden');
+        }
+
+        function closeShareModal() {
+            document.getElementById('shareModal').classList.add('hidden');
+        }
+
+        function shareViaWhatsApp() {
+            const message = encodeURIComponent('🎯 Descobri o DeadlineX! Um organizador de prazos incrível que me ajuda a nunca mais perder um prazo importante. Experimente você também!');
+            const url = encodeURIComponent(window.location.href);
+            window.open(`https://wa.me/?text=${message}%20${url}`, '_blank');
+        }
+
+        function shareViaEmail() {
+            const subject = encodeURIComponent('DeadlineX - Organizador de Prazos');
+            const body = encodeURIComponent(`Olá!
+
+Descobri uma ferramenta incrível para organizar prazos e queria compartilhar com você: o DeadlineX!
+
+🎯 Com ele você pode:
+• Organizar todos os seus prazos em um só lugar
+• Receber notificações automáticas
+• Visualizar em lista ou calendário
+• Categorizar por tipo (saúde, trabalho, etc.)
+
+Acesse aqui: ${window.location.href}
+
+Vale muito a pena experimentar!`);
+            
+            window.open(`mailto:?subject=${subject}&body=${body}`, '_blank');
+        }
+
+        function copyShareLink() {
+            const shareText = `🎯 DeadlineX - Organizador de Prazos\n\nNunca mais perca um prazo importante!\n\n${window.location.href}`;
+            
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(shareText).then(() => {
+                    showNotification('✅ Link copiado para a área de transferência!', 'success');
+                });
+            } else {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = shareText;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                showNotification('✅ Link copiado para a área de transferência!', 'success');
+            }
+            
+            closeShareModal();
+        }
+
+        // Privacy Functions
+        function openPrivacyModal() {
+            document.getElementById('dropdownMenu').classList.add('hidden');
+            document.getElementById('privacyModal').classList.remove('hidden');
+        }
+
+        function closePrivacyModal() {
+            document.getElementById('privacyModal').classList.add('hidden');
+        }
+
+        // Delete Account Functions
+        function openDeleteModal() {
+            document.getElementById('dropdownMenu').classList.add('hidden');
+            document.getElementById('deleteAccountModal').classList.remove('hidden');
+        }
+
+        function closeDeleteModal() {
+            document.getElementById('deleteAccountModal').classList.add('hidden');
+            document.getElementById('deletePassword').value = '';
+        }
+
+        async function confirmDeleteAccount() {
+            const password = document.getElementById('deletePassword').value;
+            
+            if (!password) {
+                showNotification('❌ Digite sua senha para confirmar', 'error');
+                return;
+            }
+            
+            showLoading();
+            
+            try {
+                // Re-authenticate user before deletion
+                const { error: authError } = await supabase.auth.signInWithPassword({
+                    email: currentUser.email,
+                    password: password
+                });
+                
+                if (authError) {
+                    throw new Error('Senha incorreta');
+                }
+                
+                // Delete all user deadlines first
+                const { error: deleteDataError } = await supabase
+                    .from('deadlines')
+                    .delete()
+                    .eq('user_id', currentUser.id);
+                
+                if (deleteDataError) {
+                    console.error('Erro ao excluir dados:', deleteDataError);
+                }
+                
+                // Delete user account
+                const { error: deleteUserError } = await supabase.auth.admin.deleteUser(currentUser.id);
+                
+                if (deleteUserError) {
+                    // If admin delete fails, sign out user
+                    await supabase.auth.signOut();
+                }
+                
+                showNotification('✅ Conta excluída com sucesso', 'success');
+                closeDeleteModal();
+                
+                // Redirect to login
+                setTimeout(() => {
+                    currentUser = null;
+                    deadlines = [];
+                    stopNotificationSystem();
+                    showLoginModal();
+                }, 2000);
+                
+            } catch (error) {
+                showNotification(`❌ ${error.message}`, 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        function showError(message, type = 'error') {
+            const errorDiv = document.getElementById('authError');
+            errorDiv.textContent = message;
+            errorDiv.className = `mt-4 p-3 border rounded-lg ${
+                type === 'success' 
+                    ? 'bg-green-100 border-green-400 text-green-700' 
+                    : 'bg-red-100 border-red-400 text-red-700'
+            }`;
+            errorDiv.classList.remove('hidden');
+            
+            setTimeout(() => {
+                errorDiv.classList.add('hidden');
+            }, 5000);
+        }
+
+        function getErrorMessage(error) {
+            const messages = {
+                'Invalid login credentials': 'Email ou senha incorretos',
+                'User already registered': 'Este email já está cadastrado',
+                'Password should be at least 6 characters': 'A senha deve ter pelo menos 6 caracteres'
+            };
+            return messages[error] || 'Erro ao processar solicitação';
+        }
+
+        // Deadline Functions
+        async function loadDeadlines() {
+            if (!currentUser) return;
+            
+            showLoading();
+            
+            try {
+                const { data, error } = await supabase
+                    .from('deadlines')
+                    .select('*')
+                    .order('date', { ascending: true });
+                
+                if (error) throw error;
+                
+                deadlines = data || [];
+                renderDeadlines();
+                updateStats();
+                
+                // Restart notification system with new data
+                startNotificationSystem();
+                
+            } catch (error) {
+                console.error('Erro ao carregar prazos:', error);
+            } finally {
+                hideLoading();
+            }
+        }
+
+        function renderDeadlines() {
+            if (currentView === 'list') {
+                renderListView();
+            } else {
+                renderCalendarView();
+            }
+        }
+
+        function renderListView() {
+            const container = document.getElementById('deadlinesList');
+            const emptyState = document.getElementById('emptyState');
+            
+            if (deadlines.length === 0) {
+                container.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            }
+            
+            emptyState.classList.add('hidden');
+            
+            const filteredDeadlines = getFilteredDeadlines();
+            
+            if (filteredDeadlines.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-8">
+                        <i class="fas fa-search text-4xl text-gray-300 mb-4"></i>
+                        <p class="text-gray-500">Nenhum prazo encontrado com os filtros aplicados</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = filteredDeadlines.map(deadline => createDeadlineCard(deadline)).join('');
+        }
+
+        function renderCalendarView() {
+            const calendarGrid = document.getElementById('calendarGrid');
+            const monthElement = document.getElementById('calendarMonth');
+            
+            // Update month header
+            const monthNames = [
+                'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+                'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
+            ];
+            monthElement.textContent = `${monthNames[currentDate.getMonth()]} ${currentDate.getFullYear()}`;
+            
+            // Generate calendar days
+            const firstDay = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+            const lastDay = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+            const startDate = new Date(firstDay);
+            startDate.setDate(startDate.getDate() - firstDay.getDay());
+            
+            const days = [];
+            const today = new Date();
+            
+            for (let i = 0; i < 42; i++) {
+                const date = new Date(startDate);
+                date.setDate(startDate.getDate() + i);
+                
+                const isCurrentMonth = date.getMonth() === currentDate.getMonth();
+                const isToday = date.toDateString() === today.toDateString();
+                const dateString = date.toISOString().split('T')[0];
+                
+                const dayDeadlines = getFilteredDeadlines().filter(d => d.date === dateString);
+                
+                days.push({
+                    date: date,
+                    day: date.getDate(),
+                    isCurrentMonth,
+                    isToday,
+                    deadlines: dayDeadlines
+                });
+            }
+            
+            calendarGrid.innerHTML = days.map(day => createCalendarDay(day)).join('');
+        }
+
+        function getFilteredDeadlines() {
+            const categoryFilter = document.getElementById('categoryFilter').value;
+            const priorityFilter = document.getElementById('priorityFilter').value;
+            const statusFilter = document.getElementById('statusFilter').value;
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            
+            return deadlines.filter(deadline => {
+                const matchesCategory = !categoryFilter || deadline.category === categoryFilter;
+                const matchesPriority = !priorityFilter || deadline.priority === priorityFilter;
+                const matchesSearch = !searchTerm || 
+                    deadline.title.toLowerCase().includes(searchTerm) ||
+                    (deadline.description && deadline.description.toLowerCase().includes(searchTerm));
+                
+                let matchesStatus = true;
+                if (statusFilter) {
+                    const daysUntil = getDaysUntilDeadline(deadline.date);
+                    switch (statusFilter) {
+                        case 'pending':
+                            matchesStatus = !deadline.completed;
+                            break;
+                        case 'completed':
+                            matchesStatus = deadline.completed;
+                            break;
+                        case 'overdue':
+                            matchesStatus = !deadline.completed && daysUntil < 0;
+                            break;
+                    }
+                }
+                
+                return matchesCategory && matchesPriority && matchesSearch && matchesStatus;
+            });
+        }
+
+        function createDeadlineCard(deadline) {
+            const daysUntil = getDaysUntilDeadline(deadline.date);
+            const isUrgent = daysUntil <= 7 && daysUntil >= 0;
+            const isOverdue = daysUntil < 0;
+            
+            const priorityClass = `priority-${deadline.priority}`;
+            const categoryClass = `category-${deadline.category}`;
+            const urgentClass = isUrgent ? 'deadline-urgent' : '';
+            
+            return `
+                <div class="bg-white rounded-xl p-6 shadow-sm card-hover ${priorityClass} ${urgentClass}">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="flex-1">
+                            <div class="flex items-center space-x-3 mb-2">
+                                <h3 class="text-lg font-semibold text-gray-800 ${deadline.completed ? 'line-through opacity-60' : ''}">
+                                    ${deadline.title}
+                                </h3>
+                                <span class="px-2 py-1 text-xs font-medium text-white rounded-full ${categoryClass}">
+                                    ${getCategoryLabel(deadline.category)}
+                                </span>
+                                <span class="px-2 py-1 text-xs font-medium rounded-full ${getPriorityBadge(deadline.priority)}">
+                                    ${getPriorityLabel(deadline.priority)}
+                                </span>
+                            </div>
+                            
+                            ${deadline.description ? `
+                                <p class="text-gray-600 text-sm mb-3 ${deadline.completed ? 'opacity-60' : ''}">
+                                    ${deadline.description}
+                                </p>
+                            ` : ''}
+                            
+                            <div class="flex items-center space-x-4 text-sm text-gray-500">
+                                <div class="flex items-center space-x-1">
+                                    <i class="fas fa-calendar"></i>
+                                    <span>${formatDate(deadline.date)}</span>
+                                </div>
+                                
+                                <div class="flex items-center space-x-1">
+                                    <i class="fas fa-clock"></i>
+                                    <span class="${isOverdue ? 'text-red-600 font-medium' : isUrgent ? 'text-orange-600 font-medium' : ''}">
+                                        ${getTimeUntilText(daysUntil)}
+                                    </span>
+                                </div>
+                                
+                                ${deadline.notification ? '<i class="fas fa-bell text-blue-500" title="Notificações ativas"></i>' : ''}
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center space-x-2 ml-4">
+                            <button onclick="toggleComplete(${deadline.id})" 
+                                    class="p-2 rounded-lg transition-colors ${
+                                        deadline.completed 
+                                            ? 'bg-green-100 text-green-600 hover:bg-green-200' 
+                                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                                    }" 
+                                    title="${deadline.completed ? 'Marcar como pendente' : 'Marcar como concluído'}">
+                                <i class="fas ${deadline.completed ? 'fa-check-circle' : 'fa-circle'}"></i>
+                            </button>
+                            
+                            <button onclick="editDeadline(${deadline.id})" 
+                                    class="p-2 bg-blue-100 text-blue-600 rounded-lg hover:bg-blue-200 transition-colors"
+                                    title="Editar">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            
+                            <button onclick="deleteDeadline(${deadline.id})" 
+                                    class="p-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition-colors"
+                                    title="Excluir">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Utility Functions
+        function getDaysUntilDeadline(dateString) {
+            const today = new Date();
+            const deadline = new Date(dateString);
+            const diffTime = deadline - today;
+            return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        }
+
+        function getTimeUntilText(days) {
+            if (days < 0) return `${Math.abs(days)} dias em atraso`;
+            if (days === 0) return 'Hoje';
+            if (days === 1) return 'Amanhã';
+            if (days <= 7) return `${days} dias`;
+            if (days <= 30) return `${Math.ceil(days / 7)} semanas`;
+            return `${Math.ceil(days / 30)} meses`;
+        }
+
+        function formatDate(dateString) {
+            return new Date(dateString).toLocaleDateString('pt-BR');
+        }
+
+        function getCategoryLabel(category) {
+            const labels = {
+                'saude': 'Saúde',
+                'trabalho': 'Trabalho',
+                'aniversarios': 'Aniversários',
+                'outros': 'Outros'
+            };
+            return labels[category] || category;
+        }
+
+        function getPriorityLabel(priority) {
+            const labels = {
+                'high': 'Alta',
+                'normal': 'Normal',
+                'low': 'Baixa'
+            };
+            return labels[priority] || priority;
+        }
+
+        function getPriorityBadge(priority) {
+            const badges = {
+                'high': 'bg-red-100 text-red-800',
+                'normal': 'bg-blue-100 text-blue-800',
+                'low': 'bg-green-100 text-green-800'
+            };
+            return badges[priority] || badges.normal;
+        }
+
+        function updateStats() {
+            const total = deadlines.length;
+            const completed = deadlines.filter(d => d.completed).length;
+            const urgent = deadlines.filter(d => {
+                const days = getDaysUntilDeadline(d.date);
+                return days <= 7 && days >= 0 && !d.completed;
+            }).length;
+            
+            const weekStart = new Date();
+            const weekEnd = new Date();
+            weekEnd.setDate(weekEnd.getDate() + 7);
+            
+            const thisWeek = deadlines.filter(d => {
+                const deadlineDate = new Date(d.date);
+                return deadlineDate >= weekStart && deadlineDate <= weekEnd && !d.completed;
+            }).length;
+            
+            document.getElementById('totalDeadlines').textContent = total;
+            document.getElementById('completedDeadlines').textContent = completed;
+            document.getElementById('urgentDeadlines').textContent = urgent;
+            document.getElementById('weekDeadlines').textContent = thisWeek;
         }
 
         // Modal Functions
@@ -1884,10 +1329,15 @@
             editingDeadline = null;
             document.getElementById('modalTitle').textContent = 'Novo Prazo';
             document.getElementById('deadlineForm').reset();
-            document.getElementById('deadlineModal').classList.remove('hidden');
+            document.getElementById('deadlinePriority').value = 'normal';
+            document.getElementById('deadlineNotification').checked = true;
+            deadlineModal.classList.remove('hidden');
         }
 
-        function openEditModal(deadline) {
+        function editDeadline(id) {
+            const deadline = deadlines.find(d => d.id === id);
+            if (!deadline) return;
+            
             editingDeadline = deadline;
             document.getElementById('modalTitle').textContent = 'Editar Prazo';
             
@@ -1898,92 +1348,197 @@
             document.getElementById('deadlinePriority').value = deadline.priority;
             document.getElementById('deadlineNotification').checked = deadline.notification;
             
-            document.getElementById('deadlineModal').classList.remove('hidden');
+            deadlineModal.classList.remove('hidden');
         }
 
         function closeModal() {
-            document.getElementById('deadlineModal').classList.add('hidden');
+            deadlineModal.classList.add('hidden');
             editingDeadline = null;
         }
 
-        function openShareModal() {
-            document.getElementById('shareModal').classList.remove('hidden');
-        }
-
-        function closeShareModal() {
-            document.getElementById('shareModal').classList.add('hidden');
-        }
-
-        function openPrivacyModal() {
-            document.getElementById('privacyModal').classList.remove('hidden');
-        }
-
-        function closePrivacyModal() {
-            document.getElementById('privacyModal').classList.add('hidden');
-        }
-
-        function openDeleteAccountModal() {
-            document.getElementById('deleteAccountModal').classList.remove('hidden');
-        }
-
-        function closeDeleteAccountModal() {
-            document.getElementById('deleteAccountModal').classList.add('hidden');
-            document.getElementById('deleteConfirmation').value = '';
-        }
-
-        function openShoppingModal() {
-            document.getElementById('shoppingModal').classList.remove('hidden');
-        }
-
-        function closeShoppingModal() {
-            document.getElementById('shoppingModal').classList.add('hidden');
-        }
-
-        function openWhatsAppModal() {
-            document.getElementById('whatsappModal').classList.remove('hidden');
-        }
-
-        function closeWhatsAppModal() {
-            document.getElementById('whatsappModal').classList.add('hidden');
-        }
-
-        async function confirmDeleteAccount() {
-            const confirmation = document.getElementById('deleteConfirmation').value;
-            if (confirmation !== 'EXCLUIR') {
-                showNotification('❌ Digite "EXCLUIR" para confirmar', 'error');
-                return;
-            }
-            
+        async function handleSaveDeadline(e) {
+            e.preventDefault();
             showLoading();
+            
+            const formData = {
+                title: document.getElementById('deadlineTitle').value,
+                description: document.getElementById('deadlineDescription').value || null,
+                date: document.getElementById('deadlineDate').value,
+                category: document.getElementById('deadlineCategory').value,
+                priority: document.getElementById('deadlinePriority').value,
+                notification: document.getElementById('deadlineNotification').checked,
+                user_id: currentUser.id
+            };
+            
             try {
-                // Delete all user data
-                await supabase.from('prazos').delete().eq('user_id', currentUser.id);
-                await supabase.from('lista_compras').delete().eq('user_id', currentUser.id);
-                await supabase.from('gastos_mensais').delete().eq('user_id', currentUser.id);
-                await supabase.from('usuarios_pro').delete().eq('user_id', currentUser.id);
+                let result;
+                if (editingDeadline) {
+                    result = await supabase
+                        .from('deadlines')
+                        .update(formData)
+                        .eq('id', editingDeadline.id);
+                } else {
+                    result = await supabase
+                        .from('deadlines')
+                        .insert([formData]);
+                }
                 
-                // Delete user account
-                await supabase.auth.admin.deleteUser(currentUser.id);
+                if (result.error) throw result.error;
                 
-                showNotification('✅ Conta excluída com sucesso', 'success');
-                
-                setTimeout(() => {
-                    window.location.reload();
-                }, 2000);
+                closeModal();
+                await loadDeadlines();
                 
             } catch (error) {
-                console.error('Erro ao excluir conta:', error);
-                showNotification('❌ Erro ao excluir conta', 'error');
+                console.error('Erro ao salvar prazo:', error);
+                alert('Erro ao salvar prazo. Tente novamente.');
             } finally {
                 hideLoading();
             }
         }
 
-        // Share Functions
-        function shareViaWhats
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'980486a4874bc4da',t:'MTc1ODA2OTM1MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
+        async function toggleComplete(id) {
+            const deadline = deadlines.find(d => d.id === id);
+            if (!deadline) return;
+            
+            showLoading();
+            
+            try {
+                const { error } = await supabase
+                    .from('deadlines')
+                    .update({ completed: !deadline.completed })
+                    .eq('id', id);
+                
+                if (error) throw error;
+                
+                await loadDeadlines();
+                
+            } catch (error) {
+                console.error('Erro ao atualizar prazo:', error);
+            } finally {
+                hideLoading();
+            }
+        }
 
+        async function deleteDeadline(id) {
+            if (!confirm('Tem certeza que deseja excluir este prazo?')) return;
+            
+            showLoading();
+            
+            try {
+                const { error } = await supabase
+                    .from('deadlines')
+                    .delete()
+                    .eq('id', id);
+                
+                if (error) throw error;
+                
+                await loadDeadlines();
+                
+            } catch (error) {
+                console.error('Erro ao excluir prazo:', error);
+            } finally {
+                hideLoading();
+            }
+        }
 
+        function createCalendarDay(day) {
+            const dayClasses = [
+                'calendar-day',
+                'p-2',
+                'cursor-pointer'
+            ];
+            
+            if (!day.isCurrentMonth) dayClasses.push('other-month');
+            if (day.isToday) dayClasses.push('today');
+            
+            const eventsHtml = day.deadlines.slice(0, 3).map(deadline => {
+                const priorityClass = deadline.priority;
+                const completedClass = deadline.completed ? 'completed' : '';
+                return `
+                    <div class="calendar-event ${priorityClass} ${completedClass}" 
+                         onclick="editDeadline(${deadline.id})" 
+                         title="${deadline.title}${deadline.description ? ' - ' + deadline.description : ''}">
+                        ${deadline.title.length > 15 ? deadline.title.substring(0, 15) + '...' : deadline.title}
+                    </div>
+                `;
+            }).join('');
+            
+            const moreEvents = day.deadlines.length > 3 ? 
+                `<div class="text-xs text-gray-500 mt-1">+${day.deadlines.length - 3} mais</div>` : '';
+            
+            return `
+                <div class="${dayClasses.join(' ')}" onclick="selectCalendarDate('${day.date.toISOString().split('T')[0]}')">
+                    <div class="font-medium text-sm mb-1">${day.day}</div>
+                    ${eventsHtml}
+                    ${moreEvents}
+                </div>
+            `;
+        }
+
+        function switchView(view) {
+            currentView = view;
+            
+            const listViewBtn = document.getElementById('listViewBtn');
+            const calendarViewBtn = document.getElementById('calendarViewBtn');
+            const listView = document.getElementById('listView');
+            const calendarView = document.getElementById('calendarView');
+            
+            if (view === 'list') {
+                listViewBtn.classList.add('bg-indigo-600', 'text-white');
+                listViewBtn.classList.remove('text-gray-600');
+                calendarViewBtn.classList.remove('bg-indigo-600', 'text-white');
+                calendarViewBtn.classList.add('text-gray-600');
+                
+                listView.classList.remove('hidden');
+                calendarView.classList.add('hidden');
+            } else {
+                calendarViewBtn.classList.add('bg-indigo-600', 'text-white');
+                calendarViewBtn.classList.remove('text-gray-600');
+                listViewBtn.classList.remove('bg-indigo-600', 'text-white');
+                listViewBtn.classList.add('text-gray-600');
+                
+                listView.classList.add('hidden');
+                calendarView.classList.remove('hidden');
+            }
+            
+            renderDeadlines();
+        }
+
+        function navigateMonth(direction) {
+            currentDate.setMonth(currentDate.getMonth() + direction);
+            renderCalendarView();
+        }
+
+        function goToToday() {
+            currentDate = new Date();
+            renderCalendarView();
+        }
+
+        function selectCalendarDate(dateString) {
+            // Open modal with pre-filled date
+            openAddModal();
+            document.getElementById('deadlineDate').value = dateString;
+        }
+
+        function filterDeadlines() {
+            renderDeadlines();
+        }
+
+        // Listen for auth changes
+        supabase.auth.onAuthStateChange((event, session) => {
+            if (event === 'SIGNED_IN') {
+                currentUser = session.user;
+                showMainContent();
+                loadDeadlines();
+            } else if (event === 'SIGNED_OUT') {
+                currentUser = null;
+                deadlines = [];
+                showLoginModal();
+            }
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'980801ce6291f1f6',t:'MTc1ODEwNTg1My4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
 
 
 
